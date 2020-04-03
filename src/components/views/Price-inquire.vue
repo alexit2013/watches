@@ -81,15 +81,15 @@
     methods: {
       gobackPriceAdmin(val) {
         this.priceInquire.select = val;
-        this.handleDataMaketPriceList();
+        // this.handleDataMaketPriceList();
       },
-      // 获取行情指导价列表
+      // 获取批发价列表
       handleDataMaketPriceList() {
         this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
           page: this.page,
           pagenum: this.pagenum
         }).then((res) => {
-          console.log('行情指导价列表');
+          console.log('批发价列表');
           console.log(res);
           this.total = res.data.total;
           this.dataMaketPriceList = res.data.watchs;

@@ -296,26 +296,6 @@
         </el-backtop>
         <el-col :span="24" class="main-top">
           <el-row>
-            <!-- <div class="main-top-left">
-                <span style="cursor:pointer;" class="first-fint-size" @click="jump">首页</span>
-                <span style="font-size:12px;line-height:2.3">
-                  <span v-if="selected==1" class="fint-size">
-                    <i class="el-icon-arrow-right"></i>个人数据
-                    <i class="el-icon-arrow-right"></i>在售商品
-                  </span>
-                  <span v-if="selected==2" class="fint-size">
-                    <i class="el-icon-arrow-right"></i>个人数据
-                    <i class="el-icon-arrow-right"></i>已售商品
-                  </span>
-                  <span v-if="selected==3" class="fint-size">
-                    <i class="el-icon-arrow-right"></i>个人数据
-                    <i class="el-icon-arrow-right"></i>数据导出
-                  </span>
-                  <span v-if="selected==4" class="fint-size">
-                    <i class="el-icon-arrow-right"></i>发布商品
-                  </span>
-                </span>
-            </div>-->
             <div class="main-top-right">
               <div style="display: flex;">
                 <div class="right-div" @click="updateUserClick">
@@ -332,7 +312,6 @@
                   <span class="loginout">退出登录</span>
                 </div>
               </div>
-
               <div class="downbtn" v-if="updateUser==0">
                 <ul class="updateUl">
                   <li class="updateLi1">
@@ -344,7 +323,6 @@
                         </div>
                       </div>
                     </div>
-                    <!-- <p>修改昵称</p> -->
                     <el-dialog title="修改昵称" :visible.sync="nickDialogVisible" :append-to-body="true"
                       :close-on-press-escape="false" :close-on-click-modal="false" width="40%" center>
                       <div style="width:100%;padding-left:5%;display:flex;">
@@ -368,7 +346,6 @@
                         </div>
                       </div>
                     </div>
-                    <!-- <p class="updateP" >修改密码</p> -->
                     <el-dialog title="修改密码" :visible.sync="pswDialogVisible" :append-to-body="true"
                       :close-on-press-escape="false" :close-on-click-modal="false" width="40%" center>
                       <div style="width:100%;padding-left:5%;display:flex;">
@@ -528,13 +505,16 @@
         },
         priceAdmin: {
           id: 0,
-          select: 0
+          select: 0,
+          total: 0,
+          dataMaketPriceList: [],
         },
         priceInquire: {
           id: 0,
           select: 0
         },
         dataMaketPriceCount: 0,
+        isFirst: false,
 
       };
     },
@@ -989,7 +969,21 @@
         })();
         this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
           this.dataMaketPriceCount = res.data.total;
-        })
+        });
+        if (this.isFirst == false) {
+          this.isFirst = true;
+        } else if (this.isFirst == true) {
+          this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
+            page: 1,
+            pagenum: 10
+          }).then((res) => {
+            this.priceAdmin.total = res.data.total;
+            this.priceAdmin.dataMaketPriceList = res.data.watchs;
+          }).catch((err) => {
+            console.log(err);
+          })
+        }
+
       },
       // 采购批发价查询
       selected8() {

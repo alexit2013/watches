@@ -8,13 +8,13 @@
           prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
       </div>
       <div style="width: 90%;margin: 0 auto;">
-        <p style="color: red;">说明：在行情指导价变化时，应该及时更新系统</p>
+        <p style="color: red;">说明：在批发价变化时，应该及时更新系统</p>
         <p style="color: red;">系统会将未设置等级或超过30天未更新批发价的手表标注为红色。</p>
       </div>
-      <div v-show="dataMaketPriceList.length == 0" ref="hello" style="text-align: center;">
+      <div v-show="priceAdmin.dataMaketPriceList.length == 0" ref="hello" style="text-align: center;">
         <p>数据加载中...</p>
       </div>
-      <div v-if="dataMaketPriceList.length !== 0">
+      <div v-if="priceAdmin.dataMaketPriceList.length !== 0">
         <div class="price-admin-table">
           <table>
             <tr>
@@ -27,7 +27,7 @@
               <th>是否需要设置内容</th>
               <th>操作</th>
             </tr>
-            <tr v-for="(item,index) of dataMaketPriceList" :key="index">
+            <tr v-for="(item,index) of priceAdmin.dataMaketPriceList" :key="index">
               <td class="first-td">
                 <img v-image-preview
                   :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/' + item.buy_watchpics.split('|')[0]"
@@ -76,7 +76,7 @@
         <div style="width: 100%;height: 50px;">
           <div style="margin:15px 0;position:absolute;right:6%;">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
-              layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
+              layout="total, prev, pager, next, jumper" :total="priceAdmin.total"></el-pagination>
           </div>
         </div>
       </div>
@@ -94,8 +94,8 @@
         page: 1,
         pagenum: 10,
         keyword: '',
-        total: 0,
-        dataMaketPriceList: [],
+        total: this.priceAdmin.total,
+        dataMaketPriceList: this.priceAdmin.dataMaketPriceList,
         img: this.$store.state.baseUrl,
         priceDetailsList: {},
         img1: require('../../assets/imgs/error.png'),
@@ -117,17 +117,17 @@
         let count = sessionStorage.getItem('maketPriceCount');
         this.$emit('priceCount', count);
       },
-      // 获取行情指导价列表
+      // 获取批发价列表
       handleDataMaketPriceList() {
         this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
           page: this.page,
           pagenum: this.pagenum
         }).then((res) => {
-          console.log('行情指导价列表');
+          console.log('批发价列表');
           console.log(res);
-          this.total = res.data.total;
-          this.dataMaketPriceList = res.data.watchs;
-          if (this.dataMaketPriceList.length == 0) {
+          this.priceAdmin.total = res.data.total;
+          this.priceAdmin.dataMaketPriceList = res.data.watchs;
+          if (this.priceAdmin.dataMaketPriceList.length == 0) {
             this.$refs.hello.innerText = "啊哦~ 暂无数据";
           }
         }).catch((err) => {
@@ -142,7 +142,7 @@
         console.log("关键字---" + this.keyword);
         if (this.keyword !== "") {
           console.log(this.page);
-          this.dataMaketPriceList = [];
+          this.priceAdmin.dataMaketPriceList = [];
           this.$axios
             .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
               page: this.page,
@@ -152,9 +152,9 @@
             .then(res => {
               console.log("模糊搜索待售商品");
               console.log(res);
-              this.total = res.data.total;
-              this.dataMaketPriceList = res.data.watchs;
-              if (this.dataMaketPriceList.length == 0) {
+              this.priceAdmin.total = res.data.total;
+              this.priceAdmin.dataMaketPriceList = res.data.watchs;
+              if (this.priceAdmin.dataMaketPriceList.length == 0) {
                 this.$refs.hello.innerText = "啊哦~ 暂无数据";
               }
             })
@@ -163,7 +163,7 @@
             });
         } else if (this.keyword == "") {
           this.page = 1;
-          this.dataMaketPriceList = [];
+          this.priceAdmin.dataMaketPriceList = [];
           this.handleDataMaketPriceList();
         }
       },

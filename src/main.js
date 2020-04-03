@@ -21,6 +21,7 @@ require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/title')
 require('echarts/lib/component/grid')
+require('echarts/lib/component/tooltip')
 
 Vue.config.productionTip = false
 

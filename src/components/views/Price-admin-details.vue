@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <h3>行情指导价详情页面</h3> -->
+    <!-- <h3>批发价详情页面</h3> -->
     <div class="details-center">
       <div class="back-img">
         <img src="../../assets/imgs/goback.png" @click="gobackAdmin" />
@@ -30,13 +30,13 @@
         <tr>
           <th>价格</th>
           <th>趋势</th>
-          <th>价格日期</th>
+          <th>修改时间</th>
           <th>操作</th>
         </tr>
         <tr v-for="(item,index) in detailsList" :key="index">
           <td class="first-td">{{"HKD " + formatNumberRgx(item.price)}}</td>
           <td>
-            <!-- 数组最后一项不显示此内容 -->
+            <!-- 数组最后一项不显示此内容，该判断条件也决定了数组的长度需大于1 -->
             <div v-if="index < detailsList.length-1">
               <img :src="tendency2(index)" style="width: 25px;height: 25px;" />
             </div>
@@ -82,11 +82,8 @@
       }
     },
     props: ["priceDetailsList"],
-    beforeCreate() {
-      that = this;
-    },
     created() {
-      console.log("行情指导价详情页面");
+      console.log("批发价详情页面");
       console.log(this.priceDetailsList);
       this.watchId = this.priceDetailsList.buy_watchid;
       this.detailsList = this.priceDetailsList.prices;
@@ -108,7 +105,7 @@
     methods: {
       tendency2(i) {
         console.log('比较大小');
-        if (that.detailsList[i].price > that.detailsList[i + 1].price) {
+        if (this.detailsList[i].price > this.detailsList[i + 1].price) {
           return require('../../assets/imgs/upPrice .png');
         } else {
           return require('../../assets/imgs/downPrice .png');

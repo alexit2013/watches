@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/sts/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
   devServer: {
     // 前端请求的链接
     host: 'localhost',
