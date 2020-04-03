@@ -1,0 +1,220 @@
+<template>
+  <div>
+    <!-- <h3>行情指导价详情页面</h3> -->
+    <div class="details-center">
+      <div class="back-img">
+        <img src="../../assets/imgs/goback.png" @click="gobackAdmin" />
+        <span class="font">返回</span>
+      </div>
+    </div>
+    <div v-show="detailsList.length > 1" id="myChart" style="width: 80%;height: 400px;margin: 30px auto;"></div>
+    <div v-if="detailsList.length == 0" style="text-align: center;">
+      <p>暂无价格列表</p>
+    </div>
+    <div class="details-bottom" v-if="detailsList.length !== 0">
+      <div style="display: flex;justify-content: space-around;">
+        <div>
+          <span>最高：</span>
+          <span>{{'HKD ' + formatNumberRgx(priceList[priceList.length - 1])}}</span>
+        </div>
+        <div>
+          <span>最低：</span>
+          <span>{{'HKD ' + formatNumberRgx(priceList[0])}}</span>
+        </div>
+      </div>
+      <table>
+        <tr>
+          <th>价格</th>
+          <th>趋势</th>
+          <th>价格日期</th>
+        </tr>
+        <tr v-for="(item,index) in detailsList" :key="index">
+          <td class="first-td">{{"HKD " + formatNumberRgx(item.price)}}</td>
+          <td>
+            <!-- 数组最后一项不显示此内容 -->
+            <div v-if="index < detailsList.length-1">
+              <img :src="tendency(index)" style="width: 25px;height: 25px;" />
+            </div>
+          </td>
+          <td class="last-td">{{item.time}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</template>
+<script>
+  let that;
+  export default {
+    data() {
+      return {
+        price: '',
+        watchId: 0,
+        detailsList: [],
+        dialogDeletPriceVisible: false,
+        priceId: 0,
+        priceList: [],
+        highest: 0,
+        lowest: 0,
+        tendencyImg: '',
+        img1: require('../../assets/imgs/upPrice .png'),
+        img2: require('../../assets/imgs/downPrice .png'),
+        xList: [],
+        yList: [],
+
+      }
+    },
+    props: ["priceDetailsList"],
+    beforeCreate() {
+      that = this;
+    },
+    created() {
+      console.log("行情指导价详情页面");
+      console.log(this.priceDetailsList);
+      this.watchId = this.priceDetailsList.buy_watchid;
+      this.detailsList = this.priceDetailsList.prices;
+      this.xList = [];
+      this.yList = [];
+      if (this.detailsList.length > 1) {
+        for (let item of this.detailsList) {
+          this.xList.push(item.time);
+          this.yList.push(item.price);
+        }
+      }
+      this.xList.reverse();
+      this.yList.reverse();
+      this.judgePrice();
+    },
+    mounted() {
+      this.drawLine();
+    },
+    methods: {
+      tendency(i) {
+        console.log('比较大小');
+        // 数组有一条以上数据并且不是数组最后一项才执行此操作
+        if (that.detailsList[i].price > that.detailsList[i + 1].price) {
+          return require('../../assets/imgs/upPrice .png');
+        } else {
+          return require('../../assets/imgs/downPrice .png');
+        }
+      },
+      // 绘制折线图
+      drawLine() {
+        // Vue 实现响应式并不是数据发生变化之后 DOM 立即变化，nextTick会保证其内的代码在DOM更新后执行
+        this.$nextTick(() => {
+          // 基于准备好的dom，初始化echarts实例
+          let myChart = this.$echarts.init(document.getElementById('myChart'));
+          myChart.resize();
+          // 绘制图表
+          myChart.setOption({
+            title: {
+              text: '批发价折线统计图',
+              x: 'center'
+            },
+            grid: {
+              width: '100%',
+              height: 'auto'
+            },
+            xAxis: {
+              data: this.xList
+            },
+            yAxis: {},
+            series: [{
+              name: '批发价',
+              type: 'line',
+              data: this.yList
+            }]
+          });
+          window.addEventListener("resize", function () {
+            myChart.resize();
+          })
+        })
+
+      },
+      // 返回价格列表
+      gobackAdmin() {
+        this.$emit('gobackPriceAdmin', 0);
+      },
+      // 判断最高最低价格
+      judgePrice() {
+        this.priceList = [];
+        for (let price of this.detailsList) {
+          this.priceList.push(price.price);
+        }
+        console.log(this.priceList);
+        this.priceList.sort((a, b) => {
+          return a - b;
+        })
+      },
+    },
+  }
+</script>
+<style lang="scss" scoped>
+  .details-center {
+    width: 80%;
+    margin: 30px auto;
+
+    .back-img {
+      height: 65px;
+      line-height: 65px;
+      display: flex;
+      cursor: pointer;
+
+      .font {
+        font-size: 30px;
+        color: #2d4e65;
+      }
+    }
+
+  }
+
+  .details-bottom {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 30px;
+
+    td {
+      height: 60px;
+      margin: 10px 0;
+      padding: 20px 0;
+      background-color: #f2f5f7;
+      font-size: 17px;
+    }
+
+    .first-td {
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+    }
+
+    .last-td {
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+
+      .font-style {
+        margin: 0;
+        margin-top: 10px;
+        color: #0aa1ed;
+        font-size: 15px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0 30px;
+
+    tr {
+
+      th,
+      td {
+        width: 20%;
+        text-align: center;
+        border: 0;
+      }
+    }
+  }
+</style>
