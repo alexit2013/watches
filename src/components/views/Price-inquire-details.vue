@@ -26,7 +26,7 @@
         <tr>
           <th>价格</th>
           <th>趋势</th>
-          <th>修改时间</th>
+          <th>更新时间</th>
         </tr>
         <tr v-for="(item,index) in detailsList" :key="index">
           <td class="first-td">{{"HKD " + formatNumberRgx(item.price)}}</td>
@@ -73,7 +73,7 @@
       this.yList = [];
       if (this.detailsList.length > 1) {
         for (let item of this.detailsList) {
-          this.xList.push(item.time);
+          this.xList.push(/\d{4}-\d{1,2}-\d{1,2}/g.exec(item.time));
           this.yList.push(item.price);
         }
       }
@@ -106,10 +106,6 @@
             title: {
               text: '批发价折线统计图',
               x: 'center'
-            },
-            grid: {
-              width: '100%',
-              height: 'auto'
             },
             tooltip: {},
             xAxis: {

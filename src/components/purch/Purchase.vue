@@ -244,7 +244,16 @@
 
       };
     },
-    props: ["purchaseSelect"],
+    props: ["purchaseSelect", "purchasePro"],
+    created() {
+      console.log('跳转数据');
+      console.log(this.purchasePro);
+      this.keyword = this.purchasePro.name;
+      this.store = this.purchasePro.name;
+      this.country = this.purchasePro.country;
+      this.price();
+      this.buy_storeid = this.purchasePro.id;
+    },
     methods: {
       goback(val) {
         this.purchaseSelect.nums = val;
@@ -347,10 +356,10 @@
       // 价格币种
       price() {
         this.$axios.post(this.$store.state.baseUrl + "/CountryGet").then(res => {
-          console.log('价格币种');
-          console.log(res);
+          // console.log('价格币种');
+          // console.log(res);
           for (let item of res.data) {
-            console.log(this.country);
+            // console.log(this.country);
             if (this.country == item.CnName) {
               this.buy_watchcurrency = item.EnCurrency;
             }

@@ -521,7 +521,6 @@
       },
     }
   };
-
 </script>
 <style lang="scss" scoped>
   .stock-pending-container {
@@ -665,10 +664,6 @@
     }
   }
 
-  .previewImg2 {
-    display: flex;
-  }
-
   table {
     width: 100%;
     table-layout: fixed;
@@ -695,7 +690,6 @@
   .el-radio__input {
     line-height: 3;
   }
-
 </style>
 <style lang="scss">
   .el-pagination button:disabled {
@@ -716,5 +710,4 @@
     margin: 0;
     color: #303133;
   }
-
 </style>

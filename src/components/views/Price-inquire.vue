@@ -19,7 +19,7 @@
               <th>型号</th>
               <th>手表等级</th>
               <th>批发价</th>
-              <th>修改时间</th>
+              <th>最近更新时间</th>
               <th>操作</th>
             </tr>
             <tr v-for="(item,index) of dataMaketPriceList" :key="index">

@@ -169,12 +169,16 @@
             console.log(sessionStorage.getItem('token'));
             sessionStorage.setItem('peerFlag', res.data.PeerFlag);
             sessionStorage.setItem('marketPriceFlag', res.data.MarketPriceFlag);
+            sessionStorage.setItem('storeFlag', res.data.StoreFlag);
+            sessionStorage.setItem('watchFlag', res.data.WatchFlag);
             // 将用户昵称、用户角色及token放入vuex
             this.$store.dispatch('setNick', res.data.nick);
             this.$store.dispatch('setRole', res.data.role);
             this.$store.dispatch('setToken', res.data.token);
             this.$store.dispatch('setPeerFlag', res.data.PeerFlag);
             this.$store.dispatch('setMarketPriceFlag', res.data.MarketPriceFlag);
+            this.$store.dispatch('setStoreFlag', res.data.StoreFlag);
+            this.$store.dispatch('setWatchFlag', res.data.WatchFlag);
             console.log(this.$store.state.isLogin);
             this.$router.push('/home');
             // 页面回到顶部
@@ -233,7 +237,6 @@
       }
     },
   }
-
 </script>
 <style lang="scss" scoped>
   $height: 40px;
@@ -419,7 +422,6 @@
       font-size: 30px;
     }
   }
-
 </style>
 <style lang="scss">
   input:-internal-autofill-selected {
@@ -427,5 +429,4 @@
     background-image: none !important;
     color: -internal-light-dark-color(black, white) !important;
   }
-
 </style>

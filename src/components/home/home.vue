@@ -72,6 +72,16 @@
                 </div>
               </div>
             </li>
+            <li>
+              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <img class="icon icon-size" :src="adminSelected == 7 ? priceInquireImg2 : priceInquireImg1" />
+                <div style="width: 100%;display: flex;justify-content: space-between;">
+                  <span class="my-purchase icon" style="margin-right: 0;" ref="storeQuery3" @click="admin7">店铺查询</span>
+                  <span v-show="adminLine == 7"
+                    style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
+                </div>
+              </div>
+            </li>
           </ul>
           <ul class="person-ul" v-if="role == 2">
             <li @click="selected1($event)">
@@ -162,6 +172,28 @@
                 </div>
               </div>
             </li>
+            <li>
+              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <img class="icon icon-size" :src="selected == 9 ? priceInquireImg2 : priceInquireImg1" />
+                <div style="width: 100%;display: flex;justify-content: space-between;">
+                  <span class="my-purchase icon" style="margin-right: 0;" ref="storeQuery"
+                    @click="selected9">店铺查询</span>
+                  <span v-show="line == 9"
+                    style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <img class="icon icon-size" :src="selected == 10 ? priceInquireImg2 : priceInquireImg1" />
+                <div style="width: 100%;display: flex;justify-content: space-between;">
+                  <span class="my-purchase icon" style="margin-right: 0;" ref="watchQuery"
+                    @click="selected10">手表查询</span>
+                  <span v-show="line == 10"
+                    style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
+                </div>
+              </div>
+            </li>
           </ul>
           <ul class="person-ul" v-if="role == 3">
             <li @click="select1($event)">
@@ -210,6 +242,16 @@
                 <div style="width: 100%;display: flex;justify-content: space-between;">
                   <span class="my-purchase icon" style="margin-right: 0;" ref="peerAdmin2" @click="select7">贸易商管理</span>
                   <span v-show="stockLine == 4"
+                    style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <img class="icon icon-size" :src="warehouseSelect == 6 ? priceInquireImg2 : priceInquireImg1" />
+                <div style="width: 100%;display: flex;justify-content: space-between;">
+                  <span class="my-purchase icon" style="margin-right: 0;" ref="watchQuery2" @click="select8">手表查询</span>
+                  <span v-show="stockLine == 5"
                     style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
                 </div>
               </div>
@@ -283,6 +325,17 @@
                   <span class="my-purchase icon" style="margin-right: 0;" ref="priceInquire2"
                     @click="marketSelect8">批发价查询</span>
                   <span v-show="marketLine == 5"
+                    style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <img class="icon icon-size" :src="marketSelect == 7 ? priceInquireImg2 : priceInquireImg1" />
+                <div style="width: 100%;display: flex;justify-content: space-between;">
+                  <span class="my-purchase icon" style="margin-right: 0;" ref="watchQuery3"
+                    @click="marketSelect9">手表查询</span>
+                  <span v-show="marketLine == 6"
                     style="width: 5px;hieght: 15px;background-color: #2d4e65;border-radius: 10px;"></span>
                 </div>
               </div>
@@ -373,26 +426,47 @@
         </el-col>
         <el-col :span="24" class="main-container">
           <div>
-            <purchase v-if="selected == 1" :purchaseSelect="purchaseSelect"></purchase>
+            <!-- 代理商采购 -->
+            <Purchase v-if="selected == 1" :purchaseSelect="purchaseSelect" :purchasePro="purchasePro"></Purchase>
+            <!-- 贸易商采购 -->
             <Peer v-if="selected == 3" :purchaseSelect="purchaseSelect"></Peer>
+            <!-- 我的采购 -->
             <My-purchase v-if="selected == 2" :selectSearch="selectSearch" :numSelect="numSelect" :orders="orders">
             </My-purchase>
+            <!-- 物流 -->
             <Logistics-view v-if="selected == 4" :logisticsView="logisticsView"></Logistics-view>
+            <!-- 结算单 -->
             <Statement v-if="selected == 5"></Statement>
+            <!-- 贸易商管理 -->
             <Peer-admin v-if="adminSelected == 4 || selected == 6 || warehouseSelect == 5 || marketSelect == 4"
               @peerSel="peerSel">
             </Peer-admin>
+            <!-- 批发价管理 -->
             <Price-admin v-if="adminSelected == 5 || selected == 7 || marketSelect == 5" :priceAdmin="priceAdmin"
               @priceCount="priceCount">
             </Price-admin>
+            <!-- 批发价查询 -->
             <Price-inquire v-if="adminSelected == 6 || selected == 8 || marketSelect == 6" :priceInquire="priceInquire">
             </Price-inquire>
+            <!-- 店铺查询 -->
+            <Store-query v-if="adminSelected == 7 || selected == 9" @storeJump="storeJump"
+              :storeQuerySel="storeQuerySel"></Store-query>
+            <!-- 手表查询 -->
+            <Watch-query v-if="selected == 10 || warehouseSelect == 6 || marketSelect == 7"
+              :watchQuerySel="watchQuerySel"></Watch-query>
+            <!-- 待入库 -->
             <Stock-list v-if="warehouseSelect == 0" :stock1="stock1" @getStockCount="getStockCount"></Stock-list>
+            <!-- 未出库 -->
             <Not-outbound v-if="warehouseSelect == 2" :notOutbound="notOutbound" :notOrders="notOrders"></Not-outbound>
+            <!-- 已出库 -->
             <Have-outbound v-if="warehouseSelect == 3" :haveBound="haveBound"></Have-outbound>
+            <!-- 出库/查询 -->
             <Outbound-query v-if="warehouseSelect == 4" :outboundQuery="outboundQuery"></Outbound-query>
+            <!-- 待售 -->
             <For-sale v-if="marketSelect == 0" :forSale="forSale"></For-sale>
+            <!-- 在售 -->
             <On-sale v-if="marketSelect == 2" @getSellPendOrderCount="getSellPendOrderCount"></On-sale>
+            <!-- 已完成销售 -->
             <Completed-sale v-if="marketSelect == 3"></Completed-sale>
           </div>
         </el-col>
@@ -506,8 +580,10 @@
         priceAdmin: {
           id: 0,
           select: 0,
+          page: 1,
           total: 0,
           dataMaketPriceList: [],
+          keyword: ''
         },
         priceInquire: {
           id: 0,
@@ -515,6 +591,15 @@
         },
         dataMaketPriceCount: 0,
         isFirst: false,
+        purchasePro: {},
+        storeQuerySel: {
+          id: 0,
+          select: 0
+        },
+        watchQuerySel: {
+          id: 0,
+          select: 0
+        },
 
       };
     },
@@ -569,6 +654,31 @@
       peerSel(val) {
         console.log(val);
         this.selected3();
+      },
+      storeJump(val) {
+        console.log('店铺跳转');
+        console.log(val);
+        this.purchasePro = val;
+        this.line = 1;
+        this.selected = 1;
+        this.$refs.purchase.style.color = "#2e4d65";
+        this.$refs.trade.style.color = "#c8c8c8";
+        this.$refs.myPur.style.color = '#c8c8c8';
+        this.$refs.logisticsView.style.color = "#c8c8c8";
+        this.$refs.statement.style.color = "#c8c8c8";
+        this.$refs.peerAdmin.style.color = "#c8c8c8";
+        this.$refs.priceAdmin.style.color = "#c8c8c8";
+        this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
       },
       // 阻止页面后退
       keydown() {
@@ -672,7 +782,7 @@
         this.$router.push('/login');
         this.$store.dispatch('setRole', null);
       },
-      // 统计
+      // 管理统计
       admin1() {
         this.adminLine = 1;
         this.adminSelected = 1;
@@ -682,6 +792,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin3.style.color = '#c8c8c8';
         this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
         location.reload();
       },
       // 结算
@@ -694,6 +805,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin3.style.color = '#c8c8c8';
         this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -714,6 +826,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin3.style.color = '#c8c8c8';
         this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -734,6 +847,7 @@
         this.$refs.peerAdmin3.style.color = '#2d4e65';
         this.$refs.priceAdmin3.style.color = '#c8c8c8';
         this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -755,6 +869,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin3.style.color = '#2d4e65';
         this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -779,6 +894,28 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin3.style.color = '#c8c8c8';
         this.$refs.priceInquire3.style.color = '#2d4e65';
+        this.$refs.storeQuery3.style.color = '#c8c8c8';
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
+      // 管理店铺查询
+      admin7() {
+        this.adminLine = 7;
+        this.adminSelected = 7;
+        this.$refs.statistics.style.color = '#c8c8c8';
+        this.$refs.settleAccounts.style.color = '#c8c8c8';
+        this.$refs.finalStament.style.color = '#c8c8c8';
+        this.$refs.peerAdmin3.style.color = '#c8c8c8';
+        this.$refs.priceAdmin3.style.color = '#c8c8c8';
+        this.$refs.priceInquire3.style.color = '#c8c8c8';
+        this.$refs.storeQuery3.style.color = '#2d4e65';
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -802,6 +939,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -825,6 +964,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -850,6 +991,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         console.log('选择');
         console.log(this.numSelect.select);
         this.$axios
@@ -890,6 +1033,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         this.logisticsView.logisticsV = 1;
         // 页面回到顶部
         (function smoothscroll() {
@@ -913,6 +1058,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -935,6 +1082,8 @@
         this.$refs.peerAdmin.style.color = "#2e4d65";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -950,6 +1099,8 @@
         this.selected = 7;
         this.line = 7;
         this.priceAdmin.select = 0;
+        this.priceAdmin.keyword = '';
+        this.priceAdmin.page = 1;
         this.$refs.purchase.style.color = "#c8c8c8";
         this.$refs.trade.style.color = "#c8c8c8";
         this.$refs.logisticsView.style.color = "#c8c8c8";
@@ -958,6 +1109,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#2e4d65";
         this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -974,7 +1127,7 @@
           this.isFirst = true;
         } else if (this.isFirst == true) {
           this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
-            page: 1,
+            page: this.priceAdmin.page,
             pagenum: 10
           }).then((res) => {
             this.priceAdmin.total = res.data.total;
@@ -998,6 +1151,8 @@
         this.$refs.peerAdmin.style.color = "#c8c8c8";
         this.$refs.priceAdmin.style.color = "#c8c8c8";
         this.$refs.priceInquire.style.color = "#2e4d65";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -1008,6 +1163,57 @@
           }
         })();
       },
+      // 采购店铺查询
+      selected9() {
+        this.selected = 9;
+        this.line = 9;
+        this.storeQuerySel.select = 0;
+        this.$refs.purchase.style.color = "#c8c8c8";
+        this.$refs.trade.style.color = "#c8c8c8";
+        this.$refs.logisticsView.style.color = "#c8c8c8";
+        this.$refs.myPur.style.color = "#c8c8c8";
+        this.$refs.statement.style.color = "#c8c8c8";
+        this.$refs.peerAdmin.style.color = "#c8c8c8";
+        this.$refs.priceAdmin.style.color = "#c8c8c8";
+        this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#2e4d65";
+        this.$refs.watchQuery.style.color = "#c8c8c8";
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
+      // 采购手表查询
+      selected10() {
+        this.selected = 10;
+        this.line = 10;
+        this.watchQuerySel.select = 0;
+        this.$refs.purchase.style.color = "#c8c8c8";
+        this.$refs.trade.style.color = "#c8c8c8";
+        this.$refs.logisticsView.style.color = "#c8c8c8";
+        this.$refs.myPur.style.color = "#c8c8c8";
+        this.$refs.statement.style.color = "#c8c8c8";
+        this.$refs.peerAdmin.style.color = "#c8c8c8";
+        this.$refs.priceAdmin.style.color = "#c8c8c8";
+        this.$refs.priceInquire.style.color = "#c8c8c8";
+        this.$refs.storeQuery.style.color = "#c8c8c8";
+        this.$refs.watchQuery.style.color = "#2e4d65";
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
+      // 仓库
       // 待入库
       select1(e) {
         this.warehouseSelect = 0;
@@ -1018,6 +1224,7 @@
         this.$refs.haveOutbound.style.color = "#c8c8c8";
         this.$refs.delivery.style.color = "#c8c8c8";
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
         let haveAndNot = document.getElementById("haveAndNot");
         haveAndNot.className = "close";
         this.stock1.num = 0;
@@ -1035,6 +1242,7 @@
         this.$refs.haveOutbound.style.color = "#c8c8c8";
         this.$refs.delivery.style.color = "#c8c8c8";
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
         let haveAndNot = document.getElementById("haveAndNot");
         if (haveAndNot.className == "close") {
           haveAndNot.className = "open";
@@ -1063,6 +1271,7 @@
         this.$refs.haveOutbound.style.color = "#c8c8c8";
         this.$refs.delivery.style.color = "#c8c8c8";
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
         this.$axios
           .post(this.$store.state.baseUrl + "/StockList", {
             page: 1,
@@ -1099,6 +1308,7 @@
         this.$refs.haveOutbound.style.color = "#2d4e65";
         this.$refs.delivery.style.color = "#c8c8c8";
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
         this.haveBound.have = 0;
         // 页面回到顶部
         (function smoothscroll() {
@@ -1120,6 +1330,7 @@
         this.$refs.delivery.style.color = "#2d4e65";
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
         let haveAndNot = document.getElementById("haveAndNot");
         haveAndNot.className = "close";
         // 页面回到顶部
@@ -1141,6 +1352,30 @@
         this.$refs.delivery.style.color = '#c8c8c8';
         this.$refs.peerAdmin2.style.color = '#c8c8c8';
         this.$refs.peerAdmin2.style.color = "#2d4e65";
+        this.$refs.watchQuery2.style.color = "#c8c8c8";
+        let haveAndNot = document.getElementById("haveAndNot");
+        haveAndNot.className = "close";
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
+      // 仓库手表查询
+      select8() {
+        this.warehouseSelect = 6;
+        this.stockLine = 5;
+        this.watchQuerySel.select = 0;
+        this.$refs.stock.style.color = "#c8c8c8";
+        this.$refs.inventory.style.color = "#c8c8c8";
+        this.$refs.delivery.style.color = '#c8c8c8';
+        this.$refs.peerAdmin2.style.color = '#c8c8c8';
+        this.$refs.peerAdmin2.style.color = "#c8c8c8";
+        this.$refs.watchQuery2.style.color = "#2d4e65";
         let haveAndNot = document.getElementById("haveAndNot");
         haveAndNot.className = "close";
         // 页面回到顶部
@@ -1164,6 +1399,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin2.style.color = "#c8c8c8";
         this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -1185,6 +1421,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin2.style.color = "#c8c8c8";
         this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
         // this.$axios.post(this.$store.state.baseUrl + '/SellPendOrderCount').then((res) => {
         //   this.sellPendOrderCount = res.data.count;
         // });
@@ -1208,6 +1445,7 @@
         this.$refs.peerAdmin3.style.color = '#c8c8c8';
         this.$refs.priceAdmin2.style.color = "#c8c8c8";
         this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -1228,6 +1466,7 @@
         this.$refs.peerAdmin3.style.color = "#2d4e65";
         this.$refs.priceAdmin2.style.color = "#c8c8c8";
         this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -1249,6 +1488,7 @@
         this.$refs.peerAdmin3.style.color = "#c8c8c8";
         this.$refs.priceAdmin2.style.color = "#2d4e65";
         this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =
@@ -1273,6 +1513,29 @@
         this.$refs.peerAdmin3.style.color = "#c8c8c8";
         this.$refs.priceAdmin2.style.color = "#c8c8c8";
         this.$refs.priceInquire2.style.color = "#2d4e65";
+        this.$refs.watchQuery3.style.color = "#c8c8c8";
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
+      // 销售手表查询
+      marketSelect9() {
+        this.marketSelect = 7;
+        this.marketLine = 6;
+        this.watchQuerySel.select = 0;
+        this.$refs.marketInventory.style.color = "#c8c8c8";
+        this.$refs.saveInProgress.style.color = "#c8c8c8";
+        this.$refs.completedSales.style.color = '#c8c8c8';
+        this.$refs.peerAdmin3.style.color = "#c8c8c8";
+        this.$refs.priceAdmin2.style.color = "#c8c8c8";
+        this.$refs.priceInquire2.style.color = "#c8c8c8";
+        this.$refs.watchQuery3.style.color = "#2d4e65";
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =

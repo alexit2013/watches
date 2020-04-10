@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    // baseUrl: 'http://192.168.0.108/app/WatchEx',
+    // baseUrl: 'http://192.168.0.164:8083/app/WatchEx',
     // baseUrl: 'https://hk.wistechx.cn/app/WatchEx/api',
     baseUrl: 'https://hk.wistechx.cn/app/WatchEx/test/api',
     currentRole: null, // 当前用户角色
@@ -14,6 +14,8 @@ export default new Vuex.Store({
     nick: '', //用户昵称
     peerFlag: 0,
     marketPriceFlag: 0,
+    storeFlag: 0,
+    watchFlag: 0,
     imgUrl: '',
     productsList: '',
     allowBack: false
@@ -31,6 +33,8 @@ export default new Vuex.Store({
         sessionStorage.setItem('nick', '')
         sessionStorage.setItem('peerFlag', '');
         sessionStorage.setItem('marketPriceFlag', '');
+        sessionStorage.setItem('storeFlag', '');
+        sessionStorage.setItem('watchFlag', '');
         state.currentRole = null
         state.isLogin = false
         state.token = ''
@@ -71,6 +75,20 @@ export default new Vuex.Store({
         state.marketPriceFlag = ''
       }
     },
+    storeFlag(state, storeFlag) {
+      if (storeFlag) {
+        state.storeFlag = storeFlag
+      } else {
+        state.storeFlag = ''
+      }
+    },
+    watchFlag(state, watchFlag) {
+      if (watchFlag) {
+        state.watchFlag = watchFlag
+      } else {
+        state.watchFlag = ''
+      }
+    },
   },
   actions: {
     // 应用mutations
@@ -100,6 +118,16 @@ export default new Vuex.Store({
       commit
     }, marketPriceFlag) {
       commit('marketPriceFlag', marketPriceFlag)
+    },
+    setStoreFlag({
+      commit
+    }, storeFlag) {
+      commit('storeFlag', storeFlag)
+    },
+    setWatchFlag({
+      commit
+    }, watchFlag) {
+      commit('watchFlag', watchFlag)
     },
     updateAppSetting({
       commit

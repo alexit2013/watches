@@ -14,6 +14,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import qrcode from 'vue-qrcode-directive'
 import vueDirectiveImagePreviewer from 'vue-directive-image-previewer'
 import 'vue-directive-image-previewer/dist/assets/style.css'
+
 // 引入 ECharts 主模块
 let echarts = require('echarts/lib/echarts');
 // 引入折线图组件

@@ -1,5 +1,5 @@
 <template>
-  <div class="peer-container" id="peer-admin">
+  <div class="peer-container">
     <!-- <h3>贸易商管理</h3> -->
     <div class="peer-top">
       <div class="stockSearch">
@@ -376,7 +376,6 @@
       },
     },
   }
-
 </script>
 <style lang="scss" scoped>
   .peer-container {
@@ -430,5 +429,4 @@
       text-align: center;
     }
   }
-
 </style>

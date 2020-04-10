@@ -5,7 +5,7 @@
       <div class="stockSearch">
         <!-- 型号：模糊查找    品牌：全匹配 -->
         <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
+          prefix-icon="el-icon-search" v-model="priceAdmin.keyword" @input="stockInSearch" @focus="pageSel"></el-input>
       </div>
       <div style="width: 90%;margin: 0 auto;">
         <p style="color: red;">说明：在批发价变化时，应该及时更新系统</p>
@@ -23,7 +23,7 @@
               <th>型号</th>
               <th>手表等级</th>
               <th>批发价</th>
-              <th>修改时间</th>
+              <th>最近更新时间</th>
               <th>是否需要设置内容</th>
               <th>操作</th>
             </tr>
@@ -75,8 +75,9 @@
         </div>
         <div style="width: 100%;height: 50px;">
           <div style="margin:15px 0;position:absolute;right:6%;">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
-              layout="total, prev, pager, next, jumper" :total="priceAdmin.total"></el-pagination>
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+              :current-page="priceAdmin.page" layout="total, prev, pager, next, jumper" :total="priceAdmin.total">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -91,9 +92,9 @@
   export default {
     data() {
       return {
-        page: 1,
+        page: this.priceAdmin.page,
         pagenum: 10,
-        keyword: '',
+        keyword: this.priceAdmin.keyword,
         total: this.priceAdmin.total,
         dataMaketPriceList: this.priceAdmin.dataMaketPriceList,
         img: this.$store.state.baseUrl,
@@ -113,6 +114,8 @@
     methods: {
       gobackPriceAdmin(val) {
         this.priceAdmin.select = val;
+        this.priceAdmin.keyword = '';
+        this.priceAdmin.page = 1;
         this.handleDataMaketPriceList();
         let count = sessionStorage.getItem('maketPriceCount');
         this.$emit('priceCount', count);
@@ -120,7 +123,7 @@
       // 获取批发价列表
       handleDataMaketPriceList() {
         this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
-          page: this.page,
+          page: this.priceAdmin.page,
           pagenum: this.pagenum
         }).then((res) => {
           console.log('批发价列表');
@@ -136,18 +139,18 @@
       },
       // 模糊搜索
       pageSel() {
-        this.page = 1;
+        this.priceAdmin.page = 1;
       },
       stockInSearch() {
-        console.log("关键字---" + this.keyword);
-        if (this.keyword !== "") {
-          console.log(this.page);
+        console.log("关键字---" + this.priceAdmin.keyword);
+        if (this.priceAdmin.keyword !== "") {
+          console.log(this.priceAdmin.page);
           this.priceAdmin.dataMaketPriceList = [];
           this.$axios
             .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
-              page: this.page,
+              page: this.priceAdmin.page,
               pagenum: this.pagenum,
-              keyword: this.keyword
+              keyword: this.priceAdmin.keyword
             })
             .then(res => {
               console.log("模糊搜索待售商品");
@@ -161,8 +164,8 @@
             .catch(err => {
               console.log(err);
             });
-        } else if (this.keyword == "") {
-          this.page = 1;
+        } else if (this.priceAdmin.keyword == "") {
+          this.priceAdmin.page = 1;
           this.priceAdmin.dataMaketPriceList = [];
           this.handleDataMaketPriceList();
         }
@@ -183,6 +186,7 @@
       },
       // 修改手表等级
       updateWatchLevel(watchid) {
+        this.watchLevel = '1';
         this.buy_watchid = watchid;
         console.log(this.buy_watchid);
         this.dialogWatchLevelVisible = true;
@@ -202,7 +206,12 @@
             duration: 2000
           });
           this.dialogWatchLevelVisible = false;
-          this.stockInSearch();
+          this.priceAdmin.page = 1;
+          if (this.priceAdmin.keyword !== '') {
+            this.stockInSearch();
+          } else {
+            this.handleDataMaketPriceList();
+          }
         }).catch((err) => {
           console.log(err);
         })
@@ -213,12 +222,11 @@
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
-        this.page = 1;
-        this.page = val;
-        console.log(this.page);
-        if (this.keyword !== "") {
+        this.priceAdmin.page = val;
+        console.log(this.priceAdmin.page);
+        if (this.priceAdmin.keyword !== "") {
           this.stockInSearch();
-        } else if (this.keyword == "") {
+        } else if (this.priceAdmin.keyword == "") {
           this.handleDataMaketPriceList();
         }
         (function smoothscroll() {
