@@ -3,17 +3,12 @@
     <!-- <h1>已完成销售</h1> -->
     <div class="for-sale-list-container">
       <div>
-        <div class="stockSearch">
-          <!-- 型号：模糊查找    品牌：全匹配 -->
-          <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-            prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
-        </div>
-        <div v-show="forSaleWatchList.length == 0" ref="hello" style="margin-top: 100px; text-align: center;">
-          <p>数据加载中...</p>
+        <div v-show="forSaleWatchList.length == 0" style="margin-top: 100px; text-align: center;">
+          <p>{{hintMsg}}</p>
         </div>
         <div v-if="forSaleWatchList.length !== 0">
-          <div v-for="(item,index) of forSaleWatchList" :key="index">
-            <div class="purchase-row">
+          <div v-for="(item,index) of forSaleWatchList" :key="index" class="completed-table">
+            <div>
               <span class="purchase-number">销售单号: {{" " + item.sell_orderid}}</span>
               <span class="purchase-date">销售日期: {{item.sell_time}}</span>
             </div>
@@ -27,7 +22,7 @@
                 <th>操作</th>
               </tr>
               <tr>
-                <td class="first-td">
+                <td>
                   <img v-image-preview
                     :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                     style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
@@ -40,9 +35,11 @@
                 </td>
                 <td>{{item.sell_custom}}</td>
                 <td>{{item.sell_currency +" "+ formatNumberRgx(item.sell_money)}}</td>
-                <td class="last-td">
-                  <el-button type="text" @click="sellWatch(item)">详细信息</el-button>
-                  <el-dialog title="详细信息" :visible.sync="dialogSaleListVisible" left>
+                <td>
+                  <el-tooltip class="item" effect="light" content="查看详细信息" placement="top-end">
+                    <img src="../../assets/imgs/details.png" style="cursor: pointer;" @click="sellWatch(item)" />
+                  </el-tooltip>
+                  <el-dialog title="详细信息" :visible.sync="dialogSaleListVisible" center>
                     <div style="text-align: left;">
                       <div>
                         <el-form label-width="120px">
@@ -173,20 +170,21 @@
         sell_paytime2: new Date(), // 第二次付款（尾款）时间（sell_payfull为1时，该内容不传）
         sell_note: "", // 备注
         stock_outtime: "", // 出库时间
-        sell_sendusernick: "" // 送货人
+        sell_sendusernick: "", // 送货人
+
+        hintMsg: '数据加载中',
+
       };
     },
-    created() {
+    mounted() {
       this.getSellOrderList();
     },
     methods: {
-      pageSel() {
-        this.page = 1;
-      },
       // 已完成销售列表
       getSellOrderList() {
         this.forSaleWatchList = [];
         this.total = 0;
+        this.hintMsg = "数据加载中...";
         this.$axios
           .post(this.$store.state.baseUrl + "/SellOrderList", {
             page: this.page,
@@ -198,7 +196,7 @@
             this.forSaleWatchList = res.data.lst;
             this.total = res.data.total;
             if (this.forSaleWatchList.length == 0) {
-              this.$refs.hello.innerText = "啊哦~ 暂无数据";
+              this.hintMsg = "啊哦~ 暂无数据";
             }
           });
       },
@@ -206,6 +204,7 @@
       stockInSearch() {
         if (this.keyword !== "") {
           this.forSaleWatchList = [];
+          this.hintMsg = "数据加载中...";
           this.$axios
             .post(this.$store.state.baseUrl + "/SellOrderList", {
               page: this.page,
@@ -219,7 +218,7 @@
               this.total = res.data.total;
               console.log(this.forSaleWatchList);
               if (this.forSaleWatchList.length == 0) {
-                this.$refs.hello.innerText = "啊哦~ 暂无数据";
+                this.hintMsg = "啊哦~ 暂无数据";
               }
             })
             .catch(err => {
@@ -284,77 +283,32 @@
 </script>
 <style lang="scss" scoped>
   .for-sale-list-container {
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
 
-    .stockSearch {
-      width: 50%;
-      margin: 30px auto;
-
-      .el-input__inner {
-        width: 100%;
-        height: 48px;
-        margin: 0 auto;
-        -webkit-appearance: none;
-        background-color: #fff;
-        background-image: url("../../assets/imgs/search2.png");
-        background-size: 20px;
-        background-repeat: no-repeat;
-        background-position: 30px center;
-        border-radius: 30px;
-        border: 1px solid #dcdfe6;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        line-height: 40px;
-        outline: 0;
-        padding: 0 65px;
-        -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      }
+    .completed-table {
+      padding: 30px;
+      margin-bottom: 20px;
+      border-radius: 30px;
+      background-color: #fff;
     }
 
-    .purchase-row {
-      margin-top: 20px;
-      padding-top: 30px;
-      padding-left: 30px;
-      background-color: #fff;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
+    .purchase-number {
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-      .purchase-number {
-        font-size: 22px;
-        font-weight: bold;
-      }
+    .purchase-date {
+      margin-left: 30px;
+      color: #c8c8c8;
+    }
 
-      .purchase-date {
-        margin-left: 30px;
-        color: #c8c8c8;
-      }
+    .input-style {
+      width: 70% !important;
     }
 
     .list-table {
-      background-color: #fff;
-      border-radius: 30px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      padding: 0 30px;
-
-      .first-td {
-        border-top-left-radius: 30px;
-        border-bottom-left-radius: 30px;
-      }
-
-      .last-td {
-        border-top-right-radius: 30px;
-        border-bottom-right-radius: 30px;
-      }
-
-      .input-style {
-        width: 70% !important;
-      }
+      margin-top: 20px;
     }
   }
 
@@ -362,35 +316,12 @@
     height: 60px;
     margin: 10px 0;
     padding: 20px 0;
-    background-color: #f2f5f7;
-    font-size: 17px;
-  }
-
-  @media screen and (min-width: 1401px) {
-    .top-form {
-      width: 25%;
-    }
-  }
-
-  @media screen and (min-width: 1101px) and (max-width: 1400px) {
-    .top-form {
-      width: 40%;
-    }
-  }
-
-  @media screen and (min-width: 811px) and(max-width: 1100px) {
-    .top-form {
-      width: 50%;
-    }
-  }
-
-  @media screen and (max-width: 810px) {
-    .top-form {
-      width: 60%;
-    }
+    background-color: #f3fbf9;
+    font-size: 15px;
   }
 
   .top-form {
+    width: 190px;
     height: 60px;
     padding-left: 30px;
     line-height: 60px;
@@ -398,7 +329,7 @@
     border-radius: 30px;
 
     .top-span {
-      // margin-right: 20%;
+      margin-right: 15px;
       font-size: 23px;
     }
   }
@@ -407,7 +338,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

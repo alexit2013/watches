@@ -11,7 +11,8 @@
         <div style="display:flex;position:relative;" id="delImg">
           <div v-for="(imgurl,index) of imgSrc" :key="index" style="margin-left:10px;position:relative;">
             <span class="spanStyle" @click="delImage(index)">x</span>
-            <img :src="img + imgurl" width="100px" height="100px" style="border-radius:5px;object-fit:cover;" />
+            <img :src="img + '/img/watch' + imgurl" width="100px" height="100px"
+              style="border-radius:5px;object-fit:cover;" />
           </div>
         </div>
       </div>
@@ -177,7 +178,6 @@
       },
     }
   }
-
 </script>
 <style lang="scss">
   .upload-imgs {
@@ -239,5 +239,4 @@
   .previewImg2 {
     display: flex;
   }
-
 </style>

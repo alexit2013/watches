@@ -2,13 +2,8 @@
   <div class="for-sale-container" id="for-sale-container">
     <!-- <h1>待售商品列表</h1> -->
     <div v-if="forSale.sale == 0">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
       <div v-show="sellStockList.length == 0" ref="hello" style="text-align: center;">
-        <p>数据加载中...</p>
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="sellStockList.length !== 0">
         <div class="forSale-container">
@@ -21,7 +16,7 @@
               <th>操作</th>
             </tr>
             <tr v-for="(item,index) of sellStockList" :key="index">
-              <td class="first-td">
+              <td>
                 <img v-image-preview
                   :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                   style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
@@ -33,7 +28,7 @@
                 <p>采购中：{{item | formatSaleNumRgx(0)}}</p>
                 <p>已入库：{{item | formatSaleNumRgx(2)}}</p>
               </td>
-              <td class="last-td">
+              <td>
                 <el-button type="text" @click="forSaleList(item)">查看待售列表</el-button>
               </td>
             </tr>
@@ -48,7 +43,8 @@
       </div>
     </div>
     <div v-if="forSale.sale == 1">
-      <For-sale-list :forSaleWatch="forSaleWatch" @gobackForSale="gobackForSale"></For-sale-list>
+      <For-sale-list :forSaleWatch="forSaleWatch" :forSaleSel="forSaleSel" @gobackForSale="gobackForSale">
+      </For-sale-list>
     </div>
   </div>
 </template>
@@ -62,11 +58,16 @@
         pagenum: 10,
         total: 0,
         sellStockList: [], // 可出售库存列表
-        forSaleWatch: ""
+        forSaleWatch: "",
+        hintMsg: '数据加载中...',
+        forSaleSel: {
+          select: 0
+        },
+
       };
     },
     props: ["forSale"],
-    created() {
+    mounted() {
       this.handleSellStockList();
       if (this.forSale.sale == 0) {
         this.handleSellStockList();
@@ -105,11 +106,9 @@
         this.keyword = "";
         this.handleSellStockList();
       },
-      pageSel() {
-        this.page = 1;
-      },
       // 待售商品初始数据
       handleSellStockList() {
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/SellStockList", {
             page: this.page,
@@ -121,7 +120,7 @@
             this.sellStockList = res.data.lst;
             this.total = res.data.total;
             if (this.sellStockList.length == 0) {
-              this.$refs.hello.innerText = "啊哦~ 暂无数据";
+              this.hintMsg = "啊哦~ 暂无数据";
             }
           })
           .catch(err => {
@@ -134,6 +133,7 @@
         if (this.keyword !== "") {
           console.log(this.page);
           this.sellStockList = [];
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/SellStockList", {
               page: this.page,
@@ -147,7 +147,7 @@
               this.sellStockList = res.data.lst;
               console.log(this.sellStockList);
               if (this.sellStockList.length == 0) {
-                this.$refs.hello.innerText = "啊哦~ 暂无数据";
+                this.hintMsg = "啊哦~ 暂无数据";
               }
             })
             .catch(err => {
@@ -206,59 +206,20 @@
     width: 100%;
 
     .forSale-container {
-      width: 90%;
+      width: 92%;
       margin: 0 auto;
       // margin-bottom: 25px;
-      padding: 20px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 30px;
-    }
-
-    .stockSearch {
-      width: 50%;
-      margin: 30px auto;
-
-      .el-input__inner {
-        width: 100%;
-        height: 48px;
-        margin: 0 auto;
-        -webkit-appearance: none;
-        background-color: #fff;
-        background-image: url("../../assets/imgs/search2.png");
-        background-size: 20px;
-        background-repeat: no-repeat;
-        background-position: 30px center;
-        border-radius: 30px;
-        border: 1px solid #dcdfe6;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        line-height: 40px;
-        outline: 0;
-        padding: 0 65px;
-        -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      }
     }
 
     td {
       height: 60px;
       margin: 10px 0;
       padding: 20px 0;
-      background-color: #f2f5f7;
-      font-size: 17px;
-    }
-
-    .first-td {
-      border-top-left-radius: 30px;
-      border-bottom-left-radius: 30px;
-    }
-
-    .last-td {
-      border-top-right-radius: 30px;
-      border-bottom-right-radius: 30px;
+      background-color: #f3fbf9;
+      font-size: 15px;
     }
   }
 
@@ -266,7 +227,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

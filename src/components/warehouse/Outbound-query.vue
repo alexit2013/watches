@@ -5,15 +5,17 @@
       <div style="width: 50%;margin: 0 auto;margin-top: 100px;text-align: center;">
         <p>扫描前，请确认您的输入状态是否为英文</p>
         <!--  @keyup.enter.native="payCode" -->
-        <el-input id="testInput" ref="barCodeInput" v-model="barCode3" @keyup.enter.native="payCode()"
-          autofocus="autofocus">
+        <el-input id="testInput" ref="barCodeInput" v-model="barCode3" @keyup.enter.native="payCode()">
         </el-input>
       </div>
     </div>
     <div v-if="outboundQuery.query == 2" class="list-details">
-      <div style="text-align: center;" class="style-margin">
-        <img :src="imgs == null || imgs == '' ? '' : img + imgs[0]"
-          style="width: 150px;height: 150px;object-fit: cover;border-radius: 30px;" class="first-img" />
+      <div style="margin: 0 auto;display: flex;justify-content: center;" class="style-margin">
+        <!--  + '/img/watch/' -->
+        <div v-for="(imgurl,index) in imgs" :key="index" style="margin-right: 5px;">
+          <img v-show="imgurl !== ''" :src="img +  imgurl" style="width: 150px;height: 150px;object-fit: cover;"
+            class="first-img" />
+        </div>
       </div>
       <div class="list-top">
         <div class="style-margin">
@@ -90,19 +92,19 @@
             <el-row>
               <el-col :span="12">
                 <el-button
-                  style="width: 100%;background-color:#f2f5f7;border:1px solid #f2f5f7;font-size: 13px;color:#2c3e50;"
+                  style="width: 300px;background-color:#f3fbf9;border: 1px solid #f3fbf9;font-size: 14px;color:#2c3e50;"
                   @click="checkWatch(stockwatchinfo.buy_watchid)">查看与此手表同型号的未出库的手表</el-button>
               </el-col>
               <el-col :span="12">
                 <el-button @click="getQRCode"
-                  style="width: 40%;margin-left: 10%;background-color:#f2f5f7;border:1px solid #f2f5f7;font-size: 13px;color:#2c3e50;">
+                  style="width: 300px;margin-left: 10%;background-color:#f3fbf9;border: 1px solid #f3fbf9;font-size: 14px;color:#2c3e50;">
                   打印二维码</el-button>
               </el-col>
             </el-row>
           </el-form>
         </div>
         <div style="margin-top: 100px;text-align: center;" v-if="barCode.length == 36">
-          <el-button style="width: 50%;" type="primary" @click="stockRemoval">出库</el-button>
+          <el-button style="width: 300px;" type="primary" @click="stockRemoval">出库</el-button>
           <el-dialog title="出库" :visible.sync="dialogVisible" :close-on-press-escape="false"
             :close-on-click-modal="false">
             <div>
@@ -126,7 +128,7 @@
                       <div style="display:flex;position:relative;" id="delImg">
                         <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
                           <span class="spanStyle" @click="delImage(index)">x</span>
-                          <img :src="img + imgurl" width="100px" height="100px"
+                          <img :src="img + '/img/watch' + imgurl" width="100px" height="100px"
                             style="border-radius:5px;object-fit:cover;" />
                         </div>
                       </div>
@@ -148,7 +150,9 @@
     </div>
     <div v-show="outboundQuery.query == 1" class="product-container">
       <div class="back-img" @click="gobackOutbound">
-        <img src="../../assets/imgs/goback.png" />
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
         <span class="font">返回</span>
       </div>
       <div v-for="(items,index) of productWatchList" :key="index" class="product-table">
@@ -164,7 +168,7 @@
             <th>库存信息</th>
           </tr>
           <tr>
-            <td class="first-td">
+            <td>
               <img
                 :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
                 class="first-img" />
@@ -181,7 +185,7 @@
             <td>
               {{items.sell_state == 1 ? '已出售' : (items.LOG_state == 0 ? '采购中' : (items.LOG_state == 1 ? '运输中' : '已入库'))}}
             </td>
-            <td class="last-td">
+            <td>
               <div v-show="items.LOG_state !== 2">
                 <span style="font-size: 15px;">当前商品未入库，暂无库存信息</span>
               </div>
@@ -237,6 +241,10 @@
     created() {
       this.barCode3 = this.outboundQuery.msg;
     },
+    mounted() {
+      document.getElementById('testInput').focus();
+      document.getElementById('testInput').select();
+    },
     methods: {
       // 扫描查询手表库存信息
       payCode() {
@@ -254,9 +262,14 @@
                 console.log("扫描查询内容");
                 console.log(res);
                 this.stockwatchinfo = res.data;
-                if (this.stockwatchinfo.stock_inpic !== null) {
-                  this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
+                  if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
+                    this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                  } else {
+                    this.imgs.push(this.stockwatchinfo.stock_inpic);
+                  }
                 }
+                console.log(this.imgs);
                 if (this.stockwatchinfo.watchstate !== null) {
                   this.watchState = this.stockwatchinfo.watchstate.split("|");
                 }
@@ -298,9 +311,14 @@
                 console.log("扫描查询内容");
                 console.log(res);
                 this.stockwatchinfo = res.data;
-                if (this.stockwatchinfo.stock_inpic !== null) {
-                  this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
+                  if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
+                    this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                  } else {
+                    this.imgs.push(this.stockwatchinfo.stock_inpic);
+                  }
                 }
+                console.log(this.imgs);
                 if (this.stockwatchinfo.watchstate !== null) {
                   this.watchState = this.stockwatchinfo.watchstate.split("|");
                 }
@@ -668,16 +686,15 @@
       }
     }
   };
-
 </script>
 <style lang="scss" scoped>
   .product-list-container {
     width: 100%;
 
     .list-details {
-      width: 80%;
+      width: 91%;
       margin: 0 auto;
-      padding: 40px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 30px;
 
@@ -705,7 +722,7 @@
 
     .product-container {
       .product-table {
-        width: 90%;
+        width: 94%;
         margin: 10px auto;
         padding: 10px;
         background-color: #fff;
@@ -718,8 +735,8 @@
         padding-top: 10px;
         padding-bottom: 10px;
         padding-left: 10px;
-        background-color: #f2f5f7;
-        font-size: 17px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
 
       .first-img {
@@ -792,23 +809,29 @@
   }
 
   .back-img {
-    height: 65px;
+    width: 75px;
+    height: 45px;
     margin-left: 5%;
-    line-height: 65px;
+    line-height: 45px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     cursor: pointer;
 
+    div {
+      margin-top: 5px;
+
+      img {
+        width: 30px;
+        height: 25px;
+      }
+    }
+
     .font {
-      font-size: 30px;
-      color: #2d4e65;
+      font-size: 17px;
     }
   }
 
   @media screen and (min-width: 1651px) {
-    .back-img {
-      width: 12%;
-    }
 
     .td-center {
       padding-right: 5%;
@@ -816,9 +839,6 @@
   }
 
   @media screen and (min-width: 1251px) and (max-width: 1650px) {
-    .back-img {
-      width: 15%;
-    }
 
     .td-center {
       padding-right: 20%;
@@ -826,9 +846,6 @@
   }
 
   @media screen and (min-width: 986px) and (max-width: 1250px) {
-    .back-img {
-      width: 18%;
-    }
 
     .td-center {
       padding-right: 28%;
@@ -836,9 +853,6 @@
   }
 
   @media screen and (max-width: 985px) {
-    .back-img {
-      width: 21%;
-    }
 
     .td-center {
       padding-right: 35%;
@@ -849,7 +863,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -861,5 +875,4 @@
       }
     }
   }
-
 </style>

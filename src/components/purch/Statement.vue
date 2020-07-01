@@ -1,8 +1,8 @@
 <template>
   <div>
-    <!-- <h1>结算单</h1> -->
+    <!-- <h1>结算单页面</h1> -->
     <div v-show="buySettleOrderList.length == 0" ref="hello" style="text-align: center;">
-      <!-- <p>数据加载中...</p> -->
+      <!-- <p>{{hintMsg}}</p> -->
       <p v-if="buySettleOrderList.length == 0">啊哦~暂无数据</p>
     </div>
     <div v-if="buySettleOrderList.length !== 0">
@@ -32,6 +32,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         total: 0,
         buySettleOrderList: [],
         img1: require('../../assets/imgs/error.png'),
@@ -40,17 +41,18 @@
 
       }
     },
-    created() {
-      // this.getBuySettleOrderList();
+    mounted() {
+      this.getBuySettleOrderList();
     },
     methods: {
       // 获取结算单列表
       getBuySettleOrderList() {
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuySettleOrderList').then((res) => {
           console.log('结算单列表');
           console.log(res);
           if (this.buySettleOrderList.length == 0) {
-            this.$refs.hello.innerText = '啊哦~暂无数据'
+            this.hintMsg = '啊哦~暂无数据'
           }
         }).catch((err) => {
           console.log(err);
@@ -58,7 +60,6 @@
       },
     }
   }
-
 </script>
 <style lang="scss" scoped>
 

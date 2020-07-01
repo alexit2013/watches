@@ -48,31 +48,6 @@
       <div class="paypage-center">
         <!-- <h1>付款：</h1> -->
         <div class="add-pay">
-          <div v-show="buy_pay.length !== 0" class="pay-table">
-            <table class="table-container">
-              <tr>
-                <th>付款日期</th>
-                <th>付款方式</th>
-                <th>付款金额</th>
-                <th>操作</th>
-              </tr>
-              <tr v-for="(pay,index) of buy_pay" :key="index">
-                <td class="first-td">{{pay.time}}</td>
-                <td>{{pay.type == 0 ? "刷卡":"现金"}}</td>
-                <td>{{buy_watchcurrency +" "+ formatNumberRgx(pay.money)}}</td>
-                <td class="last-td">
-                  <el-button type="text" @click="delpay(index)">删除</el-button>
-                  <el-dialog title="提示" :visible.sync="dialogVisiblePay">
-                    <span>是否删除该付款信息，删除后不能恢复</span>
-                    <div slot="footer">
-                      <el-button @click="dialogVisiblePay = false">取 消</el-button>
-                      <el-button type="primary" @click="suredelpay">确 定</el-button>
-                    </div>
-                  </el-dialog>
-                </td>
-              </tr>
-            </table>
-          </div>
           <div class="add">
             <el-button @click="dialogVisible = true" class="add-btn">
               <i class="add-i">+</i>
@@ -102,6 +77,34 @@
               </div>
             </el-dialog>
           </div>
+          <div v-show="buy_pay.length !== 0" class="pay-table">
+            <table class="table-container">
+              <tr>
+                <th>付款日期</th>
+                <th>付款方式</th>
+                <th>付款金额</th>
+                <th>操作</th>
+              </tr>
+              <tr v-for="(pay,index) of buy_pay" :key="index">
+                <td>{{pay.time}}</td>
+                <td>{{pay.type == 0 ? "刷卡":"现金"}}</td>
+                <td>{{buy_watchcurrency +" "+ formatNumberRgx(pay.money)}}</td>
+                <td>
+                  <el-tooltip class="item" effect="light" content="删除" placement="top-end">
+                    <img src="../../assets/imgs/delete.png" style="height: 25px;cursor: pointer;"
+                      @click="delpay(index)" />
+                  </el-tooltip>
+                  <el-dialog title="提示" :visible.sync="dialogVisiblePay">
+                    <span>是否删除该付款信息，删除后不能恢复</span>
+                    <div slot="footer">
+                      <el-button @click="dialogVisiblePay = false">取 消</el-button>
+                      <el-button type="primary" @click="suredelpay">确 定</el-button>
+                    </div>
+                  </el-dialog>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
       <div class="paypage-img">
@@ -129,7 +132,7 @@
         </div>
       </div>
       <div class="paypage-submit-btn">
-        <img src="../../assets/imgs/save.png" @click="payPageSubmit" />
+        <el-button type="primary" @click="payPageSubmit">保存</el-button>
       </div>
     </div>
   </div>
@@ -166,7 +169,7 @@
       acquire() {
         console.log(sessionStorage.getItem("buy_id"));
         this.$axios
-          .post(this.$store.state.baseUrl + "/BuyOrderGet", {
+          .post(this.$store.state.baseUrl + "/BuyOrderGet?java", {
             buy_id: sessionStorage.getItem("buy_id")
           })
           .then(res => {
@@ -508,12 +511,12 @@
               }
 
               .h1 {
-                font-size: 36px;
+                font-size: 24px;
                 font-weight: bold;
               }
 
               .h3 {
-                font-size: 24px;
+                font-size: 17px;
                 color: #999999;
                 font-weight: normal;
               }
@@ -538,20 +541,22 @@
       .paypage-center {
         width: 100%;
         margin: 40px auto;
-        padding: 40px 0;
+        padding: 30px 0;
         background-color: #fff;
         border-radius: 30px;
 
         .add-pay {
-          width: 90%;
+          width: 95%;
           margin: 0 auto;
 
           .add {
-            margin: 30px 0;
+            margin-bottom: 30px;
 
             .add-btn {
+              width: 150px;
               font-size: 24px;
-              color: #2d4e65;
+              background-color: #0c8563;
+              color: #fff;
 
               .add-i {
                 margin-right: 10px;
@@ -560,28 +565,17 @@
           }
 
           .pay-table {
-            width: 60%;
-            padding: 0 20px;
-            border: 1px solid #c8c8c8;
-            border-radius: 30px;
+            width: 100%;
+            // padding: 20px;
+            // border: 1px solid #c8c8c8;
+            // border-radius: 30px;
 
             .table-container {
               width: 100%;
 
               td {
-                background-color: #f2f5f7;
+                background-color: #f3fbf9;
                 padding: 15px;
-              }
-
-              .first-td {
-                margin-left: 30px;
-                border-top-left-radius: 30px;
-                border-bottom-left-radius: 30px;
-              }
-
-              .last-td {
-                border-top-right-radius: 30px;
-                border-bottom-right-radius: 30px;
               }
             }
           }
@@ -600,8 +594,8 @@
           margin: 0 auto;
 
           .img-font {
-            font-size: 24px;
-            margin-bottom: 30px;
+            font-size: 20px;
+            margin-bottom: 10px;
           }
 
           .upload-imgs {
@@ -714,7 +708,7 @@
 
   table {
     border-collapse: separate;
-    border-spacing: 0 20px;
+    border-spacing: 0;
 
     tr {
 

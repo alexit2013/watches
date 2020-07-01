@@ -1,18 +1,14 @@
 <template>
-  <div id="have-container">
+  <div id="have-container" class="have-outbound-container-main">
+    <!-- <h1>已出库商品列表页</h1> -->
     <div v-if="haveBound.have == 0">
       <div>
-        <div class="stockSearch">
-          <!-- 型号：模糊查找    品牌：全匹配 -->
-          <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-            prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageVel"></el-input>
-        </div>
         <div v-show="stockOutList.length == 0" ref="hello" style="margin-top: 60px;text-align: center;">
-          <p>数据加载中...</p>
+          <p>{{hintMsg}}</p>
         </div>
         <div v-if="stockOutList.length !== 0">
-          <div style="width: 90%;margin: 0 auto;font-size: 20px;">
-            <p>商品数量： {{total}}</p>
+          <div style="font-size: 18px;">
+            <p style="margin-top: 0;">商品数量： {{total}}</p>
           </div>
           <div class="have-outbound-container">
             <table>
@@ -24,7 +20,7 @@
                 <th>操作</th>
               </tr>
               <tr v-for="(item,index) of stockOutList" :key="index">
-                <td class="first-td">
+                <td>
                   <img v-image-preview
                     :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                     style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" class="first-img" />
@@ -32,8 +28,11 @@
                 <td>{{item.buy_watchbrand}}</td>
                 <td>{{item.buy_watchmodel}}</td>
                 <td>{{item.watch.length}}</td>
-                <td class="last-td">
-                  <el-button type="text" @click="haveOutboundDetails(item.watch)">查看详情</el-button>
+                <td>
+                  <el-tooltip class="item" effect="light" content="查看详细信息" placement="top-end">
+                    <img src="../../assets/imgs/details.png" style="cursor:pointer;"
+                      @click="haveOutboundDetails(item.watch)" />
+                  </el-tooltip>
                 </td>
               </tr>
             </table>
@@ -49,7 +48,9 @@
     </div>
     <div v-if="haveBound.have == 1">
       <div class="back-img" @click="gobackNotOutbound">
-        <img src="../../assets/imgs/goback.png" />
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
         <span class="font">返回</span>
       </div>
       <table class="have-outbound-container">
@@ -61,7 +62,7 @@
           <th>提货人</th>
         </tr>
         <tr v-for="(items,index) of haveOutboundDetailsList" :key="index">
-          <td class="first-td">
+          <td>
             <img v-image-preview
               :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
               style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" class="first-img" />
@@ -69,7 +70,7 @@
           <td>{{items.stock_outtime}}</td>
           <td>{{items.stock_No}}</td>
           <td>{{items.buy_watchsn}}</td>
-          <td class="last-td">{{items.sell_sendusernick}}</td>
+          <td>{{items.sell_sendusernick}}</td>
         </tr>
       </table>
     </div>
@@ -79,6 +80,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         keyword: '',
         page: 1,
         pagenum: 10,
@@ -91,18 +93,16 @@
       }
     },
     props: ["haveBound"],
-    created() {
+    mounted() {
       this.getStocOutkList();
     },
     methods: {
-      pageVel(){
-        this.page = 1;
-      },
       // 模糊搜索
       stockInSearch() {
         if (this.keyword !== '') {
           this.stockOutList = [];
           this.total = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/StockOutList", {
               page: this.page,
@@ -115,7 +115,7 @@
               this.stockOutList = res.data.lst;
               this.total = res.data.total;
               if (this.stockOutList.length == 0) {
-                this.$refs.hello.innerText = '啊哦~ 暂无数据'
+                this.hintMsg = '啊哦~ 暂无数据'
               }
             });
         } else if (this.keyword == '') {
@@ -129,6 +129,7 @@
       getStocOutkList() {
         this.stockOutList = [];
         this.total = 0;
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/StockOutList', {
           page: this.page,
           pagenum: this.pagenum
@@ -138,7 +139,7 @@
           this.total = res.data.total;
           this.stockOutList = res.data.lst;
           if (this.stockOutList.length == 0) {
-            this.$refs.hello.innerText = '啊哦~ 暂无数据'
+            this.hintMsg = '啊哦~ 暂无数据'
           }
           console.log(this.stockOutList);
         }).catch((err) => {
@@ -199,100 +200,46 @@
   }
 </script>
 <style lang="scss" scoped>
-  .have-outbound-container {
-    width: 90%;
+  .have-outbound-container-main {
+    width: 95%;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 30px;
-  }
 
-  .stockSearch {
-    width: 50%;
-    margin: 30px auto;
-
-    .el-input__inner {
-      width: 100%;
-      height: 48px;
-      margin: 0 auto;
-      -webkit-appearance: none;
+    .have-outbound-container {
+      padding: 30px;
       background-color: #fff;
-      background-image: url("../../assets/imgs/search2.png");
-      background-size: 20px;
-      background-repeat: no-repeat;
-      background-position: 30px center;
       border-radius: 30px;
-      border: 1px solid #dcdfe6;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      color: #606266;
-      display: inline-block;
-      font-size: inherit;
-      line-height: 40px;
-      outline: 0;
-      padding: 0 65px;
-      -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
-  }
 
-  .back-img {
-    height: 65px;
-    margin-left: 5%;
-    line-height: 65px;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
-
-    .font {
-      font-size: 30px;
-      color: #2d4e65;
-    }
-  }
-
-  @media screen and (min-width: 1651px) {
     .back-img {
-      width: 12%;
+      width: 75px;
+      height: 45px;
+      margin-bottom: 20px;
+      line-height: 45px;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+
+      div {
+        margin-top: 5px;
+
+        img {
+          width: 30px;
+          height: 25px;
+        }
+      }
+
+      .font {
+        font-size: 17px;
+      }
     }
   }
 
-  @media screen and (min-width: 1101px) and (max-width: 1650px) {
-    .back-img {
-      width: 15%;
-    }
-  }
-
-  @media screen and (min-width: 986px) and (max-width: 1100px) {
-    .back-img {
-      width: 18%;
-    }
-  }
-
-  @media screen and (max-width: 985px) {
-    .back-img {
-      width: 21%;
-    }
-  }
-
-  .back-img {
-    width: 15%;
-    height: 65px;
-    margin-bottom: 20px;
-    line-height: 65px;
-    display: flex;
-    cursor: pointer;
-
-    .font {
-      font-size: 30px;
-      color: #2d4e65;
-    }
-  }
 
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -306,8 +253,8 @@
       td {
         height: 60px;
         padding: 10px 0;
-        background-color: #f2f5f7;
-        font-size: 17px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
     }
   }

@@ -2,17 +2,11 @@
   <div>
     <!-- <h3>批发价管理页面</h3> -->
     <div v-if="priceAdmin.select == 0">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="priceAdmin.keyword" @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
-      <div style="width: 90%;margin: 0 auto;">
-        <p style="color: red;">说明：在批发价变化时，应该及时更新系统</p>
-        <p style="color: red;">系统会将未设置等级或超过30天未更新批发价的手表标注为红色。</p>
+      <div style="width: 95%;margin: 0 auto;">
+        <p style="margin-top: 0;margin-bottom: 20px;color: red;">说明：在批发价变化时，应该及时更新系统。系统会将未设置等级或超过30天未更新批发价的手表标注为红色</p>
       </div>
       <div v-show="priceAdmin.dataMaketPriceList.length == 0" ref="hello" style="text-align: center;">
-        <p>数据加载中...</p>
+        <p>{{dataMsg}}</p>
       </div>
       <div v-if="priceAdmin.dataMaketPriceList.length !== 0">
         <div class="price-admin-table">
@@ -28,7 +22,7 @@
               <th>操作</th>
             </tr>
             <tr v-for="(item,index) of priceAdmin.dataMaketPriceList" :key="index">
-              <td class="first-td">
+              <td>
                 <img v-image-preview
                   :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/' + item.buy_watchpics.split('|')[0]"
                   class="img-style" />
@@ -40,7 +34,7 @@
                   <span>{{item.watchLevel}}</span>
                   <div>
                     <img src="../../assets/imgs/update.png"
-                      style="width: 25px; height: 25px;margin-left: 10px;cursor: pointer;"
+                      style="width: 20px; height: 23px;margin-left: 10px;cursor: pointer;"
                       @click="updateWatchLevel(item.buy_watchid)" />
                   </div>
                   <el-dialog title="修改手表等级" :visible.sync="dialogWatchLevelVisible">
@@ -59,16 +53,15 @@
                   </el-dialog>
                 </div>
               </td>
-              <td>{{item.prices.length !== 0 ?  'HKD ' + formatNumberRgx(item.prices[0].price) : ''}}</td>
-              <td>{{item.prices.length !== 0 ? item.prices[0].time : ''}}</td>
+              <td>{{item.prices.length !== 0 ?  'HKD ' + formatNumberRgx(item.prices[0].price) : '无'}}</td>
+              <td>{{item.prices.length !== 0 ? item.prices[0].time : '无'}}</td>
               <td>
-                <div style="display: flex;justify-content: center;">
-                  <img :src="item.flag == 0 ? img1: img2" style="width: 22px;height: 22px;" />
-                  <span>{{item.flag == 0 ? '需要' : '不需要'}}</span>
-                </div>
+                <span :class="item.flag == 0 ? 'red' : 'green'">{{item.flag == 0 ? '是' : '否'}}</span>
               </td>
-              <td class="last-td">
-                <p class="font-style" @click="priceDetails(item)">查看详情</p>
+              <td>
+                <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
+                  <img src="../../assets/imgs/details.png" style="cursor:pointer;" @click="priceDetails(item)" />
+                </el-tooltip>
               </td>
             </tr>
           </table>
@@ -92,6 +85,7 @@
   export default {
     data() {
       return {
+        dataMsg: '数据加载中...',
         page: this.priceAdmin.page,
         pagenum: 10,
         keyword: this.priceAdmin.keyword,
@@ -114,14 +108,19 @@
     methods: {
       gobackPriceAdmin(val) {
         this.priceAdmin.select = val;
-        this.priceAdmin.keyword = '';
+        // this.priceAdmin.keyword = '';
         this.priceAdmin.page = 1;
-        this.handleDataMaketPriceList();
+        if (this.priceAdmin.keyword !== "") {
+          this.stockInSearch();
+        } else {
+          this.handleDataMaketPriceList();
+        };
         let count = sessionStorage.getItem('maketPriceCount');
         this.$emit('priceCount', count);
       },
       // 获取批发价列表
       handleDataMaketPriceList() {
+        this.dataMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
           page: this.priceAdmin.page,
           pagenum: this.pagenum
@@ -131,21 +130,19 @@
           this.priceAdmin.total = res.data.total;
           this.priceAdmin.dataMaketPriceList = res.data.watchs;
           if (this.priceAdmin.dataMaketPriceList.length == 0) {
-            this.$refs.hello.innerText = "啊哦~ 暂无数据";
+            this.dataMsg = "啊哦~ 暂无数据";
           }
         }).catch((err) => {
           console.log(err);
         })
       },
       // 模糊搜索
-      pageSel() {
-        this.priceAdmin.page = 1;
-      },
       stockInSearch() {
         console.log("关键字---" + this.priceAdmin.keyword);
         if (this.priceAdmin.keyword !== "") {
           console.log(this.priceAdmin.page);
           this.priceAdmin.dataMaketPriceList = [];
+          this.dataMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
               page: this.priceAdmin.page,
@@ -158,7 +155,7 @@
               this.priceAdmin.total = res.data.total;
               this.priceAdmin.dataMaketPriceList = res.data.watchs;
               if (this.priceAdmin.dataMaketPriceList.length == 0) {
-                this.$refs.hello.innerText = "啊哦~ 暂无数据";
+                this.dataMsg = "啊哦~ 暂无数据";
               }
             })
             .catch(err => {
@@ -242,19 +239,10 @@
   }
 </script>
 <style lang="scss" scoped>
-  .stockSearch {
-    width: 50%;
-    margin: 30px auto;
-
-    .input-search {
-      font-size: 16px;
-    }
-  }
-
   .price-admin-table {
     width: 90%;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 40px;
     background-color: #fff;
     border-radius: 30px;
 
@@ -265,39 +253,39 @@
       border-radius: 30px;
     }
 
+    th {
+      height: 50px;
+      line-height: 50px;
+      background-color: #d7ebe7;
+    }
+
     td {
       height: 60px;
       margin: 10px 0;
-      padding: 20px 0;
-      background-color: #f2f5f7;
-      font-size: 17px;
+      padding: 10px 0;
+      background-color: #f3fbf9;
+      font-size: 15px;
       text-align: center;
     }
+  }
 
-    .first-td {
-      border-top-left-radius: 30px;
-      border-bottom-left-radius: 30px;
-    }
+  .red {
+    color: red;
+  }
 
-    .last-td {
-      border-top-right-radius: 30px;
-      border-bottom-right-radius: 30px;
+  .green {
+    color: #0c8563;
+  }
 
-      .font-style {
-        margin: 0;
-        margin-top: 10px;
-        color: #0aa1ed;
-        font-size: 15px;
-        cursor: pointer;
-      }
-    }
+  .price-admin-table>table>tr:hover>td {
+    background-color: #d7ebe7 !important;
   }
 
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

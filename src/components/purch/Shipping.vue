@@ -1,24 +1,19 @@
 <template>
   <div class="shipping-container">
     <!-- 发货 -->
-    <div v-if="shipping.msg == 0" id="search">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号、机芯号进行搜索" class="input-search" prefix-icon="el-icon-search" v-model="keyword"
-          @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
+    <div v-if="shipping.msg == 0" id="search" style="margin-top: 75px;">
       <div v-show="shippingList.length == 0" ref="hello" style="text-align: center;">
-        <p>数据加载中...</p>
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="shippingList.length !== 0">
-        <div style="width: 95%;margin: 0 auto;display: flex;justify-content:space-between;">
-          <div>
-            <p style="font-size: 20px;">{{'商品数量:  ' + ' ' + totalNum}}</p>
-          </div>
-          <h4 style="color: red;">信息录入未完成的商品，不能进行发货</h4>
+        <div style="margin-left: 20px;">
+          <p style="margin-top: 0;margin-bottom: 20px;font-size: 18px;">
+            <span>{{'商品数量:  ' + ' ' + totalNum + ' '}}</span>
+            <span style="color: red;">(信息录入未完成的商品，不能进行发货)</span>
+          </p>
         </div>
         <div class="sure">
-          <input type="button" value="确认" class="sure-button" @click="shippingSure">
+          <input type="button" value="确 认" class="sure-button" @click="shippingSure">
         </div>
         <div v-for="(item,index) of shippingList" :key="index" class="mypurchase-table">
           <div class="purchase-row">
@@ -37,7 +32,7 @@
                 <th class="table-th">操作</th>
               </tr>
               <tr v-for="(content,indexs) of item.watch" :key="indexs" class="table-tr-container">
-                <td class="tr-td-first">
+                <td>
                   <input class="selBtn" type="checkbox" v-model="hobby" :value="content"
                     @change="checkedChange($event,content)" :disabled="content.buy_watchState == 1 ? false : true">
                 </td>
@@ -61,7 +56,7 @@
                     <span style="margin-left: 3px;">{{content.buy_watchState == 1 ? "已完成" : "未完成"}}</span>
                   </div>
                 </td>
-                <td class="tr-ta-last">
+                <td>
                   <el-button v-if="content.buy_watchState == 0" type="text" @click="fillMsg(item.buy_id)">完善信息
                   </el-button>
                   <el-button v-if="content.buy_watchState == 1" type="text" style="color: #c8c8c8;">无需填写</el-button>
@@ -70,8 +65,8 @@
             </table>
           </div>
         </div>
-        <div style="width: 100%;height: 80px;background-color: #f2f5f9;">
-          <div style="margin:15px 0;position:absolute;left: 16%;">
+        <div style="width: 100%;height: 80px;">
+          <div style="margin:15px 0;position:absolute;left: 50px;">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
               layout="total, prev, pager, next, jumper" :total="total">
             </el-pagination>
@@ -92,6 +87,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         keyword: '',
         img: this.$store.state.baseUrl,
         isChecked: [],
@@ -136,15 +132,13 @@
       changeMsg(val) {
         this.handleList();
       },
-      pageSel() {
-        this.page = 1;
-      },
       // 模糊查询
       stockInSearch() {
         if (this.keyword !== '') {
           this.shippingList = [];
           this.total = 0;
           this.totalNum = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
@@ -160,7 +154,7 @@
               this.total = res.data.total;
               this.totalNum = res.data.watchtotal;
               if (this.shippingList.length == 0) {
-                this.$refs.hello.innerText = '啊哦~暂无数据'
+                this.hintMsg = '啊哦~暂无数据'
               }
             });
         } else if (this.keyword == '') {
@@ -174,6 +168,7 @@
       // 获取未发货商品列表
       handleList() {
         console.log('bbbbbbbbbb' + this.shipping.filtrate);
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderListEx', {
           page: this.page,
           pagenum: this.pagenum,
@@ -186,7 +181,7 @@
           this.total = res.data.total;
           this.totalNum = res.data.watchtotal;
           if (this.shippingList.length == 0) {
-            this.$refs.hello.innerText = '啊哦~暂无数据'
+            this.hintMsg = '啊哦~暂无数据'
           }
         }).catch((err) => {
           console.log(err);
@@ -281,67 +276,37 @@
       }
     }
   }
-
 </script>
 <style lang="scss" scoped>
   .shipping-container {
     width: 100%;
     margin: 0 auto;
 
-    .stockSearch {
-      width: 50%;
-      margin: 30px auto;
-
-      .el-input__inner {
-        width: 100%;
-        height: 48px;
-        margin: 0 auto;
-        -webkit-appearance: none;
-        background-color: #fff;
-        background-image: url("../../assets/imgs/search2.png");
-        background-size: 20px;
-        background-repeat: no-repeat;
-        background-position: 30px center;
-        border-radius: 30px;
-        border: 1px solid #dcdfe6;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        line-height: 40px;
-        outline: 0;
-        padding: 0 65px;
-        -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      }
-    }
-
     .mypurchase-table {
       width: 100%;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       background-color: #fff;
       border-radius: 20px;
 
 
       .purchase-row {
-        padding-top: 50px;
+        padding-top: 30px;
         padding-left: 30px;
 
         .purchase-number {
-          font-size: 22px;
+          font-size: 18px;
           font-weight: bold;
         }
 
         .purchase-date {
-          margin-left: 30px;
+          margin-left: 20px;
           color: #c8c8c8;
         }
       }
 
 
       .div-table {
-        padding: 0 30px;
+        padding: 20px 30px;
 
         .table-tr {
           height: 40px;
@@ -353,8 +318,7 @@
           }
 
           .table-th {
-            color: #2d4e65;
-            font-size: 20px;
+            font-size: 17px;
             font-weight: normal;
           }
         }
@@ -363,14 +327,8 @@
           background-color: #fff;
 
           td {
-            background-color: #f2f5f7;
-            font-size: 17px;
-          }
-
-          .tr-td-first {
-            padding: 30px;
-            border-top-left-radius: 30px;
-            border-bottom-left-radius: 30px;
+            background-color: #f3fbf9;
+            font-size: 15px;
           }
 
           .first-img {
@@ -380,24 +338,19 @@
             border-radius: 30px;
           }
 
-          .tr-ta-last {
-            border-top-right-radius: 30px;
-            border-bottom-right-radius: 30px;
+          .jump-div {
+            display: flex;
+            cursor: pointer;
 
-            .jump-div {
-              display: flex;
-              cursor: pointer;
+            .jump-img {
+              width: 20px;
+              height: 20px;
+            }
 
-              .jump-img {
-                width: 20px;
-                height: 20px;
-              }
-
-              .button-mypurchase {
-                border: 0;
-                outline: none;
-                color: #2d4e65;
-              }
+            .button-mypurchase {
+              border: 0;
+              outline: none;
+              color: #000;
             }
           }
         }
@@ -410,7 +363,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -437,7 +390,7 @@
     position: absolute;
     top: 0;
     background-color: #fff;
-    color: #2d4e65;
+    color: #000;
     width: 15px;
     height: 15px;
     display: inline-block;
@@ -470,24 +423,22 @@
     left: 72%;
 
     .sure-button {
-      width: 20%;
-      height: 50px;
-      background-color: #2d4e65;
+      width: 15%;
+      height: 45px;
+      background-color: #0c8563;
       color: #fff;
       border: 0;
       border-radius: 30px;
       outline: none;
-      font-size: 20px;
+      font-size: 15px;
       cursor: pointer;
     }
   }
-
 </style>
 <style lang="scss">
-  .el-checkbox__input.is-checked .el-checkbox__inner,
-  .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-    background-color: #2d4e65;
-    border-color: #2d4e65;
-  }
-
+  // .el-checkbox__input.is-checked .el-checkbox__inner,
+  // .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  //   background-color: #2d4e65;
+  //   border-color: #2d4e65;
+  // }
 </style>

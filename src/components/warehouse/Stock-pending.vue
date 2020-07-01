@@ -2,7 +2,9 @@
   <div class="stock-pending-container">
     <!-- <h1>手表入库操作页面</h1> -->
     <div class="back-img" @click="gobackStockList">
-      <img src="../../assets/imgs/goback.png" />
+      <div>
+        <img src="../../assets/imgs/goback.png" />
+      </div>
       <span class="font">返回</span>
     </div>
     <div class="pending-container">
@@ -21,7 +23,7 @@
           <th>操作</th>
         </tr>
         <tr v-for="(items,index) in watchList" :key="index">
-          <td class="first-td">
+          <td>
             <img v-image-preview
               :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
               style="width: 100px;height: 100px;border-radius: 30px;object-fit: cover;" />
@@ -29,7 +31,7 @@
           <td>{{items.buy_watchbrand}}</td>
           <td>{{items.buy_watchmodel}}</td>
           <td>{{items.buy_watchsn}}</td>
-          <td class="last-td">
+          <td>
             <el-button type="text" @click="pendingButton(items,index)">入库</el-button>
             <el-dialog title="入库" :visible.sync="dialogPendingVisible" :close-on-press-escape="false"
               :close-on-click-modal="false">
@@ -69,6 +71,7 @@
                           <div v-for="(imgurl,index) of imgurls" :key="index"
                             style="margin-left:10px;position:relative;">
                             <span class="spanStyle" @click="delImage(index)">x</span>
+                            <!--  + '/img/watch' -->
                             <img :src="img + imgurl" width="100px" height="100px"
                               style="border-radius:5px;object-fit:cover;" />
                           </div>
@@ -374,7 +377,6 @@
       }
     }
   };
-
 </script>
 <style lang="scss" scoped>
   .stock-pending-container {
@@ -382,24 +384,31 @@
     margin: 0 auto;
 
     .back-img {
-      height: 65px;
-      margin-left: 4%;
+      width: 75px;
+      height: 45px;
       margin-bottom: 20px;
-      line-height: 65px;
+      line-height: 45px;
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       cursor: pointer;
 
+      div {
+        margin-top: 5px;
+
+        img {
+          width: 30px;
+          height: 25px;
+        }
+      }
+
       .font {
-        // margin-left: 30px;
-        font-size: 30px;
-        color: #2d4e65;
+        font-size: 17px;
       }
     }
 
     .pending-container {
-      width: 90%;
-      margin: 0 auto;
+      // width: 95%;
+      // margin: 0 auto;
       padding: 30px;
       background-color: #fff;
       border-radius: 30px;
@@ -408,34 +417,10 @@
         td {
           height: 60px;
           padding: 10px 0;
-          background-color: #f2f5f7;
-          font-size: 17px;
+          background-color: #f3fbf9;
+          font-size: 15px;
         }
       }
-    }
-  }
-
-  @media screen and (min-width: 1651px) {
-    .back-img {
-      width: 12%;
-    }
-  }
-
-  @media screen and (min-width: 1101px) and (max-width: 1650px) {
-    .back-img {
-      width: 15%;
-    }
-  }
-
-  @media screen and (min-width: 986px) and (max-width: 1100px) {
-    .back-img {
-      width: 18%;
-    }
-  }
-
-  @media screen and (max-width: 985px) {
-    .back-img {
-      width: 21%;
     }
   }
 
@@ -503,7 +488,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -515,12 +500,10 @@
       }
     }
   }
-
 </style>
 <style lang="scss" scoped>
   .el-radio,
   .el-radio__input {
     line-height: 3;
   }
-
 </style>

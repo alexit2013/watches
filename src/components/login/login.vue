@@ -1,14 +1,10 @@
 <template>
   <div class="container-login-one">
     <div class="login-container-top">
-      <span class="span1">Your
-        <span class="span2">Smart Assistant
-          <span class="span3">|</span>
-          <span>手表进销存管理系统</span>
-        </span>
-      </span>
+      <img src="../../assets/imgs/toptimeclub-01.png" />
+      <p class="span1">TopTime在线办公系统</p>
     </div>
-    <div style="display: flex;justify-content: space-between;">
+    <div class="login-container-main">
       <div class="login-bottom">
         <div class="every-img">
           <div>
@@ -61,40 +57,34 @@
       </div>
       <div class="login-container" @keydown="keyLogin()">
         <div class="containter-center">
-          <div style="width: 75%;height: auto;margin: 0 auto;">
-            <div class="login-top">
-              <div>
-                <span class="top-span">Scientific</span>
-              </div>
-              <div>
-                <span class="top-span">Management</span>
-              </div>
-              <div style="margin-top: 20px;">
-                <span class="top-span-login top-span">登录</span>
-              </div>
+          <div class="login-top">
+            <div>
+              <span class="top-span">TopTime Club</span>
             </div>
-            <div class="login-form">
-              <div class="username" id="user">
-                <span><img :src="usernameImg" /></span>
-                <input class="user-input" type="text" v-model="loginForm.user" placeholder="请输入用户名"
-                  autofocus="autofocus" prefix-icon="el-icon-s-custom" tabindex="1" auto-complete="on"
-                  @focus="usernameFocus($event)" @blur="usernameBlur($event)" />
-              </div>
-              <div class="password" id="psw">
-                <span><img :src="passwordImg" /></span>
-                <input class="pass-input" type="password" v-model="loginForm.psw" placeholder="请输入密码"
-                  prefix-icon="el-icon-lock" tabindex="2" auto-complete="on" @focus="passwordFocus($event)"
-                  @blur="passwordBlur($event)" />
-              </div>
+            <div style="margin-top: 40px;">
+              <span class="top-span-login">登录</span>
             </div>
-            <div class="login-button">
-              <button @click="handleLogin" class="loginBtn">登录</button>
+          </div>
+          <div class="login-form">
+            <div class="username" id="user">
+              <p><img :src="usernameImg" style="width: 19px;height: 20px;" /></p>
+              <input class="user-input" type="text" v-model="loginForm.user" placeholder="请输入用户名" autofocus="autofocus"
+                prefix-icon="el-icon-s-custom" tabindex="1" auto-complete="on" @focus="usernameFocus($event)"
+                @blur="usernameBlur($event)" />
             </div>
+            <div class="password" id="psw">
+              <p><img :src="passwordImg" style="width: 19px;height: 20px;" /></p>
+              <input class="pass-input" type="password" v-model="loginForm.psw" placeholder="请输入密码"
+                prefix-icon="el-icon-lock" tabindex="2" auto-complete="on" @focus="passwordFocus($event)"
+                @blur="passwordBlur($event)" />
+            </div>
+          </div>
+          <div class="login-button">
+            <button @click="handleLogin" class="loginBtn">登录</button>
           </div>
         </div>
       </div>
     </div>
-    <div style="height: 40px;"></div>
   </div>
 </template>
 <script>
@@ -151,8 +141,8 @@
           })
         } else {
           this.$axios.post(this.$store.state.baseUrl + '/UserLogin', {
-            'user': this.loginForm.user,
-            'psw': this.loginForm.psw
+            user: this.loginForm.user,
+            psw: this.loginForm.psw
           }).then((res) => {
             console.log('登陆成功啦');
             console.log(res)
@@ -161,7 +151,7 @@
               showClose: true,
               duration: 2000
             });
-            // 将用户昵称、用户角色和token放入sessionStorage
+            // 将用户昵称、用户角色和token等放入sessionStorage
             sessionStorage.setItem('nick', res.data.nick);
             console.log(sessionStorage.getItem('nick'));
             sessionStorage.setItem('role', res.data.role);
@@ -171,7 +161,9 @@
             sessionStorage.setItem('marketPriceFlag', res.data.MarketPriceFlag);
             sessionStorage.setItem('storeFlag', res.data.StoreFlag);
             sessionStorage.setItem('watchFlag', res.data.WatchFlag);
-            // 将用户昵称、用户角色及token放入vuex
+            sessionStorage.setItem('rateFlag', res.data.RateFlag);
+            sessionStorage.setItem('financeFlag', res.data.FinanceFlag);
+            // 将用户昵称、用户角色及token等放入vuex
             this.$store.dispatch('setNick', res.data.nick);
             this.$store.dispatch('setRole', res.data.role);
             this.$store.dispatch('setToken', res.data.token);
@@ -179,6 +171,8 @@
             this.$store.dispatch('setMarketPriceFlag', res.data.MarketPriceFlag);
             this.$store.dispatch('setStoreFlag', res.data.StoreFlag);
             this.$store.dispatch('setWatchFlag', res.data.WatchFlag);
+            this.$store.dispatch('setRateFlag', res.data.RateFlag);
+            this.$store.dispatch('setFinanceFlag', res.data.FinanceFlag);
             console.log(this.$store.state.isLogin);
             this.$router.push('/home');
             // 页面回到顶部
@@ -243,184 +237,178 @@
 
   .container-login-one {
     height: auto;
-    background: url('../../assets/imgs/background.png') no-repeat;
+
   }
 
   .login-container-top {
     padding-top: 80px;
     margin-left: 5%;
+    display: flex;
 
     .span1 {
+      height: 74px;
+      line-height: 74px;
+      margin: 0;
+      margin-left: 20px;
       font-style: italic;
       font-size: 30px;
-      color: #fff;
+      font-weight: bold;
+      color: #0c8563;
+    }
+  }
 
-      .span2 {
-        font-weight: bold;
+  .login-container-main {
+    height: 590px;
+    margin-top: 140px;
+    display: flex;
+    justify-content: space-between;
+    background: url('../../assets/imgs/background.png') no-repeat;
 
-        .span3 {
-          margin: 0 20px;
+    .login-bottom {
+      margin-left: 7%;
+
+      .every-img {
+        margin-top: 20px;
+        position: relative;
+        display: flex;
+        text-align: center;
+        z-index: 1;
+
+        .bottom-img {
+          width: 72px;
+          height: 72px;
+          line-height: 95px;
+          background-color: #3ea59a;
+          border-radius: 50%;
+          text-align: center;
+          cursor: pointer;
+        }
+
+        .bottom-text {
+          width: 72px;
+          text-align: center;
+          margin-top: 10px;
+          color: #3ea59a;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .login-container {
+      width: 416px;
+      height: 484px;
+      margin-top: -70px;
+      margin-right: 328px;
+
+      .containter-center {
+        padding: 62px 46px;
+        border-radius: 16px;
+        background-color: #fff;
+        border: 1px solid #dedede;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .login-top {
+
+        .top-span {
+          font-size: 30px;
+          font-weight: bold;
+          line-height: 30px;
+          color: #0c8563;
+        }
+
+        .top-span-login {
+          font-size: 26px;
+          color: #000;
+        }
+      }
+
+      .login-form {
+        width: 100%;
+        margin: 36px 0 50px;
+
+        .username {
+          width: 100%;
+          display: flex;
+          border-bottom: 2px solid #c8c8c8;
+
+          p {
+            margin: 0;
+            margin-top: 10px;
+          }
+        }
+
+        .user-input,
+        .pass-input {
+          width: 80%;
+          height: $height;
+          padding-left: 20px;
+          border: 0;
+          background: 0;
+          outline: none;
+          font-size: 16px;
+          color: #fafafa;
+        }
+
+        .password {
+          width: 100%;
+          margin-top: 40px;
+          display: flex;
+          border-bottom: 2px solid #c8c8c8;
+
+          p {
+            margin: 0;
+            margin-top: 3px;
+          }
+        }
+      }
+
+      .login-button {
+        width: 100%;
+
+        .loginBtn {
+          width: 100%;
+          height: 50px;
+          font-size: 16px;
+          color: #fff;
+          background-color: #0c8563;
+          border: 0;
+          outline: none;
+          border-radius: 50px;
+          cursor: pointer;
         }
       }
     }
   }
 
-  .login-container {
-    height: auto;
-    margin-top: 80px;
-    margin-right: 15%;
 
-    .containter-center {
-      padding: 60px 0;
-      background-color: #fff;
-      border-radius: 3px;
-    }
-
-    .login-top {
-
-      .top-span {
-        font-weight: bold;
-        line-height: 60px;
-        color: #2e4d65;
-      }
-
-      .top-span-login {
-        color: #000;
-      }
-    }
-
-    .login-form {
-      width: 100%;
-      margin: 50px 0;
-
-      .username {
-        width: 100%;
-        padding-bottom: 10px;
-        display: flex;
-        border-bottom: 2px solid #c8c8c8;
-      }
-
-      .user-input,
-      .pass-input {
-        width: 80%;
-        height: $height;
-        padding-left: 20px;
-        border: 0;
-        background: 0;
-        outline: none;
-        font-size: 24px;
-        color: #c8c8c8;
-      }
-
-      .password {
-        width: 100%;
-        margin-top: 40px;
-        padding-bottom: 10px;
-        display: flex;
-        border-bottom: 2px solid #c8c8c8;
-      }
-    }
-
-    .login-button {
-      width: 100%;
-      margin: 70px 0 30px 0;
-
-      .loginBtn {
-        width: 100%;
-        height: 80px;
-        font-size: 26px;
-        color: #fff;
-        background-color: #2e4d65;
-        border: 0;
-        outline: none;
-        border-radius: 50px;
-        cursor: pointer;
-      }
-    }
+  input::-webkit-input-placeholder {
+    color: #e4e3e3;
   }
 
-  .login-bottom {
-    margin-top: 120px;
-    margin-left: 7%;
-
-    .every-img {
-      margin-top: 20px;
-      position: relative;
-      display: flex;
-      text-align: center;
-      z-index: 1;
-
-      .bottom-img {
-        width: 72px;
-        height: 72px;
-        line-height: 95px;
-        background-color: #7b91a7;
-        border-radius: 50%;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      .bottom-text {
-        width: 72px;
-        text-align: center;
-        margin-top: 10px;
-        color: #ccc;
-        font-size: 14px;
-      }
-    }
+  input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #e4e3e3;
   }
 
+  input:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #e4e3e3;
+  }
+
+  input:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #e4e3e3;
+  }
 
   .input-focus {
-    border-bottom: 1px solid #2e4d65;
-    color: #2e4d65;
+    border-bottom: 1px solid #0c8563;
+    color: #0c8563;
   }
 
   .input-onblur {
     border-bottom: 1px solid #c8c8c8;
-    color: #c8c8c8;
-  }
-
-  @media screen and (min-width: 1401px) {
-    .login-container {
-      width: 28%;
-    }
-
-    .top-span {
-      font-size: 45px;
-    }
-
-    .top-span-login {
-      font-size: 36px;
-    }
-  }
-
-  @media screen and (min-width: 1201px) and (max-width: 1400px) {
-    .login-container {
-      width: 39%;
-    }
-
-    .top-span {
-      font-size: 30px;
-    }
-
-    .top-span-login {
-      font-size: 30px;
-    }
-  }
-
-  @media screen and (max-width: 1200px) {
-    .login-container {
-      width: 45%;
-    }
-
-    .top-span {
-      font-size: 30px;
-    }
-
-    .top-span-login {
-      font-size: 30px;
-    }
+    color: #fafafa;
   }
 </style>
 <style lang="scss">

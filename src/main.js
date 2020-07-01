@@ -23,6 +23,7 @@ require('echarts/lib/chart/line')
 require('echarts/lib/component/title')
 require('echarts/lib/component/grid')
 require('echarts/lib/component/tooltip')
+require('echarts/lib/component/legend')
 
 Vue.config.productionTip = false
 
@@ -35,6 +36,7 @@ Vue.use(functions)
 Vue.use(qrcode)
 Vue.use(vueDirectiveImagePreviewer)
 
+// 路由守卫
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
@@ -68,6 +70,7 @@ router.beforeEach((to, from, next) => {
 axios.interceptors.request.use(config => {
   // 在发送请求前
   let pathname = location.pathname;
+  // console.log(pathname);
   if (sessionStorage.getItem('token')) {
     if (pathname !== '#/' && pathname !== '#/login') {
       config.headers.common['token'] = sessionStorage.getItem('token');

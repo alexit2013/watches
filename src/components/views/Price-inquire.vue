@@ -2,13 +2,8 @@
   <div>
     <!-- <h3>批发价查询页面</h3> -->
     <div v-if="priceInquire.select == 0">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
       <div v-show="dataMaketPriceList.length == 0" ref="hello" style="text-align: center;">
-        <p>数据加载中...</p>
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="dataMaketPriceList.length !== 0">
         <div class="price-admin-table">
@@ -23,7 +18,7 @@
               <th>操作</th>
             </tr>
             <tr v-for="(item,index) of dataMaketPriceList" :key="index">
-              <td class="first-td">
+              <td>
                 <img v-image-preview
                   :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/' + item.buy_watchpics.split('|')[0]"
                   class="img-style" />
@@ -35,8 +30,10 @@
               </td>
               <td>{{item.prices.length !== 0 ?  'HKD ' + formatNumberRgx(item.prices[0].price) : ''}}</td>
               <td>{{item.prices.length !== 0 ? item.prices[0].time : ''}}</td>
-              <td class="last-td">
-                <p class="font-style" @click="priceDetails(item)">查看详情</p>
+              <td>
+                <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
+                  <img src="../../assets/imgs/details.png" style="cursor:pointer;" @click="priceDetails(item)" />
+                </el-tooltip>
               </td>
             </tr>
           </table>
@@ -59,6 +56,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         page: 1,
         pagenum: 10,
         keyword: '',
@@ -85,6 +83,7 @@
       },
       // 获取批发价列表
       handleDataMaketPriceList() {
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
           page: this.page,
           pagenum: this.pagenum
@@ -94,21 +93,19 @@
           this.total = res.data.total;
           this.dataMaketPriceList = res.data.watchs;
           if (this.dataMaketPriceList.length == 0) {
-            this.$refs.hello.innerText = "啊哦~ 暂无数据";
+            this.hintMsg = "啊哦~ 暂无数据";
           }
         }).catch((err) => {
           console.log(err);
         })
       },
       // 模糊搜索
-      pageSel() {
-        this.page = 1;
-      },
       stockInSearch() {
         console.log("关键字---" + this.keyword);
         if (this.keyword !== "") {
           console.log(this.page);
           this.dataMaketPriceList = [];
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
               page: this.page,
@@ -121,7 +118,7 @@
               this.total = res.data.total;
               this.dataMaketPriceList = res.data.watchs;
               if (this.dataMaketPriceList.length == 0) {
-                this.$refs.hello.innerText = "啊哦~ 暂无数据";
+                this.hintMsg = "啊哦~ 暂无数据";
               }
             })
             .catch(err => {
@@ -174,19 +171,10 @@
   }
 </script>
 <style lang="scss" scoped>
-  .stockSearch {
-    width: 50%;
-    margin: 30px auto;
-
-    .input-search {
-      font-size: 16px;
-    }
-  }
-
   .price-admin-table {
     width: 90%;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 40px;
     background-color: #fff;
     border-radius: 30px;
 
@@ -201,27 +189,9 @@
       height: 60px;
       margin: 10px 0;
       padding: 20px 0;
-      background-color: #f2f5f7;
-      font-size: 17px;
+      background-color: #f3fbf9;
+      font-size: 15px;
       text-align: center;
-    }
-
-    .first-td {
-      border-top-left-radius: 30px;
-      border-bottom-left-radius: 30px;
-    }
-
-    .last-td {
-      border-top-right-radius: 30px;
-      border-bottom-right-radius: 30px;
-
-      .font-style {
-        margin: 0;
-        margin-top: 10px;
-        color: #0aa1ed;
-        font-size: 15px;
-        cursor: pointer;
-      }
     }
   }
 
@@ -229,7 +199,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

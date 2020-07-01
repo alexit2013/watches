@@ -1,176 +1,165 @@
 <template>
   <div class="purchase-container" id="purchase-container">
-    <!-- <h1>新增采购</h1> -->
-    <div class="purchase-top">
-      <div class="top">
-        <span class="span1">
-          Hello
-          <span>{{this.$store.state.nick}}!</span>
-        </span>
-        <span class="span2">We are committed to improve the efficiency of watches enters sells saves!</span>
-      </div>
-    </div>
+    <!-- <h1>代理商采购</h1> -->
     <div class="purchase-center">
       <div class="purchase-form" v-if="purchaseSelect.nums == 0">
         <div class="purchase">
           <el-form label-width="100px">
-            <el-form-item label="采购日期" required>
-              <el-date-picker style="width: 100%;" v-model="buy_date" type="date" placeholder="选择日期"></el-date-picker>
-            </el-form-item>
-            <el-form-item label="采购店铺" required>
-              <el-autocomplete style="width: 100%;" v-model="keyword" :fetch-suggestions="querySearchAsync"
-                :trigger-on-focus="false" placeholder="可输入店铺名称、地址、国家等信息进行查询" @select="handleSelect" @blur="price">
-              </el-autocomplete>
-            </el-form-item>
-          </el-form>
-          <!-- <el-form-item> -->
-          <div @click="dialogFormVisible = true" class="add">
-            <span class="add-style">
-              <span style="font-size: 22px;">+</span> 添加手表
-            </span>
-          </div>
-          <el-dialog title="手表信息" :visible.sync="dialogFormVisible" center :close-on-press-escape="false"
-            :close-on-click-modal="false" style="padding: 20px 30px;">
-            <el-form label-width="100px">
-              <el-form-item label="手表型号:" required>
-                <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
-                  :trigger-on-focus="false" @select="handleModel"></el-autocomplete>
-              </el-form-item>
-              <el-form-item label="采购价格:" required>
-                <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
-                  @input="watchprice">
-                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="机芯号:">
-                <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
-              </el-form-item>
-              <el-form-item label="保卡日期:">
-                <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期"></el-date-picker>
-              </el-form-item>
-              <el-form-item label="配件:">
-                <el-checkbox-group required>
-                  <el-checkbox-group v-model="accessory" class="accessories">
-                    <el-checkbox v-for="accessory in accessories" :label="accessory" :key="accessory">{{accessory}}
-                    </el-checkbox>
-                  </el-checkbox-group>
-                </el-checkbox-group>
-              </el-form-item>
-              <el-form-item label="额外表带:">
-                <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
-                  @input="waychbandInput">
-                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
-                </el-input>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="messageSure">保 存</el-button>
-            </div>
-          </el-dialog>
-          <!-- </el-form-item> -->
-          <div v-show="watchList.length !== 0" class="pruducts-list">
-            <div style="margin-bottom:15px;font-size: 18px;">
-              <span>采购商品：</span>
-            </div>
-            <div>
-              <table>
-                <tr>
-                  <th class="table-th">图片</th>
-                  <th class="table-th">手表型号</th>
-                  <th class="table-th">采购价格</th>
-                  <th class="table-th">操作</th>
-                </tr>
-                <tr v-for="(item,index) in watchList" :key="index">
-                  <td class="first-td">
-                    <img v-image-preview
-                      :src="item.buy_pics == null || item.buy_pics == '' ? '' : img + '/img/watch/'+ item.buy_pics"
-                      style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
-                  </td>
-                  <td>
-                    <p style="margin: 0;">{{item.buy_watchbrand}}</p>
-                    <p style="margin: 0;">{{item.buy_watchmodel}}</p>
-                  </td>
-                  <td>{{item.buy_watchcurrency}} {{formatNumberRgx(item.buy_watchprice)}}</td>
-                  <td class="last-td">
-                    <el-button type="text" @click="updateWatch(item,index)">修改</el-button>
-                    <el-dialog title="手表信息" :visible.sync="dialogUpdateWatchVisible" center
-                      :close-on-press-escape="false" :close-on-click-modal="false">
-                      <el-form label-width="120px">
-                        <el-form-item label="手表型号:" required>
-                          <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
-                            :trigger-on-focus="false" @select="handleModel">
-                          </el-autocomplete>
-                        </el-form-item>
-                        <el-form-item label="采购价格:" required>
-                          <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
-                            @input="watchprice">
-                            <i slot="suffix"
-                              style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
-                          </el-input>
-                        </el-form-item>
-                        <el-form-item label="机芯号：">
-                          <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
-                        </el-form-item>
-                        <el-form-item label="保卡日期：">
-                          <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期" class="input-style">
-                          </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="配件：">
-                          <el-checkbox-group required>
-                            <el-checkbox-group v-model="accessory" class="accessories">
-                              <el-checkbox v-for="accessory in accessories" :label="accessory" :key="accessory">
-                                {{accessory}}
-                              </el-checkbox>
-                            </el-checkbox-group>
-                          </el-checkbox-group>
-                        </el-form-item>
-                        <el-form-item label="额外表带：">
-                          <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
-                            @input="waychbandInput">
-                            <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
-                          </el-input>
-                        </el-form-item>
-                      </el-form>
-                      <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogUpdateWatchVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="messageSureUpdate">保 存</el-button>
-                      </div>
-                    </el-dialog>
-                    <el-button type="text" @click="del(index)" style="margin-left: 5px;">删除</el-button>
-                    <el-dialog title="提示" :visible.sync="centerDialogVisible" width="50%" center>
-                      <div style="text-align:center;">
-                        <span>是否删除该手表信息，删除后不能恢复</span>
-                      </div>
-                      <span slot="footer" class="dialog-footer">
-                        <el-button @click="centerDialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="delMessage">确 定</el-button>
-                      </span>
-                    </el-dialog>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
+            <el-row :gutter="24">
+              <el-col :span="12">
+                <el-form-item label="采购日期" required>
+                  <el-date-picker style="width: 100%;" v-model="buy_date" type="date" placeholder="选择日期">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="采购店铺" required>
+                  <el-autocomplete style="width: 100%;" v-model="keyword" :fetch-suggestions="querySearchAsync"
+                    :trigger-on-focus="false" placeholder="可输入店铺名称、地址、国家等信息进行查询" @select="handleSelect" @blur="price">
+                  </el-autocomplete>
+                </el-form-item>
+              </el-col>
+            </el-row>
 
-          <div style="text-align: right;">
-            <div class="submitWatch">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div class="watch" @click="submitPurchase">
-                <img src="../../assets/imgs/submit.png" />
-              </div>
+          </el-form>
+          <div style="display: flex; justify-content: space-between;">
+            <div @click="addWatch" class="add">
+              <span class="add-style">
+                <span>+</span> 添加手表
+              </span>
             </div>
+            <el-dialog title="手表信息" :visible.sync="dialogFormVisible" center :close-on-press-escape="false"
+              :close-on-click-modal="false" style="padding: 20px 30px;">
+              <el-form label-width="100px">
+                <el-form-item label="手表型号:" required>
+                  <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
+                    :trigger-on-focus="false" @select="handleModel"></el-autocomplete>
+                </el-form-item>
+                <el-form-item label="采购价格:" required>
+                  <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
+                    @input="watchprice">
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="机芯号:">
+                  <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
+                </el-form-item>
+                <el-form-item label="保卡日期:">
+                  <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="配件:">
+                  <el-checkbox-group required>
+                    <el-checkbox-group v-model="accessory" class="accessories">
+                      <el-checkbox v-for="accessory in accessories" :label="accessory" :key="accessory">{{accessory}}
+                      </el-checkbox>
+                    </el-checkbox-group>
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label="额外表带:">
+                  <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
+                    @input="waychbandInput">
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="messageSure">保 存</el-button>
+              </div>
+            </el-dialog>
+            <button class="top-search-button" @click="submitPurchase">提 交</button>
             <el-dialog title="提示" :visible.sync="addDialog" width="43%" center>
               <div style="text-align:center;">
                 <span>采购单已提交到系统中</span>
               </div>
               <span slot="footer" class="dialog-footer">
-                <el-button @click="addNew" style="width: 35%;color:#2d4e65;margin-right:10px;">添加新的采购单</el-button>
-                <el-button @click="complete" style="width: 35%;background:#2d4e65;color:#fff;">继续完善该采购单</el-button>
+                <el-button @click="addNew" style="width: 35%;margin-right:10px;">添加新的采购单</el-button>
+                <el-button @click="complete" style="width: 35%;background:#0c8563;color:#fff;">继续完善该采购单</el-button>
               </span>
             </el-dialog>
+          </div>
+          <div v-show="watchList.length !== 0" class="pruducts-list">
+            <table>
+              <tr>
+                <th class="table-th">图片</th>
+                <th class="table-th">手表型号</th>
+                <th class="table-th">采购价格</th>
+                <th class="table-th">操作</th>
+              </tr>
+              <tr v-for="(item,index) in watchList" :key="index">
+                <td>
+                  <img v-image-preview
+                    :src="item.buy_pics == null || item.buy_pics == '' ? '' : img + '/img/watch/'+ item.buy_pics"
+                    style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
+                </td>
+                <td>
+                  <p style="margin: 0;">{{item.buy_watchbrand}}</p>
+                  <p style="margin: 0;">{{item.buy_watchmodel}}</p>
+                </td>
+                <td>{{item.buy_watchcurrency}} {{formatNumberRgx(item.buy_watchprice)}}</td>
+                <td>
+                  <el-tooltip class="item" effect="light" content="修改查看信息" placement="top-end">
+                    <img src="../../assets/imgs/details.png" style="cursor:pointer;" @click="updateWatch(item,index)" />
+                  </el-tooltip>
+                  <el-dialog title="手表信息" :visible.sync="dialogUpdateWatchVisible" center :close-on-press-escape="false"
+                    :close-on-click-modal="false">
+                    <el-form label-width="120px">
+                      <el-form-item label="手表型号:" required>
+                        <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
+                          :trigger-on-focus="false" @select="handleModel">
+                        </el-autocomplete>
+                      </el-form-item>
+                      <el-form-item label="采购价格:" required>
+                        <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
+                          @input="watchprice">
+                          <i slot="suffix"
+                            style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
+                        </el-input>
+                      </el-form-item>
+                      <el-form-item label="机芯号：">
+                        <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
+                      </el-form-item>
+                      <el-form-item label="保卡日期：">
+                        <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期" class="input-style">
+                        </el-date-picker>
+                      </el-form-item>
+                      <el-form-item label="配件：">
+                        <el-checkbox-group required>
+                          <el-checkbox-group v-model="accessory" class="accessories">
+                            <el-checkbox v-for="accessory in accessories" :label="accessory" :key="accessory">
+                              {{accessory}}
+                            </el-checkbox>
+                          </el-checkbox-group>
+                        </el-checkbox-group>
+                      </el-form-item>
+                      <el-form-item label="额外表带：">
+                        <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
+                          @input="waychbandInput">
+                          <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
+                        </el-input>
+                      </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                      <el-button @click="dialogUpdateWatchVisible = false">取 消</el-button>
+                      <el-button type="primary" @click="messageSureUpdate">保 存</el-button>
+                    </div>
+                  </el-dialog>
+                  <el-tooltip class="item" effect="light" content="删除" placement="top-end">
+                    <img src="../../assets/imgs/delete.png" style="margin-left: 30px;cursor:pointer;"
+                      @click="del(index)" />
+                  </el-tooltip>
+                  <el-dialog title="提示" :visible.sync="centerDialogVisible" width="50%" center>
+                    <div style="text-align:center;">
+                      <span>是否删除该手表信息，删除后不能恢复</span>
+                    </div>
+                    <span slot="footer" class="dialog-footer">
+                      <el-button @click="centerDialogVisible = false">取 消</el-button>
+                      <el-button type="primary" @click="delMessage">确 定</el-button>
+                    </span>
+                  </el-dialog>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
@@ -257,7 +246,19 @@
     methods: {
       goback(val) {
         this.purchaseSelect.nums = val;
-        location.reload();
+        // this.reload();
+        this.buy_date = new Date();
+        this.store = '';
+        this.keyword = '';
+        this.country = '';
+        this.watchList = [];
+        this.pics = [];
+        this.imgSels = '';
+        this.buy_watchid = '';
+        this.model = '';
+        this.models = [];
+        this.myBrand = '';
+        this.myModel = '';
       },
       // 日期 型号 价格 必须
       // 采购店铺
@@ -297,6 +298,34 @@
         this.country = item.CountryCn;
         this.store = item.value;
       },
+      // 添加手表
+      addWatch() {
+        console.log(this.buy_date);
+        console.log(this.store);
+        if (this.buy_date == null) {
+          this.$message.error({
+            message: "采购日期不能为空",
+            showClose: true,
+            duration: 2000
+          })
+        } else if (this.store == "" || this.store == undefined) {
+          this.$message.error({
+            message: "采购店铺不能为空",
+            showClose: true,
+            duration: 2000
+          })
+        } else {
+          this.dialogFormVisible = true;
+        };
+        this.watch = {};
+        this.buy_watchprice = "";
+        this.buy_watchsn = "";
+        this.accessory = [];
+        this.buy_watchparts = '';
+        this.buy_watchband = "";
+        this.buy_watchbrand = "";
+        this.buy_watchmodel = "";
+      },
       // 手表型号
       fetchSuggestions(queryString, callback) {
         let param = {};
@@ -335,7 +364,6 @@
         this.buy_watchid = item.id;
         this.myBrand = item.brand;
         this.myModel = item.model;
-        this.value = item.value;
         console.log(item);
         if (item.pics !== null) {
           this.imgSels = item.pics.split('|')[0];
@@ -370,22 +398,6 @@
       verify() {
         console.log("111");
         console.log(this.buy_date);
-        if (this.buy_date == null) {
-          this.$message.error({
-            message: "采购日期不能为空",
-            showClose: true,
-            duration: 2000
-          })
-          return 1;
-        }
-        if (this.store == "") {
-          this.$message.error({
-            message: "采购店铺不能为空",
-            showClose: true,
-            duration: 2000
-          })
-          return 1;
-        }
         if (this.buy_watchid == "") {
           this.$message.error({
             message: "手表型号不能为空",
@@ -393,19 +405,20 @@
             duration: 2000
           })
           return 1;
-        }
-        if (this.buy_watchprice == "") {
+        } else if (this.buy_watchprice == "") {
           this.$message.error({
             message: "采购价格不能为空",
             showClose: true,
             duration: 2000
           })
           return 1;
+        } else {
+          return 2;
         }
       },
       // 确认保存手表信息
       messageSure() {
-        if (this.verify() !== 1) {
+        if (this.verify() == 2) {
           // console.log(this.accessory);
           // this.buy_watchparts = '';
           for (let item of this.accessory) {
@@ -538,6 +551,7 @@
         this.pics.splice(this.delid, 1);
         this.centerDialogVisible = false;
       },
+
       // 提交
       submitWatches() {
         if (this.buy_watch.length == 0) {
@@ -595,7 +609,19 @@
             window.scrollTo(0, currentScroll - currentScroll / 5);
           }
         })();
-        location.reload();
+        // this.reload();
+        this.buy_date = new Date();
+        this.store = '';
+        this.keyword = '';
+        this.country = '';
+        this.watchList = [];
+        this.pics = [];
+        this.imgSels = '';
+        this.buy_watchid = '';
+        this.model = '';
+        this.models = [];
+        this.myBrand = '';
+        this.myModel = '';
       },
       complete() {
         this.addDialog = false;
@@ -617,14 +643,15 @@
   .purchase-container {
     width: 100%;
 
-    .purchase-top {
-      width: 91%;
-      height: 240px;
+    /*.purchase-top {
+      width: 95%;
+      height: 215px;
       margin: 30px auto;
       margin-top: 0;
       background: url("../../assets/imgs/banner.png") no-repeat;
       border-radius: 30px;
-      background-size: cover;
+      // background-size: cover;
+      background-size: 100% 215px;
 
       .top {
         width: 80%;
@@ -638,24 +665,36 @@
         }
 
         .span1 {
-          font-weight: bold;
+          font-size: 28px;
         }
 
         .span2 {
-          margin-top: 10px;
-          font-size: 25px;
-          width: 60%;
+          margin-top: 20px;
+          font-size: 18px;
+          // color: #7798b1;
         }
       }
-    }
+    }*/
 
     .purchase-center {
-      width: 90%;
+      width: 95%;
       margin: 0 auto;
 
+      .top-search-button {
+        width: 110px;
+        height: 48px;
+        margin-top: 20px;
+        background-color: #0c7063;
+        color: #fff;
+        outline: none;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
       .purchase-form {
-        padding: 20px;
-        padding-left: 0;
+        padding: 50px 0 30px 0;
         background-color: #fff;
         border-radius: 15px;
 
@@ -664,63 +703,34 @@
           margin: 0 auto;
 
           .pruducts-list {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 30px;
+            padding-top: 20px;
 
             .table-th {
-              // padding-bottom: 20px;
-              color: #2d4e65;
               font-size: 17px;
               font-weight: normal;
             }
 
             td {
               padding: 20px;
-              background-color: #f2f5f7;
               font-size: 15px;
-            }
-
-            .first-td {
-              // padding: 30px;
-              border-top-left-radius: 30px;
-              border-bottom-left-radius: 30px;
-            }
-
-            .last-td {
-              border-top-right-radius: 30px;
-              border-bottom-right-radius: 30px;
+              background-color: #f3fbf9;
             }
           }
 
           .add {
-            width: 50%;
-            height: 50px;
+            width: 144px;
+            height: 48px;
             margin: 20px 0;
-            line-height: 50px;
-            border: 1px solid #c8c8c8;
-            border-radius: 15px;
+            line-height: 48px;
+            border-radius: 6px;
             text-align: center;
             cursor: pointer;
+            background-color: #0c7063;
 
             .add-style {
               display: inline-block;
-              font-size: 18px;
-              font-weight: bold;
-              color: #2d4e65;
-            }
-          }
-
-          .submitWatch {
-            width: 100%;
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-around;
-
-            .watch {
-              width: 30%;
-              height: 80px;
-              cursor: pointer;
+              font-size: 16px;
+              color: #fff;
             }
           }
         }
@@ -736,40 +746,14 @@
     }
   }
 
-  @media screen and (min-width: 1121px) {
-    .span1 {
-      font-size: 40px;
-    }
-  }
-
-  @media screen and(max-width: 1120px) {
-    .span1 {
-      font-size: 35px;
-    }
-  }
-
-  // @media screen and (min-width: 1901px) {
-  //   .watch {
-  //     width: 35%;
-  //   }
-  // }
-
-  // @media screen and (min-width: 1601px) and (max-width: 1900px) {
-  //   .watch {
-  //     width: 40%;
-  //   }
-  // }
-
-  // @media screen and (max-width: 1600px) {
-  //   .watch {
-  //     width: 45%;
-  //   }
-  // }
-
   table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 15px;
+    border-spacing: 0;
+
+    th {
+      height: 50px;
+    }
   }
 
   tr {
@@ -778,18 +762,6 @@
     td {
       width: 21%;
       text-align: center;
-    }
-  }
-
-  @media screen and (min-width: 1401px) {
-    .purchase-form {
-      width: 70%;
-    }
-  }
-
-  @media screen and (max-width: 1400px) {
-    .purchase-form {
-      width: 80%;
     }
   }
 </style>
@@ -816,10 +788,6 @@
       width: 10%;
     }
 
-    .el-input {
-      width: 100%;
-    }
-
     .el-input__suffix {
       width: 15%;
     }
@@ -835,7 +803,11 @@
     }
 
     .el-dialog--center .el-dialog__footer {
-      text-align: center;
+      text-align: right;
+    }
+
+    .el-checkbox__label {
+      font-size: 14px;
     }
 
   }

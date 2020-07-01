@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="drawback-center" v-if="buy_taxState == true">
-      <el-form label-width="120px">
+      <el-form label-width="135px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="退税方式：" class="input-style">
@@ -39,24 +39,35 @@
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="13">
-            <el-form-item label="退税日期：">
-              <el-date-picker v-model="buy_taxrecvtime" type="date" class="input-style"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="11">
-            <el-form-item label="实退金额：">
-              <el-input v-model="buy_taxrecvmoney" class="input-style">
-                <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxrecvcurrency}}</i>
-              </el-input>
-            </el-form-item>
-          </el-col>
         </el-row>
       </el-form>
+      <div class="drawback-top">
+        <div class="top-form">
+          <span class="top-span" style="font-size: 18px;">是否返店退税</span>
+          <el-switch v-model="buy_taxBackStore" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        </div>
+      </div>
+      <div>
+        <el-form label-width="135px">
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="到账日期：">
+                <el-date-picker v-model="buy_taxrecvtime" type="date" style="width: 100%;">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="13">
+              <el-form-item label="到账金额：">
+                <el-input v-model="buy_taxrecvmoney" class="input-style">
+                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxrecvcurrency}}</i>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
       <div class="drawback-upload">
-        <h1 style="margin-top: 0;font-weight: normal; font-size: 24px;">税单图片：</h1>
+        <h3 style="margin-top: 0;font-weight: normal; font-size: 20px;">税单图片：</h3>
         <div style="display:flex;">
           <div class="upload-imgs">
             <div class="add">
@@ -70,7 +81,8 @@
               <div style="display:flex;position:relative;" id="delImg">
                 <div v-for="(imgurl,index) of imgSrc" :key="index" style="margin-left:10px;position:relative;">
                   <span class="spanStyle" @click="delImage(index)">x</span>
-                  <img :src="img + imgurl" width="100px" height="100px" style="border-radius:5px;object-fit:cover;" />
+                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
+                    style="border-radius:5px;object-fit:cover;" />
                 </div>
               </div>
             </div>
@@ -79,7 +91,7 @@
       </div>
     </div>
     <div class="drawback-submit">
-      <img src="../../assets/imgs/save.png" @click="submitDrawback" />
+      <el-button type="primary" @click="submitDrawback">保 存</el-button>
     </div>
   </div>
 </template>
@@ -95,9 +107,12 @@
         buy_taxperson: "", // 退税负责人
         buy_taxmoney: "", // 应退金额
         buy_taxcurrency: "", // 应退金额币种
-        buy_taxrecvtime: new Date(), // 退税日期
-        buy_taxrecvmoney: "", // 实退金额
-        buy_taxrecvcurrency: "", //实退金额币种
+
+        buy_taxBackStore: true, // 是否返店退税
+        buy_taxrecvtime: '', // 到账日期
+        buy_taxrecvmoney: "", // 到账金额
+        buy_taxrecvcurrency: "", //到账金额币种
+
         tax: {},
         imgSrc: [],
       };
@@ -109,7 +124,7 @@
       // 获取退税信息
       acquire() {
         this.$axios
-          .post(this.$store.state.baseUrl + "/BuyOrderGet", {
+          .post(this.$store.state.baseUrl + "/BuyOrderGet?java", {
             buy_id: sessionStorage.getItem("buy_id")
           })
           .then(res => {
@@ -117,7 +132,7 @@
               this.buy_taxcurrency = item.buy_watchcurrency;
             }
             this.tax = res.data.tax;
-            console.log("退款");
+            console.log("退税");
             console.log(this.tax);
             if (this.buy_taxtype == "退到银行卡") {
               this.buy_taxrecvcurrency = 'CNY';
@@ -137,16 +152,39 @@
               }
               this.buy_taxcompany = this.tax.buy_taxcompany;
               this.buy_taxperson = this.tax.buy_taxperson;
-              this.buy_taxmoney = this.tax.buy_taxmoney;
-              this.buy_taxrecvtime = this.tax.buy_taxrecvtime;
-              this.buy_taxrecvmoney = this.tax.buy_taxrecvmoney;
+              if (this.tax.buy_taxmoney == 0) {
+                this.buy_taxmoney = '';
+              } else {
+                this.buy_taxmoney = this.tax.buy_taxmoney;
+              };
+              if (this.tax.buy_taxBackStore == 0) {
+                this.buy_taxBackStore = false;
+              } else if (this.tax.buy_taxBackStore == 1) {
+                this.buy_taxBackStore = true;
+              }
+              if (this.tax.buy_taxrecvtime == '0000-00-00') {
+                this.buy_taxrecvtime = '';
+              } else {
+                this.buy_taxrecvtime = this.tax.buy_taxrecvtime;
+              };
+              if (this.tax.buy_taxrecvmoney == 0) {
+                this.buy_taxrecvmoney = '';
+              } else {
+                this.buy_taxrecvmoney = this.tax.buy_taxrecvmoney;
+              };
               console.log("mmmm");
               console.log(this.tax);
-              if (this.tax.buy_taxpic !== null) {
+              if (this.tax.buy_taxpic !== null && this.tax.buy_taxpic !== '') {
                 this.imgSrc = this.tax.buy_taxpic.split("|");
+                for (let i = 0; i < this.imgSrc.length; i++) {
+                  if (this.imgSrc[i] == '') {
+                    this.imgSrc.splice(i, 1);
+                    i = i - 1;
+                  }
+                };
               } else {
                 this.imgSrc = [];
-              }
+              };
               console.log(this.imgSrc);
             }
           });
@@ -302,7 +340,7 @@
       },
       // 退税方式改变币种
       taxtypeChange() {
-        console.log(this.buy_taxcurrency);
+        // console.log(this.buy_taxcurrency);
         if (this.buy_taxtype == "退到银行卡") {
           this.buy_taxrecvcurrency = 'CNY';
         } else if (this.buy_taxtype == "现金") {
@@ -311,31 +349,31 @@
       },
       // 提交退税信息
       submitDrawback() {
-        console.log("萝卜青菜");
+        // B15858187774620018
+        // console.log("萝卜青菜");
         let storeImgUrl1 = this.imgSrc.join('|');
-        console.log(this.buy_taxState);
-        console.log(storeImgUrl1);
+        // console.log(this.buy_taxState);
+        // console.log(storeImgUrl1);
+        console.log(this.buy_taxrecvtime);
         this.$axios
           .post(this.$store.state.baseUrl + "/BuyTaxSave", {
             buy_id: sessionStorage.getItem("buy_id"),
             buy_taxState: this.buy_taxState == true ? 1 : -1,
-            buy_taxtype: this.buy_taxState == true ?
-              this.buy_taxtype == "现金" ?
-              1 :
-              0 : "",
+            buy_taxtype: this.buy_taxState == true ? (this.buy_taxtype == "现金" ? 1 : 0) : "",
             buy_taxcompany: this.buy_taxState == true ? this.buy_taxcompany : "",
             buy_taxperson: this.buy_taxState == true ? this.buy_taxperson : "",
-            buy_taxmoney: this.buy_taxState == true ? this.buy_taxmoney : "",
+            buy_taxmoney: this.buy_taxState == true ? Number(this.buy_taxmoney) : "",
             buy_taxcurrency: this.buy_taxState == true ? this.buy_taxcurrency : "",
-            buy_taxrecvtime: this.buy_taxState == true ?
-              this.shellDate(this.buy_taxrecvtime) : "",
-            buy_taxrecvmoney: this.buy_taxState == true ? this.buy_taxrecvmoney : "",
+            buy_taxBackStore: this.buy_taxState == true ? (this.buy_taxBackStore == true ? 1 : 0) : "",
+            buy_taxrecvtime: this.buy_taxState == true ? (this.buy_taxrecvtime == null ? '' : this.shellDate(this
+              .buy_taxrecvtime)) : '',
+            buy_taxrecvmoney: this.buy_taxState == true ? Number(this.buy_taxrecvmoney) : "",
             // this.buy_taxrecvcurrency
             buy_taxrecvcurrency: this.buy_taxtype == "现金" ? this.buy_taxcurrency : "CNY",
             buy_taxpic: this.buy_taxState == true ? storeImgUrl1 : ""
           })
           .then(res => {
-            console.log("退税返回数据");
+            console.log("提交退税信息");
             console.log(res);
             this.$message.success({
               message: "退税信息保存成功",
@@ -372,19 +410,8 @@
     .drawback-top {
       width: 100%;
 
-      @media screen and (min-width: 1401px) {
-        .top-form {
-          width: 25%;
-        }
-      }
-
-      @media screen and (max-width: 1400px) {
-        .top-form {
-          width: 40%;
-        }
-      }
-
       .top-form {
+        width: 190px;
         height: 80px;
         padding-left: 40px;
         line-height: 80px;
@@ -392,8 +419,8 @@
         border-radius: 30px;
 
         .top-span {
-          margin-right: 30%;
-          font-size: 23px;
+          margin-right: 15px;
+          font-size: 22px;
         }
       }
     }
@@ -508,20 +535,20 @@
       top: 2px;
     }
 
-    .el-switch {
-      height: 80px;
-      line-height: 80px;
-    }
+    // .el-switch {
+    //   height: 80px;
+    //   line-height: 80px;
+    // }
 
-    .el-switch__core {
-      width: 60px !important;
-      height: 30px;
-      border-radius: 30px;
-    }
+    // .el-switch__core {
+    //   width: 60px !important;
+    //   height: 30px;
+    //   border-radius: 30px;
+    // }
 
-    .el-switch__core:after {
-      top: 6px;
-    }
+    // .el-switch__core:after {
+    //   top: 6px;
+    // }
 
     .el-form-item__label {
       font-size: 16px;

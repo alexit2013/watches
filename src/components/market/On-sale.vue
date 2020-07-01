@@ -1,21 +1,16 @@
 <template>
   <div class="on-sale-container">
     <!-- <h1>进行中的销售</h1> -->
-    <div class="onSale-container">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
+    <div class="onSale-container" v-if="onSaleSel.select == 0">
       <div class="onSale-top">
-        <p style="font-size: 20px;">销售单数量：{{' ' + count}}</p>
+        <p style="margin: 0;font-size: 18px;">销售单数量：{{' ' + count}}</p>
       </div>
-      <div v-show="sellPendOrderList.length == 0" ref="hello" class="container-null">
-        <p>数据加载中...</p>
+      <div v-show="sellPendOrderList.length == 0" class="container-null">
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="sellPendOrderList.length !== 0">
         <div v-for="(item,index) of sellPendOrderList" :key="index" class="onSale-center">
-          <div class="purchase-row">
+          <div>
             <span class="purchase-number">销售单号: {{" " + item.sell_orderid}}</span>
             <span class="purchase-date">销售日期: {{item.sell_time}}</span>
           </div>
@@ -71,7 +66,7 @@
                 <th class="table-th">操作</th>
               </tr>
               <tr class="table-tr-container">
-                <td class="tr-td-first">
+                <td>
                   <img v-image-preview
                     :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                     style="width: 100px;height: 100px;border-radius: 30px;object-fit: cover;" />
@@ -80,9 +75,11 @@
                 <td>{{item.buy_watchmodel}}</td>
                 <td>{{item.sell_custom}}</td>
                 <td>{{item.sell_currency + ' ' + formatNumberRgx(item.sell_money)}}</td>
-                <td class="tr-td-last">
-                  <el-button type="text" @click="details(item)">查看</el-button>
-                  <el-dialog title="修改销售单信息" :visible.sync="updateDialogVisible" :append-to-body="true"
+                <td>
+                  <el-tooltip class="item" effect="light" content="修改查看信息" placement="top-end">
+                    <img src="../../assets/imgs/update.png" style="cursor: pointer;" @click="details(item)" />
+                  </el-tooltip>
+                  <!-- <el-dialog title="修改销售单信息" :visible.sync="updateDialogVisible" :append-to-body="true"
                     :close-on-press-escape="false" :close-on-click-modal="false" width="50%" center>
                     <div style="text-align: left;">
                       <div>
@@ -158,7 +155,6 @@
                           <p>备注：</p>
                           <el-input type="textarea" v-model="sell_note" placeholder="请输入备注信息"></el-input>
                         </div>
-                        <!--  v-if="sell_stockouttoken !== ''" -->
                         <div v-if="logState == 2 || logState == 3">
                           <div style="text-align: center;" id="qrcode2">
                             <vue-qr :logoSrc="config.logo" :text="config.value" :size="200" :margin="0"></vue-qr>
@@ -171,12 +167,15 @@
                       <el-button @click="qu" style="margin-left: 35%;">取 消</el-button>
                       <el-button type="primary" @click="updateSure">确 定</el-button>
                     </span>
-                  </el-dialog>
-                  <el-button type="text" @click="delet(item.id)">删除</el-button>
+                  </el-dialog> -->
+                  <el-tooltip class="item" effect="light" content="删除" placement="top-end">
+                    <img src="../../assets/imgs/delete.png" style="margin-left: 30px;cursor: pointer;"
+                      @click="delet(item.id)" />
+                  </el-tooltip>
                   <el-dialog title="取消销售单" :visible.sync="salesTicketDialogVisible" :append-to-body="true"
                     :close-on-press-escape="false" :close-on-click-modal="false" width="50%" center>
-                    <div>
-                      <p style="font-size: 18px;">确定删除该销售单？删除后不可恢复</p>
+                    <div style="text-align: center;">
+                      <p style="font-size: 16px;">确定删除该销售单？删除后不可恢复</p>
                     </div>
                     <span slot="footer" class="dialog-footer">
                       <el-button @click="salesTicketDialogVisible = false" style="margin-left: 35%;">取 消</el-button>
@@ -188,10 +187,192 @@
             </table>
           </div>
         </div>
-        <div style="width: 100%;height: 63px;background-color: #f2f5f9;">
+        <div style="width: 100%;height: 63px;">
           <div style="margin:15px 0;position:absolute;right:6%;">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
               layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="onSaleSel.select == 1" class="onSale-details">
+      <div class="back-img" @click="gobackOnSaleList">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
+        <span class="font">返回</span>
+      </div>
+      <div style="text-align: left;">
+        <div>
+          <el-form label-width="120px">
+            <el-form-item label="型号：">
+              <span>{{buy_watchbrand +' - '+ buy_watchmodel}}</span>
+            </el-form-item>
+            <el-form-item label="销售日期：">
+              <el-date-picker v-model="sell_time" type="date" class="input-style"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="销售金额：">
+              <el-input type="text" v-model="sell_money" class="input-style">
+                <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{sell_currency}}</i>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="客户名称：">
+              <el-input v-model="sell_custom" class="input-style" @focus="clientSelect"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <div class="top-form">
+            <span class="top-span">是否全款：</span>
+            <el-switch v-model="sell_payfull" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          </div>
+          <div v-if="sell_payfull == false" style="width: 75%;">
+            <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
+              <p>定金：</p>
+              <el-form label-width="120px">
+                <el-form-item label="付款日期：">
+                  <el-date-picker v-model="sell_paytime1" type="date" class="input-style">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item label="付款金额：">
+                  <el-input type="text" v-model="sell_paymoney1" class="input-style">
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
+              <p>尾款：</p>
+              <el-form label-width="120px">
+                <el-form-item label="付款日期：">
+                  <el-date-picker v-model="sell_paytime2" type="date" class="input-style">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item label="付款金额：">
+                  <el-input type="text" v-model="sell_paymoney2" class="input-style">
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+          <div v-if="sell_payfull == true" style="width: 75%;">
+            <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
+              <el-form label-width="120px">
+                <el-form-item label="付款日期：">
+                  <el-date-picker v-model="sell_paytime1" type="date" class="input-style">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item label="付款金额：">
+                  <el-input type="text" v-model="sell_paymoney1" class="input-style">
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+          <div style="margin: 30px;">
+            <p>备注：</p>
+            <el-input type="textarea" v-model="sell_note" placeholder="请输入备注信息" class="input-style"></el-input>
+          </div>
+          <!--  v-if="sell_stockouttoken !== ''" -->
+          <div v-if="logState == 2 || logState == 3">
+            <div style="text-align: center;" id="qrcode2">
+              <vue-qr :logoSrc="config.logo" :text="config.value" :size="200" :margin="0"></vue-qr>
+              <p>提货二维码</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 40px;text-align: center;">
+        <el-button type="primary" @click="updateSure">确定修改</el-button>
+      </div>
+    </div>
+    <div v-if="onSaleSel.select == 2" class="onSale-details">
+      <div class="peer-container">
+        <!-- <h3>贸易商管理</h3> -->
+        <div class="peer-top">
+          <div class="back-img" style="margin-left: 0;" @click="gobackForSaleList">
+            <div>
+              <img src="../../assets/imgs/goback.png" />
+            </div>
+            <span class="font">返回</span>
+          </div>
+          <div class="peer-top-right">
+            <div class="stockSearch">
+              <!-- 型号：模糊查找    品牌：全匹配class="el-input__inner" -->
+              <el-input style="font-size: 14px;" placeholder="可输入客户名称进行查找" class="input-search"
+                prefix-icon="el-icon-search" v-model="keyword2" @input="stockInSearch2">
+              </el-input>
+              <!-- <el-button type="primary" @click="stockInSearch2">查 询</el-button> -->
+            </div>
+            <div class="addBtn">
+              <el-button @click="addPeer" class="add-btn">
+                <i class="add-i">+</i>
+                添加客户
+              </el-button>
+              <el-dialog title="新增客户" :visible.sync="dialogAddPeerVisible" center :close-on-press-escape="false"
+                :close-on-click-modal="false">
+                <el-form label-width="120px">
+                  <el-form-item label="类型：" required>
+                    <el-radio-group v-model="type">
+                      <el-radio :label="0">贸易商公司</el-radio>
+                      <el-radio :label="1">贸易商个体</el-radio>
+                      <el-radio :label="2">散客</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <el-form-item label="名称：" required>
+                    <el-input v-model="name" placeholder="请输入客户名称" class="input-style">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="国家：" required>
+                    <el-select v-model="country" placeholder="请选择" class="input-style">
+                      <el-option v-for="(coun,index) of countryList" :key="index" :label="coun.CnName"
+                        :value="coun.CnName">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="主营品牌：" required v-show="type !== 2">
+                    <el-checkbox-group v-model="sellBrandList">
+                      <el-checkbox :label="brand.name" v-for="(brand, index) of watchBrandList" :key="index">
+                      </el-checkbox>
+                    </el-checkbox-group>
+                  </el-form-item>
+                  <el-form-item label="备注：">
+                    <el-input type="textarea" v-model="contactType" placeholder="请输入备注信息" class="input-style">
+                    </el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer">
+                  <el-button @click="dialogAddPeerVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="surePeerAdd">确 定</el-button>
+                </div>
+              </el-dialog>
+            </div>
+          </div>
+
+        </div>
+        <div class="peer-table">
+          <div v-show="dataPeerList.length == 0" ref="listes" style="text-align: center;">
+            <p>{{dataMsg}}</p>
+          </div>
+          <div v-if="dataPeerList.length !== 0">
+            <table>
+              <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>操作</th>
+              </tr>
+              <tr v-for="(item,index) of dataPeerList" :key="index">
+                <td>{{item.name}}</td>
+                <td>{{item.type == 0 ? '贸易商公司' : (item.type == 1 ? '贸易商个体' : '散客')}}</td>
+                <td>
+                  <p type="text" style="color: #0aa1ed;cursor: pointer;" @click="addPurchase(item)">
+                    选择该用户
+                  </p>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
@@ -224,6 +405,7 @@
         sell_time: new Date(), // 销售日期
         sell_money: "", // 销售金额
         sell_currency: "", // 币种
+        sell_customid: 0, // 客户id
         sell_custom: "", // 客户名称
         sell_payfull: false, // 是否全款   0:非全款 1:全款
         sell_paymoney1: "", // 第一次付款（定金）
@@ -238,16 +420,39 @@
           value: "",
           logo: ""
         },
-        logState: ""
+        logState: "",
+
+        hintMsg: '数据加载中...',
+        dataMsg: '数据加载中...',
+        keyword2: '',
+        dataPeerList: [],
+        dataPeerList2: [],
+        dataPeerList3: [],
+        dialogAddPeerVisible: false,
+        name: '', // 贸易商名称
+        type: 0, // 类型
+        country: '中国香港', // 国家
+        countryList: [],
+        contactType: '', // 备注
+        watchBrandList: [],
+        sellBrandList: [], // 所选择的主营品牌
+        sellBrand: '', // 主营品牌
+
       };
     },
+    props: ["onSaleSel"],
     created() {
+      this.handlePeerList();
+      this.handleCountry();
+      this.handleBrand();
+    },
+    mounted() {
       this.getSellPendOrderCount();
       this.handleSellPendOrderList();
     },
     methods: {
-      pageSel() {
-        this.page = 1;
+      gobackForSaleList() {
+        this.onSaleSel.select = 1;
       },
       // 进行中的销售单数量
       getSellPendOrderCount() {
@@ -265,6 +470,7 @@
       },
       // 进行中的销售单
       handleSellPendOrderList() {
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/SellPendOrderList", {
             page: this.page,
@@ -276,7 +482,7 @@
             this.total = res.data.total;
             this.sellPendOrderList = res.data.lst;
             if (this.sellPendOrderList.length == 0) {
-              this.$refs.hello.innerText = "啊哦~ 暂无数据";
+              this.hintMsg = "啊哦~ 暂无数据";
             }
           })
           .catch(err => {
@@ -290,6 +496,7 @@
           this.sellPendOrderList = [];
           this.count = 0;
           this.total = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/SellPendOrderList", {
               page: this.page,
@@ -303,7 +510,7 @@
               this.count = res.data.total;
               this.total = res.data.total;
               if (this.sellPendOrderList.length == 0) {
-                this.$refs.hello.innerText = "啊哦~ 暂无数据";
+                this.hintMsg = "啊哦~ 暂无数据";
               }
               console.log(this.sellPendOrderList);
             })
@@ -319,6 +526,155 @@
           this.handleSellPendOrderList();
         }
       },
+      gobackOnSaleList() {
+        this.onSaleSel.select = 0;
+      },
+      // 选择客户
+      clientSelect() {
+        this.onSaleSel.select = 2;
+      },
+      // 获取同行列表
+      handlePeerList() {
+        this.dataMsg = '数据加载中...';
+        this.$axios
+          .post(this.$store.state.baseUrl + "/DataPeerList")
+          .then(res => {
+            console.log("客户列表");
+            console.log(res);
+            this.dataPeerList3 = res.data.peers;
+            this.dataPeerList = this.dataPeerList3;
+            console.log(this.dataPeerList);
+            if (this.dataPeerList.length == 0) {
+              this.dataMsg = '啊哦~暂无数据';
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      },
+      // 模糊搜索
+      stockInSearch2() {
+        console.log(this.keyword2);
+        console.log(this.dataPeerList);
+        if (this.keyword2 !== '') {
+          this.dataPeerList.map((item) => {
+            console.log(item);
+            if (item.name.indexOf(this.keyword2) > -1) {
+              return this.dataPeerList2.push(item);
+            }
+          });
+          this.dataPeerList = [];
+          this.dataPeerList = this.dataPeerList2;
+          if (this.dataPeerList.length == 0) {
+            this.dataMsg = '啊哦~暂无数据';
+          }
+          this.dataPeerList2 = [];
+          return this.dataPeerList;
+        } else {
+          this.dataPeerList = this.dataPeerList3;
+        }
+      },
+      // 增加贸易商
+      addPeer() {
+        this.dialogAddPeerVisible = true;
+        this.name = '';
+        this.type = 0;
+        this.country = '中国香港'; // 国家
+        this.contactType = ''; // 备注
+        this.sellBrandList = []; // 所选择的主营品牌
+        this.sellBrand = ''; // 主营品牌
+      },
+      // 获取所有国家
+      handleCountry() {
+        this.$axios.post(this.$store.state.baseUrl + '/CountryGet').then((res) => {
+          console.log('所有国家');
+          console.log(res);
+          this.countryList = res.data;
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      // 获取所有品牌
+      handleBrand() {
+        this.$axios.post(this.$store.state.baseUrl + '/DataWatchBrandList').then((res) => {
+          console.log('品牌列表');
+          console.log(res);
+          this.watchBrandList = res.data;
+        })
+      },
+      // 提交前数据的验证
+      sellBrandChange() {
+        // 主营品牌
+        console.log(this.sellBrandList);
+        this.sellBrand = this.sellBrandList.join('|');
+        console.log(this.sellBrand);
+        if (this.type !== 2) {
+          if (this.name == '' || this.country == '' || this.sellBrand == '') {
+            this.$message.error({
+              message: '数据不能为空，请检查数据填写',
+              showClose: true,
+              duration: 2000
+            })
+            return 1;
+          }
+        } else {
+          if (this.name == '' || this.country == '') {
+            this.$message.error({
+              message: '数据不能为空，请检查数据填写',
+              showClose: true,
+              duration: 2000
+            })
+            return 1;
+          }
+        }
+
+      },
+      // 确定增加贸易商
+      surePeerAdd() {
+        if (this.sellBrandChange() !== 1) {
+          const loading = this.$loading({
+            lock: true,
+            text: '数据提交中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+          this.$axios.post(this.$store.state.baseUrl + '/DataPeerSave', {
+            name: this.name,
+            type: this.type,
+            country: this.country,
+            contactType: this.contactType,
+            sellBrand: this.sellBrand
+          }).then((res) => {
+            console.log('增加贸易商');
+            console.log(res);
+            this.$message.success({
+              message: '新增贸易商成功',
+              showClose: true,
+              duration: 2000
+            });
+            this.dialogAddPeerVisible = false;
+            loading.close();
+            // this.handlePeerList();
+            this.sell_customid = res.data.id;
+            this.sell_custom = res.data.name;
+            this.onSaleSel.select = 1;
+          }).catch((err) => {
+            loading.close();
+            this.$message.error({
+              message: err.data.message,
+              showClose: true,
+              duration: 2000
+            })
+          })
+        }
+      },
+      // 选择该用户
+      addPurchase(item) {
+        console.log(item);
+        this.sell_customid = item.id;
+        this.sell_custom = item.name;
+        this.onSaleSel.select = 1;
+      },
       // 修改销售单信息
       details(item) {
         console.log(item);
@@ -331,12 +687,17 @@
         this.sell_time = item.sell_time;
         this.sell_money = item.sell_money;
         this.sell_currency = item.sell_currency;
+        this.sell_customid = item.sell_customid;
         this.sell_custom = item.sell_custom;
         if (item.sell_payfull == 0) {
           this.sell_payfull = false;
           this.sell_paymoney1 = item.sell_paymoney1;
           this.sell_paytime1 = item.sell_paytime1;
-          this.sell_paymoney2 = item.sell_paymoney2;
+          if (item.sell_paymoney2 == 0) {
+            this.sell_paymoney2 = '';
+          } else {
+            this.sell_paymoney2 = item.sell_paymoney2;
+          }
           if (item.sell_paytime2 == '0000-00-00') {
             this.sell_paytime2 = new Date();
           } else {
@@ -344,7 +705,11 @@
           }
         } else if (item.sell_payfull == 1) {
           this.sell_payfull = true;
-          this.sell_paymoney1 = item.sell_paymoney1;
+          if (item.sell_paymoney1 == 0) {
+            this.sell_paymoney1 = '';
+          } else {
+            this.sell_paymoney1 = item.sell_paymoney1;
+          }
           this.sell_paytime1 = item.sell_paytime1;
         }
         this.sell_note = item.sell_note;
@@ -353,17 +718,34 @@
         this.sell_sendusernick = item.sell_sendusernick;
         this.config.value = item.sell_stockouttoken;
         console.log(this.sell_stockouttoken);
-        this.updateDialogVisible = true;
+        this.onSaleSel.select = 1;
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
       },
       // 确认修改前数据的验证
       sellOrderSave1() {
         console.log("新增销售单");
         console.log(this.sell_payfull);
+        if (this.sell_custom == '') {
+          this.$message.error({
+            message: '请选择销售客户',
+            showClose: true,
+            duration: 2000
+          });
+          return 3;
+        }
         if (this.sell_payfull == false) {
           this.paramsSave = {
             id: this.updateId,
             sell_time: this.shellDate(this.sell_time),
             sell_money: this.sell_money,
+            sell_customid: this.sell_customid,
             sell_custom: this.sell_custom,
             sell_payfull: 0,
             sell_paymoney1: this.sell_paymoney1,
@@ -395,6 +777,7 @@
             id: this.updateId,
             sell_time: this.shellDate(this.sell_time),
             sell_money: this.sell_money,
+            sell_customid: this.sell_customid,
             sell_custom: this.sell_custom,
             sell_payfull: 1,
             sell_paymoney1: this.sell_paymoney1,
@@ -417,9 +800,6 @@
           }
         }
       },
-      qu() {
-        this.updateDialogVisible = false;
-      },
       // 确认修改
       updateSure(id) {
         console.log("ffff");
@@ -429,7 +809,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/SellOrderSave", this.paramsSave)
             .then(res => {
-              console.log("修改销售单成功了吗");
+              console.log("修改销售单");
               console.log(res);
               this.$message.success({
                 message: "修改销售单成功",
@@ -438,8 +818,8 @@
               });
               this.sell_stockouttoken = res.data.sell_stockouttoken;
               console.log(this.sell_stockouttoken);
-              this.updateDialogVisible = false;
               this.keyword = "";
+              this.onSaleSel.select = 0;
               // this.handleSellPendOrderList();
               this.stockInSearch();
             })
@@ -524,62 +904,108 @@
       width: 95%;
       margin: 0 auto;
 
-      .stockSearch {
-        width: 50%;
-        margin: 0 auto;
-
-        .el-input__inner {
-          width: 100%;
-          height: 48px;
-          margin: 0 auto;
-          -webkit-appearance: none;
-          background-color: #fff;
-          background-image: url("../../assets/imgs/search2.png");
-          background-size: 20px;
-          background-repeat: no-repeat;
-          background-position: 30px center;
-          border-radius: 30px;
-          border: 1px solid #dcdfe6;
-          -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-          color: #606266;
-          display: inline-block;
-          font-size: inherit;
-          line-height: 40px;
-          outline: 0;
-          padding: 0 65px;
-          -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-          transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        }
-      }
-
       .onSale-top {
-        margin-top: 30px;
         padding-left: 20px;
         // display: flex;
       }
 
       .onSale-center {
         margin-top: 20px;
+        padding: 30px;
         background-color: #fff;
         border-radius: 30px;
       }
     }
   }
 
+  .onSale-details {
+    width: 92%;
+    margin: 0 auto;
+    padding: 30px;
+    padding-top: 5px;
+    border-radius: 30px;
+    background-color: #fff;
+  }
+
+  .peer-container {
+    width: 100%;
+
+    .peer-top {
+      display: flex;
+      justify-content: space-between;
+
+      .peer-top-right {
+        display: flex;
+
+        .stockSearch {
+          width: 350px;
+          margin: 30px 0;
+          margin-right: 20px;
+        }
+
+        .addBtn {
+          margin: 30px 0;
+
+          .add-btn {
+            width: 120px;
+            height: 40px !important;
+            font-size: 14px !important;
+            background-color: #0c8563;
+            color: #fff;
+
+            .add-i {
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+    }
+
+    .peer-table {
+      background-color: #fff;
+      border-radius: 30px;
+
+      td {
+        background-color: #f3fbf9;
+      }
+    }
+  }
+
+  .back-img {
+    width: 75px;
+    height: 45px;
+    margin: 20px;
+    line-height: 45px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+
+    div {
+      margin-top: 5px;
+
+      img {
+        width: 30px;
+        height: 25px;
+      }
+    }
+
+    .font {
+      font-size: 17px;
+    }
+  }
+
   .purchase-row {
     padding-top: 30px;
-    padding-left: 30px;
+  }
 
-    .purchase-number {
-      font-size: 22px;
-      font-weight: bold;
-    }
+  .purchase-number {
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-    .purchase-date {
-      margin-left: 30px;
-      color: #c8c8c8;
-    }
+  .purchase-date {
+    margin-left: 30px;
+    color: #c8c8c8;
   }
 
   .img-style {
@@ -588,7 +1014,7 @@
   }
 
   .div-table {
-    padding: 0 30px;
+    padding: 0;
 
     .table-tr {
       height: 40px;
@@ -600,8 +1026,7 @@
       }
 
       .table-th {
-        color: #2d4e65;
-        font-size: 20px;
+        font-size: 17px;
         font-weight: normal;
       }
     }
@@ -610,57 +1035,21 @@
       background-color: #fff;
 
       td {
-        background-color: #f2f5f7;
-        font-size: 17px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
 
-      .tr-td-first {
-        padding: 30px;
-        padding-left: 0;
-        padding-right: 0;
-        border-top-left-radius: 30px;
-        border-bottom-left-radius: 30px;
-
-        .first-img {
-          width: 100px;
-          height: 100px;
-          object-fit: cover;
-          border-radius: 30px;
-        }
+      .first-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 30px;
       }
-
-      .tr-td-last {
-        border-top-right-radius: 30px;
-        border-bottom-right-radius: 30px;
-      }
-    }
-  }
-
-  @media screen and (min-width: 1401px) {
-    .top-form {
-      width: 25%;
-    }
-  }
-
-  @media screen and (min-width: 1101px) and (max-width: 1400px) {
-    .top-form {
-      width: 40%;
-    }
-  }
-
-  @media screen and (min-width: 811px) and(max-width: 1100px) {
-    .top-form {
-      width: 50%;
-    }
-  }
-
-  @media screen and (max-width: 810px) {
-    .top-form {
-      width: 60%;
     }
   }
 
   .top-form {
+    width: 190px;
     height: 40px;
     padding-left: 30px;
     line-height: 40px;
@@ -668,7 +1057,7 @@
     border-radius: 30px;
 
     .top-span {
-      // margin-right: 20%;
+      margin-right: 15px;
       font-size: 23px;
     }
   }
@@ -681,25 +1070,15 @@
     height: 60px;
     margin: 10px 0;
     padding: 20px 0;
-    background-color: #f2f5f7;
-    font-size: 17px;
-  }
-
-  .first-td {
-    border-top-left-radius: 30px;
-    border-bottom-left-radius: 30px;
-  }
-
-  .last-td {
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
+    background-color: #f3fbf9;
+    font-size: 15px;
   }
 
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -758,15 +1137,19 @@
 
   .el-button--primary {
     color: #fff;
-    background-color: #2d4e65 !important;
-    border-color: #2d4e65 !important;
+    background-color: #0c8563 !important;
+    border-color: #0c8563 !important;
   }
 
   .el-button {
     width: 20%;
-    height: 50px;
-    border-radius: 23px;
-    font-size: 15px;
+    height: 48px;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+
+  .el-button+.el-button {
+    margin-left: 10%;
   }
 
   // }

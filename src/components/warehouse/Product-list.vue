@@ -3,7 +3,9 @@
     <div class="product-container">
       <div v-if="deliveryList.delivery == 0">
         <div class="back-img" @click="gobackNotOutbound">
-          <img src="../../assets/imgs/goback.png" />
+          <div>
+            <img src="../../assets/imgs/goback.png" />
+          </div>
           <span class="font">返回</span>
         </div>
         <div v-if="productWatchList">
@@ -21,7 +23,7 @@
                 <th>库存信息</th>
               </tr>
               <tr>
-                <td class="first-td">
+                <td>
                   <img v-image-preview
                     :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
                     class="first-img" />
@@ -41,12 +43,13 @@
                 <td>
                   {{items.sell_state == 1 ? items.sell_usernick : (items.LOG_state == 0 ? items.buy_date : (items.LOG_state == 1 ? items.LOG_arrivetime : ''))}}
                 </td>
-                <td class="last-td">
+                <td>
                   <div v-show="items.LOG_state !== 2">
                     <span style="font-size: 15px;">当前商品未入库，暂无库存信息</span>
                   </div>
                   <div v-show="items.LOG_state == 2">
-                    <span @click="inventoryInfo(items.id)" style="font-size: 15px;color: #0aa1ed;cursor: pointer;">查看库存信息</span>
+                    <span @click="inventoryInfo(items.id)"
+                      style="font-size: 15px;color: #0aa1ed;cursor: pointer;">查看库存信息</span>
                   </div>
                 </td>
               </tr>
@@ -57,12 +60,17 @@
       <div v-if="deliveryList.delivery == 1" class="list-details">
         <!-- 手表库存信息页 -->
         <div class="back-img" @click="gobackDeliveryOne">
-          <img src="../../assets/imgs/goback.png" />
+          <div>
+            <img src="../../assets/imgs/goback.png" />
+          </div>
           <span class="font">返回</span>
         </div>
-        <div style="text-align: center;" class="style-margin">
-          <img :src="imgs == null || imgs == '' ? '' : img +  imgs[0]"
-            style="width: 150px;height: 150px;object-fit: cover;" class="first-img" />
+        <div style="margin: 0 auto;display: flex;justify-content: center;" class="style-margin">
+          <!--  + '/img/watch/' -->
+          <div v-for="(imgurl,index) in imgs" :key="index" style="margin-right: 5px;">
+            <img v-show="imgurl !== ''" :src="img +  imgurl" style="width: 150px;height: 150px;object-fit: cover;"
+              class="first-img" />
+          </div>
         </div>
         <div class="list-top">
           <div class="style-margin">
@@ -137,11 +145,12 @@
               <el-row>
                 <el-col :span="12">
                   <el-button
-                    style="width: 100%;margin-top: 30px;background-color:#f2f5f7;border:1px solid #f2f5f7;font-size: 15px;color:#2c3e50;"
+                    style="width: 300px;margin-top: 30px;background-color:#f3fbf9;border:1px solid #f3fbf9;font-size: 14px;color:#2c3e50;"
                     @click="checkWatch">查看与此手表同型号的未出库的手表</el-button>
                 </el-col>
                 <el-col :span="12">
-                  <el-button type="primary" @click="getQRCode" style="width: 40%;margin-top: 30px;">打印二维码</el-button>
+                  <el-button type="primary" @click="getQRCode" style="width: 300px;margin-top: 30px;font-size: 14px;">
+                    打印二维码</el-button>
                 </el-col>
               </el-row>
             </el-form>
@@ -184,6 +193,7 @@
         console.log("55555");
         console.log(id);
         this.id = id;
+        this.imgs = [];
         this.$axios
           .post(this.$store.state.baseUrl + "/Stockwatchinfo", {
             id: this.id
@@ -195,7 +205,13 @@
             this.watchState = this.stockwatchinfo.watchstate.split("|");
             // 手表id  buy_watchid 用于获取同品牌未出库手表列表
             this.watchid = this.stockwatchinfo.buy_watchid;
-            this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+            if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
+              if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
+                this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+              } else {
+                this.imgs.push(this.stockwatchinfo.stock_inpic);
+              }
+            }
             console.log(this.imgs);
             this.buy_watchbrand = this.stockwatchinfo.buy_watchbrand;
             this.buy_watchmodel = this.stockwatchinfo.buy_watchmodel;
@@ -299,36 +315,41 @@
       },
     }
   };
-
 </script>
 <style lang="scss" scoped>
   .product-list-container {
     width: 100%;
 
     .product-container {
-      width: 90%;
+      width: 95%;
       margin: 0 auto;
 
       .back-img {
-        height: 65px;
-        // margin-right: 10%;
+        width: 75px;
+        height: 45px;
         margin-bottom: 20px;
-        line-height: 65px;
+        line-height: 45px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         cursor: pointer;
 
+        div {
+          margin-top: 5px;
+
+          img {
+            width: 30px;
+            height: 25px;
+          }
+        }
+
         .font {
-          // margin-left: 30px;
-          font-size: 30px;
-          color: #2d4e65;
+          font-size: 17px;
         }
       }
 
       .product-table {
-        width: 100%;
-        margin: 10px auto;
-        padding: 10px;
+        margin-bottom: 20px;
+        padding: 30px;
         background-color: #fff;
         border-radius: 30px;
       }
@@ -337,8 +358,8 @@
         height: 60px;
         margin: 10px 0;
         padding: 10px;
-        background-color: #f2f5f7;
-        font-size: 17px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
 
       .first-img {
@@ -349,9 +370,7 @@
       }
 
       .list-details {
-        width: 90%;
-        margin: 0 auto;
-        padding: 40px;
+        padding: 20px 30px;
         background-color: #fff;
         border-radius: 30px;
 
@@ -379,35 +398,11 @@
     }
   }
 
-  @media screen and (min-width: 1651px) {
-    .back-img {
-      width: 12%;
-    }
-  }
-
-  @media screen and (min-width: 1251px) and (max-width: 1650px) {
-    .back-img {
-      width: 15%;
-    }
-  }
-
-  @media screen and (min-width: 986px) and (max-width: 1250px) {
-    .back-img {
-      width: 18%;
-    }
-  }
-
-  @media screen and (max-width: 985px) {
-    .back-img {
-      width: 21%;
-    }
-  }
-
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -419,11 +414,9 @@
       }
     }
   }
-
 </style>
 <style lang="scss">
   .el-form-item__label {
     text-align: left;
   }
-
 </style>

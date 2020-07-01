@@ -1,17 +1,12 @@
 <template>
   <div class="shipping-order-container">
-    <!-- <h3>已入库</h3> -->
-    <div class="stockSearch">
-      <!-- 型号：模糊查找    品牌：全匹配 -->
-      <el-input placeholder="可输入品牌、型号、机芯号进行搜索" class="input-search" prefix-icon="el-icon-search" v-model="keyword"
-        @input="stockInSearch" @focus="pageSel"></el-input>
-    </div>
+    <!-- <h3>已入库/入库待售</h3> -->
     <div v-show="forAccountList.length == 0" ref="hello" style="text-align: center;">
-      <p>数据加载中...</p>
+      <p>{{hintMsg}}</p>
     </div>
     <div v-if="forAccountList.length !== 0">
       <div style="margin-left: 20px;">
-        <p style="font-size: 20px;">{{'商品数量:  ' + ' ' + totalNum}}</p>
+        <p style="font-size: 18px;">{{'商品数量:  ' + ' ' + totalNum}}</p>
       </div>
       <div class="table-container">
         <table>
@@ -25,9 +20,11 @@
         </table>
         <div v-for="(items,index) of forAccountList" :key="index">
           <table>
-            <tr v-for="(item,index) of items.watch" :key="index" style="background-color: #f2f5f7;">
-              <td class="first-td">
-                <img v-image-preview :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ item.buy_watchpics.split('|')[0]" class="first-img" />
+            <tr v-for="(item,index) of items.watch" :key="index" style="background-color: #f3fbf9;">
+              <td>
+                <img v-image-preview
+                  :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ item.buy_watchpics.split('|')[0]"
+                  class="first-img" />
               </td>
               <td>
                 <p>{{item.buy_watchbrand}}</p>
@@ -35,12 +32,12 @@
               </td>
               <td>{{item.buy_watchsn}}</td>
               <td>{{item.buy_watchcurrency + ' ' + formatNumberRgx(item.buy_watchprice)}}</td>
-              <td class="last-td">{{item.stock_intime}}</td>
+              <td>{{item.stock_intime}}</td>
             </tr>
           </table>
         </div>
       </div>
-      <div style="width: 100%;height: 63px;background-color: #f2f5f9;">
+      <div style="width: 100%;height: 63px;">
         <div style="margin:15px 0;position:absolute;right:6%;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
             layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
@@ -53,6 +50,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         page: 1,
         pagenum: 10,
         keyword: '',
@@ -69,15 +67,13 @@
       this.getForAccountList();
     },
     methods: {
-      pageSel() {
-        this.page = 1;
-      },
       // 模糊搜索
       stockInSearch() {
         if (this.keyword !== '') {
           this.forAccountList = [];
           this.total = 0;
           this.totalNum = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
@@ -92,7 +88,7 @@
               this.total = res.data.total;
               this.totalNum = res.data.watchtotal;
               if (this.forAccountList.length == 0) {
-                this.$refs.hello.innerText = '啊哦~暂无数据'
+                this.hintMsg = '啊哦~暂无数据'
               }
             });
         } else if (this.keyword == '') {
@@ -105,6 +101,7 @@
       },
       // 获取待结算商品
       getForAccountList() {
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderListEx', {
           page: this.page,
           pagenum: this.pagenum,
@@ -116,7 +113,7 @@
           this.total = res.data.total;
           this.totalNum = res.data.watchtotal;
           if (this.forAccountList.length == 0) {
-            this.$refs.hello.innerText = '啊哦~暂无数据'
+            this.hintMsg = '啊哦~暂无数据'
           }
         }).catch((err) => {
           console.log(err);
@@ -146,75 +143,36 @@
       },
     },
   }
-
 </script>
 <style lang="scss" scoped>
   .shipping-order-container {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
+    margin-top: 75px;
 
     .table-container {
-      width: 100%;
-      padding: 20px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 30px;
+
+      td {
+        padding: 20px 0;
+
+        .first-img {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 30px;
+        }
+      }
     }
-  }
-
-  .stockSearch {
-    width: 50%;
-    margin: 30px auto;
-
-    .el-input__inner {
-      width: 100%;
-      height: 48px;
-      margin: 0 auto;
-      -webkit-appearance: none;
-      background-color: #fff;
-      background-image: url("../../assets/imgs/search2.png");
-      background-size: 20px;
-      background-repeat: no-repeat;
-      background-position: 30px center;
-      border-radius: 30px;
-      border: 1px solid #dcdfe6;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      color: #606266;
-      display: inline-block;
-      font-size: inherit;
-      line-height: 40px;
-      outline: 0;
-      padding: 0 65px;
-      -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-    }
-  }
-
-  .first-td {
-    padding: 30px;
-    padding-left: 0;
-    padding-right: 0;
-    border-top-left-radius: 30px;
-    border-bottom-left-radius: 30px;
-
-    .first-img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 30px;
-    }
-  }
-
-  .last-td {
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
   }
 
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 20px;
+    border-spacing: 0;
 
     tr {
 
@@ -226,5 +184,4 @@
       }
     }
   }
-
 </style>

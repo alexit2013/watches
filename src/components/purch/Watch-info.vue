@@ -11,7 +11,7 @@
           <th>操作</th>
         </tr>
         <tr v-for="(con,index) of buy_watch" :key="index" class="second-tr">
-          <td class="first-td">
+          <td>
             <img :src="con.buy_watchState == 1 ? watchimg1 : watchimg2" />
           </td>
           <td>
@@ -31,8 +31,10 @@
           </td>
           <td>{{con.buy_watchsn}}</td>
           <td>{{con.buy_watchcurrency+" "+formatNumberRgx(con.buy_watchprice)}}</td>
-          <td class="last-td">
-            <img src="../../assets/imgs/update.png" @click="editCatch(con)" style="cursor: pointer;" />
+          <td>
+            <el-tooltip class="item" effect="light" content="修改信息" placement="top-end">
+              <img src="../../assets/imgs/update.png" @click="editCatch(con)" style="cursor: pointer;" />
+            </el-tooltip>
             <el-dialog title="手表信息" :visible.sync="dialogFormVisible" center :close-on-press-escape="false"
               :close-on-click-modal="false">
               <el-form label-width="120px">
@@ -103,7 +105,7 @@
       obtain() {
         console.log('我是手表信息修改页面');
         console.log(this.watchid);
-        this.$axios.post(this.$store.state.baseUrl + '/BuyOrderGet', {
+        this.$axios.post(this.$store.state.baseUrl + '/BuyOrderGet?java', {
           buy_id: sessionStorage.getItem("buy_id")
         }).then((res) => {
           console.log('手表详细信息');
@@ -160,27 +162,25 @@
       },
     }
   }
-
 </script>
 <style lang="scss" scoped>
   .watchinfo-container {
-    width: 85%;
+    width: 100%;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 20px;
     background-color: #fff;
     border-radius: 30px;
 
     .watchinfo {
-      padding: 30px;
-      padding-bottom: 0;
+      padding: 0;
 
       .first-tr {
         height: 40px;
         line-height: 40px;
-        color: #2d4e65;
+        color: #000;
 
         th {
-          font-size: 20px;
+          font-size: 16px;
           font-weight: normal;
         }
 
@@ -188,14 +188,9 @@
 
       .second-tr {
         td {
-          background-color: #f2f5f7;
           padding: 15px;
-        }
-
-        .first-td {
-          margin-left: 30px;
-          border-top-left-radius: 30px;
-          border-bottom-left-radius: 30px;
+          font-size: 15px;
+          background-color: #f3fbf9;
         }
 
         .img {
@@ -205,17 +200,12 @@
           border-radius: 30px;
         }
 
-        .last-td {
-          border-top-right-radius: 30px;
-          border-bottom-right-radius: 30px;
+        .input-style {
+          width: 50% !important;
+        }
 
-          .input-style {
-            width: 50% !important;
-          }
-
-          .accessories {
-            width: 90%;
-          }
+        .accessories {
+          width: 90%;
         }
       }
     }
@@ -225,7 +215,7 @@
   table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
   }
 
   tr {
@@ -237,7 +227,6 @@
       text-align: center;
     }
   }
-
 </style>
 <style lang="scss">
   .el-form-item::after,
@@ -251,5 +240,4 @@
     display: none;
     content: "";
   }
-
 </style>

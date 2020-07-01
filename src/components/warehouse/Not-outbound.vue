@@ -2,29 +2,22 @@
   <div class="not-outbound-container" id="not-outbound">
     <!-- <h1>未出库商品列表页</h1> -->
     <div v-if="notOutbound.nots == 0">
-      <div v-if="notOutbound.select == 2"
-        style="width: 80%;margin: 20px auto;display: flex;justify-content: space-around;">
+      <div v-if="notOutbound.select == 2" class="not-outbound-top">
         <el-radio v-model="filtrate1" label="0" border @change="getStockListAllList2">全部：采购中+已入库</el-radio>
         <el-radio v-model="filtrate1" label="1" border @change="getStockList3">采购中</el-radio>
         <el-radio v-model="filtrate1" label="2" border @change="getStockList4">已入库</el-radio>
       </div>
-      <div v-if="notOutbound.select == 1"
-        style="width: 80%;margin: 20px auto;display: flex;justify-content: space-around;">
+      <div v-if="notOutbound.select == 1" class="not-outbound-top">
         <el-radio v-model="filtrate" label="0" border @change="getStockListAllList1">全部：采购中+已入库</el-radio>
         <el-radio v-model="filtrate" label="1" border @change="getStockList1">采购中</el-radio>
         <el-radio v-model="filtrate" label="2" border @change="getStockList2">已入库</el-radio>
       </div>
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号进行搜索" style="width: 100%;margin: 0 auto;" class="input-search"
-          prefix-icon="el-icon-search" v-model="keyword" @input="stockInSearch1"></el-input>
-      </div>
-      <div v-show="notOrders.notOutboundList1.length == 0" ref="hello" style="text-align: center;">
-        <p>数据加载中...</p>
+      <div v-show="notOrders.notOutboundList1.length == 0" style="text-align: center;">
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="notOrders.notOutboundList1.length !== 0">
         <div style="margin-left: 5%;">
-          <p style="font-size: 20px;">{{'商品数量: ' + ' ' + notOrders.totalNum1}}</p>
+          <p style="font-size: 18px;">{{'商品数量: ' + ' ' + notOrders.totalNum1}}</p>
         </div>
         <div class="not-container">
           <table>
@@ -35,7 +28,7 @@
               <th>操作</th>
             </tr>
             <tr v-for="(item,index) of notOrders.notOutboundList1" :key="index">
-              <td class="first-td">
+              <td>
                 <img v-image-preview
                   :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                   class="first-img" />
@@ -54,8 +47,10 @@
                 <p v-if="filtrate == 0">已入库：{{item | formatPurchNumRgx(2)}}</p>
                 <p>已出售：{{item | formatPurchNumRgx(1)}}</p>
               </td>
-              <td class="last-td">
-                <el-button type="text" @click="notDetails(item.watch)">查看详情</el-button>
+              <td>
+                <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
+                  <img src="../../assets/imgs/details.png" style="cursor:pointer;" @click="notDetails(item.watch)" />
+                </el-tooltip>
               </td>
             </tr>
           </table>
@@ -78,6 +73,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         filtrate1: "0",
         filtrate: "0",
         keyword: "",
@@ -98,7 +94,7 @@
       };
     },
     props: ["notOutbound", "notOrders"],
-    created() {
+    mounted() {
       this.getStockListAllList1();
     },
     // 库存各指标数据
@@ -149,10 +145,6 @@
         this.notOutbound.select = 1;
       },
       // 模糊搜索
-      stockInSearch1() {
-        this.page = 1;
-        this.stockInSearch();
-      },
       stockInSearch() {
         console.log(this.keyword);
         if (this.keyword !== "") {
@@ -161,6 +153,7 @@
           this.notOrders.notOutboundList1 = [];
           this.notOrders.total1 = 0;
           this.notOrders.totalNum1 = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/StockList", {
               page: this.page,
@@ -178,7 +171,7 @@
               this.notOrders.total1 = res.data.total;
               this.notOrders.totalNum1 = res.data.watchtotal;
               if (this.notOrders.notOutboundList1.length == 0) {
-                this.$refs.hello.innerText = "啊哦~暂无数据";
+                this.hintMsg = "啊哦~暂无数据";
               }
             });
         } else if (this.keyword == "") {
@@ -192,6 +185,7 @@
       // 获取未出库所有商品列表
       getStockListAllList1() {
         console.log(this.filtrate);
+        this.$emit('notKeywordChan', '');
         this.notOutbound.select = 1;
         this.page = 1;
         this.keyword = "";
@@ -202,6 +196,7 @@
       },
       getStockListAllList() {
         console.log(this.filtrate);
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/StockList", {
             page: this.page,
@@ -215,7 +210,7 @@
             this.notOrders.total1 = res.data.total;
             this.notOrders.totalNum1 = res.data.watchtotal;
             if (this.notOrders.notOutboundList1.length == 0) {
-              this.$refs.hello.innerText = "啊哦~暂无数据";
+              this.hintMsg = "啊哦~暂无数据";
             }
           })
           .catch(err => {
@@ -225,6 +220,7 @@
       // 采购中
       getStockList1() {
         console.log(this.filtrate);
+        this.$emit('notKeywordChan', '');
         this.notOutbound.select = 1;
         this.page = 1;
         this.keyword = "";
@@ -236,6 +232,7 @@
       // 已入库
       getStockList2() {
         console.log(this.filtrate);
+        this.$emit('notKeywordChan', '');
         this.notOutbound.select = 1;
         this.page = 1;
         this.keyword = "";
@@ -245,18 +242,21 @@
         this.stockInSearch();
       },
       getStockListAllList2() {
+        this.$emit('notKeywordChan', '');
         this.filtrate1 = "0";
         this.notOutbound.select = 1;
         this.filtrate = "0";
         this.getStockListAllList1();
       },
       getStockList3() {
+        this.$emit('notKeywordChan', '');
         this.filtrate1 = "0";
         this.notOutbound.select = 1;
         this.filtrate = "1";
         this.getStockList1();
       },
       getStockList4() {
+        this.$emit('notKeywordChan', '');
         this.filtrate1 = "0";
         this.notOutbound.select = 1;
         this.filtrate = "2";
@@ -308,47 +308,26 @@
   .not-outbound-container {
     width: 100%;
 
-    .stockSearch {
-      width: 50%;
-      margin: 30px auto;
-
-      .el-input__inner {
-        width: 100%;
-        height: 48px;
-        margin: 0 auto;
-        -webkit-appearance: none;
-        background-color: #fff;
-        background-image: url("../../assets/imgs/search2.png");
-        background-size: 20px;
-        background-repeat: no-repeat;
-        background-position: 30px center;
-        border-radius: 30px;
-        border: 1px solid #dcdfe6;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        line-height: 40px;
-        outline: 0;
-        padding: 0 65px;
-        -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      }
+    .not-outbound-top {
+      width: 80%;
+      margin: 20px auto;
+      margin-top: 0;
+      display: flex;
+      justify-content: space-around;
     }
 
     .not-container {
-      width: 90%;
+      width: 92%;
       margin: 0 auto;
-      padding: 20px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 30px;
 
       td {
         height: 60px;
         padding: 10px 0;
-        background-color: #f2f5f7;
-        font-size: 17px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
 
       .first-img {
@@ -364,7 +343,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

@@ -1,18 +1,13 @@
 <template>
   <div class="mypurchase-container" id="pending-container">
     <div v-if="selectSearch.msg == 0">
-      <div class="stockSearch">
-        <!-- 型号：模糊查找    品牌：全匹配 -->
-        <el-input placeholder="可输入品牌、型号、机芯号进行搜索" class="input-search" prefix-icon="el-icon-search" v-model="keyword"
-          @input="stockInSearch" @focus="pageSel"></el-input>
-      </div>
-      <div>
+      <div style="margin-top: 75px;">
         <div v-show="purchaseOrder.length == 0" ref="hello" style="text-align: center;">
-          <span>数据加载中...</span>
+          <p>{{hintMsg}}</p>
         </div>
         <div v-if="purchaseOrder.length !== 0">
           <div style="margin-left: 20px;">
-            <p style="font-size: 20px;">{{'商品数量:  ' + ' ' + totalNum}}</p>
+            <p style="margin: 20px 0;font-size: 18px;">{{'商品数量:  ' + ' ' + totalNum}}</p>
           </div>
           <div v-for="(item,index) of purchaseOrder" :key="index" class="mypurchase-table">
             <div class="purchase-row">
@@ -22,26 +17,41 @@
             <div class="state-style">
               <div class="state-container">
                 <div class="jump-div" @click="drawback1(item.buy_id)">
-                  <img class="jump-img" :src="watchInfoSelect(item.watch) == 1 ? watchimg1 : watchimg2" />
+                  <div style="margin-right: 10px;">
+                    <img class="jump-img" :src="watchInfoSelect(item.watch) == 1 ? watchimg1 : watchimg2" />
+                  </div>
                   <span type="text" class="button-mypurchase one">手表信息</span>
                 </div>
                 <div class="jump-div" @click="drawback2(item.buy_id)">
-                  <img class="jump-img" :src="item.buy_payState == 1 ? watchimg1 : watchimg2" />
+                  <div style="margin-right: 10px;">
+                    <img class="jump-img" :src="item.buy_payState == 1 ? watchimg1 : watchimg2" />
+                  </div>
                   <span type="text" class="button-mypurchase two">付款</span>
                 </div>
                 <div class="jump-div" @click="drawback3(item.buy_id)">
-                  <img class="jump-img"
-                    :src="item.buy_taxState == 1 ? watchimg1 : (item.buy_taxState == 0 ? watchimg2 : watchimg3)" />
+                  <div style="margin-right: 10px;">
+                    <img class="jump-img"
+                      :src="item.buy_taxState == 1 ? watchimg1 : (item.buy_taxState == 0 ? watchimg2 : watchimg3)" />
+                  </div>
                   <span type="text" class="button-mypurchase three">退税</span>
                 </div>
+                <div class="jump-div" @click="drawback5(item.buy_id,item.buy_commState)">
+                  <div style="margin-right: 10px;">
+                    <img class="jump-img"
+                      :src="item.buy_commState == 1 ? watchimg1 : (item.buy_commState == 0 ? watchimg2 : watchimg3)" />
+                  </div>
+                  <span type="text" class="button-mypurchase three">佣金</span>
+                </div>
                 <div class="jump-div" @click="drawback4(item.buy_id)">
-                  <img class="jump-img"
-                    :src="item.buy_feeState == 1 ? watchimg1 : (item.buy_feeState == 0 ? watchimg2 : watchimg3)" />
+                  <div style="margin-right: 10px;">
+                    <img class="jump-img"
+                      :src="item.buy_feeState == 1 ? watchimg1 : (item.buy_feeState == 0 ? watchimg2 : watchimg3)" />
+                  </div>
                   <span type="text" class="button-mypurchase four">小费</span>
                 </div>
               </div>
             </div>
-            <div class="div-table" v-for="(content,indexs) of item.watch" :key="indexs">
+            <div class="div-table">
               <table>
                 <tr class="table-tr">
                   <th class="table-th first-img">图片</th>
@@ -51,8 +61,8 @@
                   <th class="table-th">销售价</th>
                   <th class="table-th">状态</th>
                 </tr>
-                <tr class="table-tr-container">
-                  <td class="tr-td-first">
+                <tr class="table-tr-container" v-for="(content,indexs) of item.watch" :key="indexs">
+                  <td>
                     <img v-image-preview
                       :src="content.buy_watchpics == null || content.buy_watchpics == '' ? '' : img + '/img/watch/'+ content.buy_watchpics.split('|')[0]"
                       class="first-img" />
@@ -66,134 +76,137 @@
                   <td>
                     {{content.sell_state == 0 ? '未销售' : content.sell_currency + ' ' + formatNumberRgx(content.sell_money)}}
                   </td>
-                  <td class="tr-ta-last">
-                    <div class="jump-div">
-                      <div @click="shipped(content.LOG_id,content.LOG_state,index)">
-                        <img class="jump-img" :src="content.LOG_state > 0 ? watchimgs1 : watchimgs2" />
-                        <span type="text" class="button-mypurchase four">发货</span>
-                      </div>
-                      <el-dialog title="物流详细信息" :visible.sync="dialogShippedVisible">
-                        <div style="text-align: left;">
-                          <div class="details-container">
-                            <el-form label-width="20%">
-                              <el-form-item label="预计到达时间：" v-show="details.LOG_state == 1">
-                                <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
-                                  class="input-style" readonly>
-                                </el-date-picker>
-                              </el-form-item>
-                              <el-form-item label="到达仓库时间：" v-show="details.LOG_state == 2">
-                                <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
-                                  class="input-style" readonly>
-                                </el-date-picker>
-                              </el-form-item>
-                              <el-form-item label="到达仓库：">
-                                <el-input v-model="details.LOG_warehouse" class="input-style"
-                                  style="width: 60%;height: auto;line-height: 40px;" readonly>
-                                </el-input>
-                              </el-form-item>
-                              <el-form-item label="总运费：">
-                                <el-input v-model="details.LOG_money" style="width: 60%;height: auto;line-height: 40px;"
-                                  readonly>
-                                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
-                                </el-input>
-                              </el-form-item>
-                            </el-form>
-                            <div>
-                              <!-- <div style="margin: 15px 0;font-size: 20px;">
-                              <span>共 {{nums}} 块手表</span>
-                            </div> -->
-                              <div class="every-details">
-                                <div style="font-size: 18px;"><span>每块表详细信息：</span></div>
-                                <table>
-                                  <tr>
-                                    <th class="table-th">图片</th>
-                                    <th class="table-th">型号</th>
-                                    <th class="table-th">机芯号</th>
-                                    <th class="table-th">采购价</th>
-                                    <th class="table-th">运费</th>
-                                  </tr>
-                                  <tr v-for="(items,index) in details.LOG_watch" :key="index">
-                                    <td class="first-td">
-                                      <img v-image-preview
-                                        :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
-                                        style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
-                                    </td>
-                                    <td>
-                                      <div>
-                                        <span>{{items.buy_watchbrand}}</span>
-                                      </div>
-                                      <div>
-                                        <span>{{items.buy_watchmodel}}</span>
-                                      </div>
-                                    </td>
-                                    <!-- <td>{{items.buy_watchbrand +'-'+ items.buy_watchmodel}}</td> -->
-                                    <td>{{items.buy_watchsn}}</td>
-                                    <td>{{items.buy_watchcurrency}} {{formatNumberRgx(items.buy_watchprice)}}</td>
-                                    <td class="last-td">
-                                      <div
-                                        style="width: 90%;margin: 0 auto;padding-left: 5px;border-bottom: 1px solid #2d4e65;display: flex;">
-                                        <input type="text" v-model="items.LOG_moneyex" class="freight-input" readonly>
-                                        <i slot="suffix"
-                                          style="width: 50%;height: 40px;margin-right:5%;line-height: 40px;font-style:normal;color: #000;">HKD</i>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </table>
+                  <td>
+                    <div style="width: 100%;display: flex;justify-content: space-between;">
+                      <div>
+                        <div @click="shipped(content.LOG_id,content.LOG_state,index)" class="jump-div">
+                          <div style="margin-top: 2px;">
+                            <img class="jump-img" :src="content.LOG_state > 0 ? watchimgs1 : watchimgs2" />
+                          </div>
+                          <span type="text" class="button-mypurchase four">发货</span>
+                        </div>
+                        <el-dialog title="物流详细信息" :visible.sync="dialogShippedVisible">
+                          <div style="text-align: left;">
+                            <div class="details-container">
+                              <el-form label-width="130px">
+                                <el-form-item label="预计到达时间：" v-show="details.LOG_state == 1">
+                                  <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
+                                    class="input-style" readonly>
+                                  </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="到达仓库时间：" v-show="details.LOG_state == 2">
+                                  <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
+                                    class="input-style" readonly>
+                                  </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="到达仓库：">
+                                  <el-input v-model="details.LOG_warehouse" class="input-style"
+                                    style="width: 60%;height: auto;line-height: 40px;" readonly>
+                                  </el-input>
+                                </el-form-item>
+                                <el-form-item label="总运费：">
+                                  <el-input v-model="details.LOG_money"
+                                    style="width: 60%;height: auto;line-height: 40px;" readonly>
+                                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                                  </el-input>
+                                </el-form-item>
+                              </el-form>
+                              <div>
+                                <div class="every-details">
+                                  <div style="margin-bottom: 20px;font-size: 18px;"><span>每块表详细信息：</span></div>
+                                  <table>
+                                    <tr>
+                                      <th class="table-th">图片</th>
+                                      <th class="table-th">型号</th>
+                                      <th class="table-th">机芯号</th>
+                                      <th class="table-th">采购价</th>
+                                      <th class="table-th">运费</th>
+                                    </tr>
+                                    <tr v-for="(items,index) in details.LOG_watch" :key="index">
+                                      <td>
+                                        <img v-image-preview
+                                          :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
+                                          style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
+                                      </td>
+                                      <td>
+                                        <p>{{items.buy_watchbrand}}</p>
+                                        <p>{{items.buy_watchmodel}}</p>
+                                      </td>
+                                      <!-- <td>{{items.buy_watchbrand +'-'+ items.buy_watchmodel}}</td> -->
+                                      <td>{{items.buy_watchsn}}</td>
+                                      <td>{{items.buy_watchcurrency}} {{formatNumberRgx(items.buy_watchprice)}}</td>
+                                      <td>
+                                        <div
+                                          style="width: 90%;margin: 0 auto;padding-left: 5px;border-bottom: 1px solid #000;display: flex;">
+                                          <input type="text" v-model="items.LOG_moneyex" class="freight-input" readonly>
+                                          <i slot="suffix"
+                                            style="width: 50%;height: 40px;margin-right:5%;line-height: 40px;font-style:normal;color: #000;">HKD</i>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div slot="footer">
-                          <el-button @click="dialogShippedVisible = false">取 消</el-button>
-                          <el-button type="primary" @click="dialogShippedVisible = false">确 定</el-button>
-                        </div>
-                      </el-dialog>
-                    </div>
-                    <div>
-                      <div @click="comePurch(content.stock_intime)" class="jump-div">
-                        <img class="jump-img" :src="content.LOG_state == 2 ? watchimgs1 : watchimgs2" />
-                        <span type="text" class="button-mypurchase four">入库</span>
+                          <div slot="footer">
+                            <el-button @click="dialogShippedVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="dialogShippedVisible = false">确 定</el-button>
+                          </div>
+                        </el-dialog>
                       </div>
-                      <el-dialog title="入库时间" :visible.sync="dialogPurchVisible">
-                        <div style="text-align: left;">
-                          <el-form label-width="120px">
-                            <el-form-item label="入库时间：">
-                              <el-input v-model="stock_intime" style="width: 50%;" readonly="readonly"></el-input>
+                      <div>
+                        <div @click="comePurch(content.stock_intime)" class="jump-div">
+                          <div style="margin-top: 2px;">
+                            <img class="jump-img" :src="content.LOG_state == 2 ? watchimgs1 : watchimgs2" />
+                          </div>
+                          <span type="text" class="button-mypurchase four">入库</span>
+                        </div>
+                        <el-dialog title="入库时间" :visible.sync="dialogPurchVisible">
+                          <div style="text-align: left;">
+                            <el-form label-width="120px">
+                              <el-form-item label="入库时间：">
+                                <el-input v-model="stock_intime" style="width: 50%;" readonly="readonly"></el-input>
+                              </el-form-item>
+                            </el-form>
+                          </div>
+                          <div slot="footer">
+                            <el-button @click="dialogPurchVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="dialogPurchVisible = false">确 定</el-button>
+                          </div>
+                        </el-dialog>
+                      </div>
+                      <div>
+                        <div @click="saleCome(content.sell_money,content.sell_currency)" class="jump-div">
+                          <div style="margin-top: 2px;">
+                            <img class="jump-img" :src="content.sell_state == 2 ? watchimgs1 : watchimgs2" />
+                          </div>
+                          <span type="text" class="button-mypurchase four">销售</span>
+                        </div>
+                        <el-dialog title="销售金额" :visible.sync="dialogSaleVisible">
+                          <el-form label-width="120px" style="text-align: left;">
+                            <el-form-item label="销售金额：">
+                              <el-input v-model="sell_money" style="width: 50%;" readonly="readonly">
+                                <i slot="suffix"
+                                  style="color: #000;margin-right:5%;font-style:normal;">{{sell_currency}}</i>
+                              </el-input>
                             </el-form-item>
                           </el-form>
-                        </div>
-                        <div slot="footer">
-                          <el-button @click="dialogPurchVisible = false">取 消</el-button>
-                          <el-button type="primary" @click="dialogPurchVisible = false">确 定</el-button>
-                        </div>
-                      </el-dialog>
-                    </div>
-                    <div>
-                      <div @click="saleCome(content.sell_money,content.sell_currency)" class="jump-div">
-                        <img class="jump-img" :src="content.sell_state == 2 ? watchimgs1 : watchimgs2" />
-                        <span type="text" class="button-mypurchase four">销售</span>
+                          <div slot="footer">
+                            <el-button @click="dialogSaleVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="dialogSaleVisible = false">确 定</el-button>
+                          </div>
+                        </el-dialog>
                       </div>
-                      <el-dialog title="销售金额" :visible.sync="dialogSaleVisible">
-                        <el-form label-width="120px" style="text-align: left;">
-                          <el-form-item label="销售金额">
-                            <el-input v-model="sell_money" style="width: 50%;" readonly="readonly">
-                              <i slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;">{{sell_currency}}</i>
-                            </el-input>
-                          </el-form-item>
-                        </el-form>
-                        <div slot="footer">
-                          <el-button @click="dialogSaleVisible = false">取 消</el-button>
-                          <el-button type="primary" @click="dialogSaleVisible = false">确 定</el-button>
+                      <div>
+                        <div @click="finalStatement(content.admin_settleOrderid,content.admin_settlestate)"
+                          class="jump-div">
+                          <div style="margin-top: 2px;">
+                            <img class="jump-img" :src="content.admin_settlestate == 2 ? watchimgs1 : watchimgs2" />
+                          </div>
+                          <span type="text" class="button-mypurchase four">结算</span>
                         </div>
-                      </el-dialog>
-                    </div>
-                    <div class="jump-div">
-                      <div @click="finalStatement(content.admin_settleOrderid,content.admin_settlestate)">
-                        <img class="jump-img" :src="content.admin_settlestate == 2 ? watchimgs1 : watchimgs2" />
-                        <span type="text" class="button-mypurchase four">结算</span>
-                      </div>
-                      <!-- <el-dialog title="结算单详细信息" :visible.sync="dialogFinalStatementVisible">
+                        <!-- <el-dialog title="结算单详细信息" :visible.sync="dialogFinalStatementVisible">
                       <div style="text-align: left;">
                         <div class="details-container">
                           <el-form label-width="15%">
@@ -243,6 +256,7 @@
                         <el-button type="primary" @click="dialogFinalStatementVisible = false">确 定</el-button>
                       </div>
                     </el-dialog> -->
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -250,7 +264,7 @@
             </div>
 
           </div>
-          <div style="width: 100%;height: 63px;background-color: #f2f5f9;">
+          <div style="width: 100%;height: 63px;">
             <div style="margin:15px 0;position:absolute;right:6%;">
               <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
                 layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
@@ -271,6 +285,7 @@
     data() {
       return {
         // numSelect: 0,
+        hintMsg: '数据加载中...',
         page: 1,
         pagenum: 10,
         total: 0,
@@ -293,7 +308,8 @@
         watchstate: 0,
         detailsSelect: {
           id: 1,
-          num: 0
+          num: 0,
+          buy_commState: 0,
         },
         dialogShippedVisible: false,
         details: {},
@@ -326,9 +342,6 @@
     },
     props: ["selectSearch"],
     methods: {
-      pageSel() {
-        this.page = 1;
-      },
       // 模糊搜索
       stockInSearch() {
         console.log(this.keyword);
@@ -337,6 +350,7 @@
           this.purchaseOrder = [];
           this.total = 0;
           this.totalNum = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
@@ -351,7 +365,7 @@
               this.total = res.data.total;
               this.totalNum = res.data.watchtotal;
               if (this.purchaseOrder.length == 0) {
-                this.$refs.hello.innerText = '啊哦~暂无数据'
+                this.hintMsg = '啊哦~暂无数据'
               }
             });
         } else if (this.keyword == '') {
@@ -365,6 +379,7 @@
       // 全部订单
       getBuyOrderAllList() {
         console.log(this.filtrate);
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
             page: this.page,
@@ -379,7 +394,7 @@
             this.totalNum = res.data.watchtotal;
             console.log(this.purchaseOrder);
             if (this.purchaseOrder.length == 0) {
-              this.$refs.hello.innerText = '啊哦~暂无数据'
+              this.hintMsg = '啊哦~暂无数据'
             }
             // this.page = 1;
           });
@@ -474,6 +489,23 @@
           }
         })();
       },
+      drawback5(id, buy_commState) {
+        sessionStorage.setItem("buy_id", id);
+        console.log(sessionStorage.getItem("buy_id"));
+        this.detailsSelect.buy_commState = buy_commState;
+        this.detailsSelect.num = 4;
+        this.selectSearch.msg = 1;
+        this.$emit('pendingNum', 1);
+        // 页面回到顶部
+        (function smoothscroll() {
+          var currentScroll =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          if (currentScroll > 0) {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - currentScroll / 5);
+          }
+        })();
+      },
       drawback4(id) {
         sessionStorage.setItem("buy_id", id);
         console.log(sessionStorage.getItem("buy_id"));
@@ -526,11 +558,11 @@
       },
       // 是否已销售
       saleCome(sell_money, sell_currency) {
-        this.sell_money = sell_money;
+        this.sell_money = this.formatNumberRgx(sell_money);
         this.sell_currency = sell_currency;
         if (this.sell_money == null || this.sell_currency == null) {
           this.$message.error({
-            message: '商品未销售',
+            message: '商品未出售，暂无出售信息',
             showClose: true,
             duration: 2000
           })
@@ -585,37 +617,8 @@
 </script>
 <style lang="scss" scoped>
   .mypurchase-container {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
-
-    .stockSearch {
-      width: 50%;
-      margin: 30px auto;
-
-      .el-input__inner {
-        width: 100%;
-        height: 48px;
-        margin: 0 auto;
-        -webkit-appearance: none;
-        background-color: #fff;
-        background-image: url("../../assets/imgs/search2.png");
-        background-size: 20px;
-        background-repeat: no-repeat;
-        background-position: 30px center;
-        border-radius: 30px;
-        border: 1px solid #dcdfe6;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        color: #606266;
-        display: inline-block;
-        font-size: inherit;
-        line-height: 40px;
-        outline: 0;
-        padding: 0 65px;
-        -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      }
-    }
 
     .freight-input {
       width: 90%;
@@ -628,16 +631,16 @@
 
     .mypurchase-table {
       width: 100%;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       background-color: #fff;
       border-radius: 20px;
 
       .purchase-row {
-        padding-top: 50px;
+        padding-top: 30px;
         padding-left: 30px;
 
         .purchase-number {
-          font-size: 22px;
+          font-size: 18px;
           font-weight: bold;
         }
 
@@ -648,10 +651,9 @@
       }
 
       .div-table {
-        // padding: 0 30px;
         padding: 30px;
+        padding-bottom: 20px;
         padding-top: 0;
-        padding-bottom: 0;
 
         .table-tr {
           height: 40px;
@@ -663,8 +665,7 @@
           }
 
           .table-th {
-            color: #2d4e65;
-            font-size: 20px;
+            font-size: 17px;
             font-weight: normal;
           }
         }
@@ -673,52 +674,30 @@
           background-color: #fff;
 
           td {
-            background-color: #f2f5f7;
-            font-size: 17px;
+            padding: 20px 0;
+            background-color: #f3fbf9;
+            font-size: 15px;
           }
 
-          .tr-td-first {
-            padding: 30px;
-            padding-left: 0;
-            padding-right: 0;
-            border-top-left-radius: 30px;
-            border-bottom-left-radius: 30px;
-
-            .first-img {
-              width: 100px;
-              height: 100px;
-              object-fit: cover;
-              border-radius: 30px;
-            }
+          .first-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 30px;
           }
 
-          .tr-ta-last {
-            border-top-right-radius: 30px;
-            border-bottom-right-radius: 30px;
+          .jump-div {
+            margin-top: 10px;
+            cursor: pointer;
+            display: flex;
 
-            .jump-div {
-              margin-top: 10px;
-              cursor: pointer;
-
-              .jump-img {
-                width: 15px;
-                height: 15px;
-              }
-
-              .button-mypurchase {
-                border: 0;
-                outline: none;
-                color: #2d4e65;
-              }
+            .jump-img {
+              width: 15px;
+              height: 15px;
             }
 
             .details-container {
               .every-details {
-                padding: 20px;
-                padding-bottom: 0;
-                border-radius: 30px;
-                border: 1px solid #ddd;
-
                 .table-th {
                   font-size: 16px;
                 }
@@ -732,17 +711,22 @@
     }
   }
 
+  .button-mypurchase {
+    border: 0;
+    outline: none;
+    color: #000;
+  }
+
   .state-style {
-    width: 100%;
-    padding: 20px 0;
-    // background-color: #f2f5f7;
-    // border-bottom-left-radius: 30px;
-    // border-bottom-right-radius: 30px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 30px;
 
     .state-container {
-      width: 50%;
+      width: 100%;
+      margin: 0 auto;
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
 
       .jump-div {
         display: flex;
@@ -752,24 +736,20 @@
           width: 20px;
           height: 20px;
         }
-
-        .button-mypurchase {
-          border: 0;
-          outline: none;
-          color: #2d4e65;
-        }
       }
     }
 
   }
-  .input-style{
+
+  .input-style {
     width: 60% !important;
   }
+
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 20px;
+    border-spacing: 0;
 
     tr {
 
@@ -794,25 +774,21 @@
   #pending-container {
     .el-pagination button:disabled {
       color: #c0c4cc;
-      background-color: #f2f5f9;
+      background-color: transparent;
       cursor: not-allowed;
     }
 
     div .el-pager li {
-      background-color: #f2f5f9 !important;
+      background-color: transparent !important;
     }
 
     .el-pagination .btn-next,
     .el-pagination .btn-prev {
-      background: center center no-repeat #f2f5f9;
+      background: center center no-repeat transparent;
       background-size: 16px;
       cursor: pointer;
       margin: 0;
       color: #303133;
-    }
-
-    .el-input {
-      width: 100%;
     }
 
     .el-radio.is-bordered {
@@ -822,10 +798,6 @@
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
       height: 40px;
-    }
-
-    .el-dialog {
-      width: 60%;
     }
 
     .vue-directive-image-previewer {

@@ -1,53 +1,53 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view v-if="isRouterAlive"></router-view>
   </div>
 </template>
 
 <script>
-export default {
-  name: "App",
-  provide() {
-    return {
-      reload: this.reload
-    };
-  },
-  data() {
-    return {
-      isRouterAlive: true
-    };
-  },
-  computed: {
-    isLogin() {
-      if (sessionStorage.getItem("role") && sessionStorage.getItem("token")) {
-        this.$store.commit("userStatus", sessionStorage.getItem("role"));
-      } else {
-        this.$store.commit("userStatus", null);
+  export default {
+    name: "App",
+    provide() {
+      return {
+        reload: this.reload
+      };
+    },
+    data() {
+      return {
+        isRouterAlive: true
+      };
+    },
+    computed: {
+      isLogin() {
+        if (sessionStorage.getItem("role") && sessionStorage.getItem("token")) {
+          this.$store.commit("userStatus", sessionStorage.getItem("role"));
+        } else {
+          this.$store.commit("userStatus", null);
+        }
+        return this.$store.getters.isLogin;
       }
-      return this.$store.getters.isLogin;
+    },
+    methods: {
+      reload() {
+        this.isRouterAlive = false;
+        this.$nextTick(function () {
+          this.isRouterAlive = true;
+        });
+      }
     }
-  },
-  methods: {
-    reload() {
-      this.isRouterAlive = false;
-      this.$nextTick(function() {
-        this.isRouterAlive = true;
-      });
-    }
-  }
-};
+  };
 </script>
 
 <style>
-body {
-  margin: 0;
-}
+  body {
+    margin: 0;
+  }
 
-#app {
-  font-family: "微软雅黑";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-}
+  #app {
+    font-family: "微软雅黑";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: left;
+    color: #2c3e50;
+  }
 </style>

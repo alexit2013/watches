@@ -8,22 +8,22 @@
     </div>
     <div v-if="buy_feeState == true" class="tip-center">
       <el-form label-width="10%">
-        <el-form-item label="小费日期">
+        <el-form-item label="小费日期：">
           <el-date-picker v-model="buy_feetime" type="date" class="input-style"></el-date-picker>
         </el-form-item>
-        <el-form-item label="小费金额">
+        <el-form-item label="小费金额：">
           <el-input v-model="buy_feemoney" class="input-style">
             <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_feecurrency}}</i>
           </el-input>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="备注：">
           <el-input type="textarea" :autosize="{ minRows: 6}" placeholder="请输入备注内容" v-model="buy_feenote"
             class="input-style"></el-input>
         </el-form-item>
       </el-form>
     </div>
     <div class="drawback-submit">
-      <img src="../../assets/imgs/save.png" @click="submitTip" />
+      <el-button type="primary" @click="submitTip">保 存</el-button>
     </div>
   </div>
 </template>
@@ -44,7 +44,7 @@
     methods: {
       acquire() {
         this.$axios
-          .post(this.$store.state.baseUrl + "/BuyOrderGet", {
+          .post(this.$store.state.baseUrl + "/BuyOrderGet?java", {
             buy_id: sessionStorage.getItem("buy_id")
           })
           .then(res => {
@@ -102,7 +102,6 @@
       }
     }
   };
-
 </script>
 <style lang="scss" scoped>
   .tip-container {
@@ -111,19 +110,8 @@
     .drawback-top {
       width: 100%;
 
-      @media screen and (min-width: 1401px) {
-        .top-form {
-          width: 25%;
-        }
-      }
-
-      @media screen and (max-width: 1400px) {
-        .top-form {
-          width: 40%;
-        }
-      }
-
       .top-form {
+        width: 190px;
         height: 80px;
         padding-left: 40px;
         line-height: 80px;
@@ -131,8 +119,8 @@
         border-radius: 30px;
 
         .top-span {
-          margin-right: 30%;
-          font-size: 23px;
+          margin-right: 15px;
+          font-size: 22px;
         }
       }
     }
@@ -159,11 +147,9 @@
       }
     }
   }
-
 </style>
 <style lang="scss">
   .el-form-item__label {
     font-size: 16px;
   }
-
 </style>

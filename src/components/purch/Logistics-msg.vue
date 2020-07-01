@@ -2,12 +2,11 @@
   <div class="msg-container" id="logistics-msg">
     <!-- <h1>商品发货</h1> -->
     <div class="back-button" @click="selecting">
-      <img src="../../assets/imgs/goback.png" style="cursor: pointer;" />
-      <div style="height: 70px; line-height: 70px;">
-        <span>继续选择</span>
+      <div>
+        <img src="../../assets/imgs/goback.png" />
       </div>
+      <span>继续选择</span>
     </div>
-    <!-- <h2 class="msg-title">物流信息</h2> -->
     <div class="msg-info-first">
       <el-form label-width="150px">
         <el-form-item label="发货时间：">
@@ -17,7 +16,7 @@
           <el-date-picker class="input-style" v-model="arriveTime" type="date"></el-date-picker>
         </el-form-item>
         <el-form-item label="到达仓库：">
-          <el-select v-model="warehouse" placeholder="placeholder" class="input-style">
+          <el-select v-model="warehouse" placeholder="请选择" class="input-style">
             <el-option v-for="(item,index) in warehouseList" :key="index" :label="item.name" :value="item.name">
             </el-option>
           </el-select>
@@ -33,7 +32,7 @@
         </el-form-item>
       </el-form>
       <div class="freight-container">
-        <span>每块表分摊金额：</span>
+        <p>每块表分摊金额：</p>
         <table>
           <tr>
             <th>图片</th>
@@ -45,7 +44,7 @@
             </th>
           </tr>
           <tr v-for="(item,index) in watchFreightList" :key="index">
-            <td class="first-td">
+            <td>
               <img v-image-preview
                 :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
                 style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
@@ -60,8 +59,8 @@
             </td>
             <td>{{item.buy_watchsn}}</td>
             <td>{{item.buy_watchcurrency}} {{formatNumberRgx(item.buy_watchprice)}}</td>
-            <td class="last-td">
-              <div style="width: 75%;margin: 0 auto;padding-left: 5px;border-bottom: 1px solid #2d4e65;display: flex;">
+            <td>
+              <div style="width: 75%;margin: 0 auto;padding-left: 5px;border-bottom: 1px solid #000;display: flex;">
                 <input type="text" v-model="arries[index]" class="freight-input" @input="inputChange" />
                 <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
               </div>
@@ -83,7 +82,7 @@
         img: this.$store.state.baseUrl,
         arriveTime: "",
         warehouseList: [],
-        warehouse: "小凤仓库",
+        warehouse: "",
         warehouseId: 1,
         freight: "", // 运费
         watchFreightList: "",
@@ -129,6 +128,7 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/RatesGet", {
             // source: item.buy_watchcurrency
+            time: '2020-06-29',
             source: "CNY"
           })
           .then(res => {
@@ -285,7 +285,7 @@
           this.freight == ""
         ) {
           this.$message.error({
-            message: "数据不能为空，请重新填写",
+            message: "数据不能为空，请检查数据填写",
             showClose: true,
             duration: 2000
           })
@@ -390,19 +390,30 @@
 </script>
 <style lang="scss" scoped>
   .msg-container {
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
 
     .back-button {
-      width: 150px;
+      width: 105px;
+      height: 30px;
+      margin-bottom: 20px;
+      line-height: 37px;
       display: flex;
       justify-content: space-between;
-    }
+      cursor: pointer;
 
-    .msg-title {
-      font-size: 24px;
-      color: #2d4e65;
-      font-weight: normal;
+      div {
+        margin-top: 5px;
+
+        img {
+          width: 30px;
+          height: 25px;
+        }
+      }
+
+      .font {
+        font-size: 17px;
+      }
     }
 
     .msg-info-first,
@@ -410,7 +421,7 @@
       width: 100%;
       padding: 40px 0;
       padding-bottom: 20px;
-      padding-left: 20px;
+      // padding-left: 20px;
       background-color: #fff;
       border-radius: 30px;
     }
@@ -431,19 +442,9 @@
         border-radius: 30px;
 
         td {
-          background-color: #f2f5f7;
-          font-size: 17px;
-        }
-
-        .first-td {
-          padding: 30px;
-          border-top-left-radius: 30px;
-          border-bottom-left-radius: 30px;
-        }
-
-        .last-td {
-          border-top-right-radius: 30px;
-          border-bottom-right-radius: 30px;
+          padding: 20px 0;
+          background-color: #f3fbf9;
+          font-size: 15px;
         }
       }
     }
@@ -453,23 +454,23 @@
       height: 40px;
       border: 0;
       outline: none;
-      background-color: #f2f5f7;
+      background-color: transparent;
     }
 
     .sure {
-      width: 100%;
+      width: 95%;
       margin: 20px;
       text-align: right;
 
       .sure-button {
-        width: 30%;
-        height: 60px;
-        background-color: #2d4e65;
+        width: 300px;
+        height: 50px;
+        background-color: #0c8563;
         color: #fff;
         border: 0;
         border-radius: 30px;
         outline: none;
-        font-size: 20px;
+        font-size: 16px;
         cursor: pointer;
       }
     }
@@ -479,7 +480,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

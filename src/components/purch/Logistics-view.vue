@@ -2,7 +2,7 @@
   <div class="view-container" id="container">
     <!-- <h1>物流</h1> -->
     <div v-show="logisticsViewList.length == 0" ref="hello" style="margin-top: 100px;text-align: center;">
-      <span>数据加载中...</span>
+      <p>{{hintMsg}}</p>
     </div>
     <div v-if="logisticsViewList.length !== 0">
       <div class="view" v-for="(item,index) in logisticsViewList" :key="index">
@@ -18,22 +18,24 @@
             <th>操作</th>
           </tr>
           <tr>
-            <td class="first-td">{{item.LOG_warehouse}}</td>
+            <td>{{item.LOG_warehouse}}</td>
             <td>{{'HKD '+formatNumberRgx(item.LOG_money)}}</td>
             <td>
               <div style="display: flex;justify-content:center;">
                 <span>{{item.LOG_state == 1 ? "运输中" : "已到达仓库"}}</span>
-                <div style="padding-top: 3px;margin-left: 5px;">
+                <div style="margin-left: 5px;">
                   <img :src="item.LOG_state == 1 ? img1 : img2" style="width: 20px;height: 20px;" />
                 </div>
               </div>
             </td>
-            <td class="last-td">
-              <el-button type="text" @click="viewDetails(item)">详细信息</el-button>
+            <td>
+              <el-tooltip class="item" effect="light" content="查看详细信息" placement="top-end">
+                <img src="../../assets/imgs/details.png" style="cursor: pointer;" @click="viewDetails(item)" />
+              </el-tooltip>
               <el-dialog title="详细物流信息" :visible.sync="dialogVisible">
                 <div style="text-align: left;">
                   <div class="details-container">
-                    <el-form label-width="20%">
+                    <el-form label-width="130px">
                       <el-form-item label="预计到达时间：" v-if="details.LOG_state == 1">
                         <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
                           class="input-style" readonly></el-date-picker>
@@ -54,12 +56,12 @@
                       </el-form-item>
                     </el-form>
                     <div>
-                      <div style="margin: 15px 0;font-size: 20px;">
+                      <div style="margin: 15px 0;font-size: 18px;">
                         <span>共 {{nums}} 块手表</span>
                         <!-- <span></span> -->
                       </div>
                       <div class="every-details">
-                        <div style="font-size: 18px;">
+                        <div style="font-size: 16px;">
                           <span>每块表详细信息：</span>
                         </div>
                         <table>
@@ -72,7 +74,7 @@
                             <th class="table-th">运费</th>
                           </tr>
                           <tr v-for="(items,index) in details.LOG_watch" :key="index">
-                            <td class="first-td">
+                            <td>
                               <img v-image-preview
                                 :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
                                 style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
@@ -92,8 +94,8 @@
                               <!-- <span>{{items.LOG_state == 1 ? "运输中" : "已到达仓库"}}</span> -->
                               <img :src="items.LOG_state == 2 || items.LOG_state > 2 ? img2 : img1" />
                             </td>
-                            <td class="last-td">
-                              <div style="width: 100%;margin: 0 auto;border-bottom: 1px solid #2d4e65;display: flex;">
+                            <td>
+                              <div style="width: 100%;margin: 0 auto;border-bottom: 1px solid #000;display: flex;">
                                 <input type="text" v-model="items.LOG_moneyex" class="freight-input" readonly />
                                 <i slot="suffix"
                                   style="width: 50%;height: 40px;line-height: 40px;font-style:normal;color: #000;">HKD</i>
@@ -114,7 +116,7 @@
           </tr>
         </table>
       </div>
-      <div style="width: 100%;height: 50px;background-color: #f2f5f9;">
+      <div style="width: 100%;height: 50px;">
         <div style="margin:15px 0;position:absolute;right:10%;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
             layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
@@ -127,6 +129,7 @@
   export default {
     data() {
       return {
+        hintMsg: '数据加载中...',
         img: this.$store.state.baseUrl,
         total: 0,
         page: 1,
@@ -149,6 +152,7 @@
     methods: {
       // 获取已发货的商品物流信息
       handleView() {
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/LOGList", {
             page: this.page,
@@ -160,7 +164,7 @@
             this.total = res.data.total;
             this.logisticsViewList = res.data.lst;
             if (this.logisticsViewList.length == 0) {
-              this.$refs.hello.innerText = "啊哦~暂无数据";
+              this.hintMsg = "啊哦~暂无数据";
             }
           })
           .catch(err => {
@@ -213,55 +217,42 @@
 
     .view {
       width: 100%;
-      margin-top: 20px;
+      margin-bottom: 20px;
       background-color: #fff;
       border-radius: 30px;
 
       .purchase-row {
-        padding-top: 50px;
+        padding-top: 20px;
         padding-left: 30px;
 
         .purchase-number {
-          font-size: 22px;
+          font-size: 18px;
           font-weight: bold;
         }
 
         .purchase-date {
-          margin-left: 30px;
+          margin-left: 20px;
           color: #c8c8c8;
         }
       }
 
       .view-table {
         width: 100%;
-        padding: 20px;
+        padding: 30px;
+        padding-bottom: 20px;
+        padding-top: 20px;
         margin: 0 auto;
 
         td {
-          background-color: #f2f5f7;
-          font-size: 17px;
+          padding: 20px 0;
+          background-color: #f3fbf9;
+          font-size: 15px;
         }
 
-        .first-td {
-          padding: 30px;
-          border-top-left-radius: 30px;
-          border-bottom-left-radius: 30px;
-        }
-
-        .last-td {
-          border-top-right-radius: 30px;
-          border-bottom-right-radius: 30px;
-
-          .details-container {
-            .every-details {
-              padding: 20px;
-              padding-bottom: 0;
-              border-radius: 30px;
-              border: 1px solid #ddd;
-
-              .table-th {
-                font-size: 16px;
-              }
+        .details-container {
+          .every-details {
+            .table-th {
+              font-size: 16px;
             }
           }
         }
@@ -277,14 +268,16 @@
       text-align: center;
     }
   }
-  .input-style{
+
+  .input-style {
     width: 60% !important;
   }
+
   table {
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 
@@ -315,33 +308,9 @@
     .el-dialog__title {
       font-size: 20px;
     }
+  }
 
-    @media screen and (min-width: 1801px) {
-      .el-dialog {
-        width: 55%;
-      }
-    }
-
-    @media screen and (min-width: 1641px) and (max-width: 1800px) {
-      .el-dialog {
-        width: 60%;
-      }
-    }
-
-    @media screen and (min-width: 1401px) and (max-width: 1640px) {
-      .el-dialog {
-        width: 70%;
-      }
-    }
-
-    @media screen and (max-width: 1400px) {
-      .el-dialog {
-        width: 80%;
-      }
-    }
-
-    .vue-directive-image-previewer {
-      z-index: 10000;
-    }
+  .vue-directive-image-previewer {
+    z-index: 9999;
   }
 </style>

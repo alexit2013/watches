@@ -2,17 +2,12 @@
   <div class="stock-pending-container">
     <!-- <h1>待入库手表</h1> -->
     <div v-if="stock1.num == 0">
-      <div style="text-align: center;">
-        <div class="stockSearch">
-          <input placeholder="请输入机芯号进行搜索" class="el-input__inner" v-model="keyword" @input="stockInSearch" />
-        </div>
-      </div>
       <div v-show="stockList.length == 0" ref="hello" style="margin-top: 30px;text-align: center;">
         <p>数据加载中...</p>
       </div>
       <div v-if="stockList.length !== 0">
         <div style="width: 98%;margin: 0 auto;">
-          <p style="font-size: 20px;">待入库手表数量： {{count}}</p>
+          <p style="margin: 0;font-size: 18px;">待入库手表总数量： {{count}}</p>
         </div>
         <div class="stock-container">
           <div class="stock-list">
@@ -30,11 +25,14 @@
                     <th>操作</th>
                   </tr>
                   <tr>
-                    <td class="first-td">{{item.nick}}</td>
+                    <td>{{item.nick}}</td>
                     <td>{{item.LOG_watch.length}}</td>
                     <td>{{item.LOG_arrivetime}}</td>
-                    <td class="last-td">
-                      <el-button type="text" @click="stockListJump(item.LOG_watch)">查看手表详情</el-button>
+                    <td>
+                      <el-tooltip class="item" effect="light" content="查看手表详情" placement="top-end">
+                        <img src="../../assets/imgs/details.png" style="cursor:pointer;"
+                          @click="stockListJump(item.LOG_watch)" />
+                      </el-tooltip>
                     </td>
                   </tr>
                 </table>
@@ -48,7 +46,7 @@
             </div>
             <div v-if="keyword !== ''">
               <div v-show="stockPending.length == 0" ref="keywordText" style="width: 100%; text-align: center;">
-                <p>数据加载中...</p>
+                <p>{{hintMsg}}</p>
               </div>
               <table v-show="stockPending.length !== 0" class="stocktable">
                 <tr>
@@ -59,7 +57,7 @@
                   <th>操作</th>
                 </tr>
                 <tr v-for="(items,index) in stockPending" :key="index">
-                  <td class="first-td">
+                  <td>
                     <img v-image-preview
                       :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
                       style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
@@ -67,7 +65,7 @@
                   <td>{{items.buy_watchbrand}}</td>
                   <td>{{items.buy_watchmodel}}</td>
                   <td>{{items.buy_watchsn}}</td>
-                  <td class="last-td">
+                  <td>
                     <el-button type="text" @click="stockPendingButton(items)">入库</el-button>
                     <el-dialog title="入库" :visible.sync="dialogVisible" :close-on-press-escape="false"
                       :close-on-click-modal="false">
@@ -107,6 +105,7 @@
                                   <div v-for="(imgurl,index) of imgurls" :key="index"
                                     style="margin-left:10px;position:relative;">
                                     <span class="spanStyle" @click="delImage(index)">x</span>
+                                    <!--  + '/img/watch' -->
                                     <img :src="img + imgurl" width="100px" height="100px"
                                       style="border-radius:5px;object-fit:cover;" />
                                   </div>
@@ -141,6 +140,7 @@
   export default {
     data() {
       return {
+        hintMsg: '',
         img: this.$store.state.baseUrl,
         dialogVisible: false,
         count: 0,
@@ -189,6 +189,7 @@
       },
       // 获取待入库手表列表
       getStockInList() {
+        this.hintMsg = '数据加载中...';
         this.$axios
           .post(this.$store.state.baseUrl + "/StockInList", {
             page: this.page,
@@ -200,39 +201,37 @@
             this.total = res.data.total;
             this.stockList = res.data.lst;
             if (this.stockList.length == 0) {
-              this.$refs.hello.innerText = "啊哦~ 暂无数据";
+              this.hintMsg = "啊哦~ 暂无数据";
             }
           })
           .catch(err => {
             console.log(err);
           });
       },
+      // search() {
+      //   this.stockPending = [];
+      //   this.hintMsg = '';
+      // },
       // 模糊搜索
       stockInSearch() {
         this.stockPending = [];
-        if (this.keyword !== "") {
-          this.$axios
-            .post(this.$store.state.baseUrl + "/StockInSearch", {
-              keyword: this.keyword
-            })
-            .then(res => {
-              console.log("模糊搜索获取待入库手表");
-              console.log(res);
-              this.stockPending = res.data;
-              if ((this.stockPending.length == 0)) {
-                this.$refs.keywordText.innerText =
-                  "啊哦~没有符合条件的商品，请重新输入关键字";
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        } else if (this.keyword == "") {
-          this.stockPending = [];
-          this.stockList = [];
-          this.page = 1;
-          this.getStockInList();
-        }
+        this.hintMsg = '数据加载中...';
+        this.$axios
+          .post(this.$store.state.baseUrl + "/StockInSearch", {
+            keyword: this.keyword
+          })
+          .then(res => {
+            console.log("模糊搜索获取待入库手表");
+            console.log(res);
+            this.stockPending = res.data;
+            if ((this.stockPending.length == 0)) {
+              this.hintMsg =
+                "啊哦~没有符合该条件的商品，请重新输入关键字";
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
       },
       // 跳转本物流单号内手表展示页面
       stockListJump(watch) {
@@ -505,9 +504,14 @@
                 duration: 2000
               });
               this.dialogVisible = false;
-              this.keyword = "";
-              this.getCount();
               this.getStockInList();
+              this.getCount();
+              this.keyword = '';
+              // if (this.keyword !== '') {
+              //   this.stockInSearch();
+              // } else {
+              //   this.getStockInList();
+              // }
             })
             .catch(err => {
               console.log(err);
@@ -524,7 +528,7 @@
 </script>
 <style lang="scss" scoped>
   .stock-pending-container {
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
 
     .stock-container {
@@ -533,7 +537,9 @@
     }
 
     .stockSearch {
-      // position: relative;
+      width: 50%;
+      margin: 0 auto;
+      display: flex;
 
       .el-input__inner {
         width: 600px;
@@ -563,7 +569,7 @@
     }
 
     .stock-list {
-      margin-top: 30px;
+      margin-top: 20px;
 
       .stocktable {
         border-radius: 30px;
@@ -578,7 +584,7 @@
         border-top-right-radius: 30px;
 
         .purchase-number {
-          font-size: 22px;
+          font-size: 18px;
           font-weight: bold;
         }
 
@@ -592,18 +598,8 @@
         height: 60px;
         padding: 20px;
         margin: 10px 0;
-        background-color: #f2f5f7;
-        font-size: 17px;
-      }
-
-      .first-td {
-        border-top-left-radius: 30px;
-        border-bottom-left-radius: 30px;
-      }
-
-      .last-td {
-        border-top-right-radius: 30px;
-        border-bottom-right-radius: 30px;
+        background-color: #f3fbf9;
+        font-size: 15px;
       }
     }
   }
@@ -668,7 +664,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 15px;
+    border-spacing: 0;
     padding: 30px;
     background-color: #fff;
     border-radius: 30px;

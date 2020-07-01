@@ -1,13 +1,8 @@
 <template>
-  <div id="have-account">
+  <div id="have-account" style="margin-top: 75px;">
     <!-- <h3>已结算</h3> -->
-    <div class="stockSearch">
-      <!-- 型号：模糊查找    品牌：全匹配 -->
-      <el-input placeholder="可输入品牌、型号、机芯号进行搜索" class="input-search" prefix-icon="el-icon-search" v-model="keyword"
-        @input="stockInSearch" @focus="pageSel"></el-input>
-    </div>
     <div v-show="haveAccountList.length == 0" ref="hello" style="text-align: center;">
-      <p>数据加载中...</p>
+      <p>{{hintMsg}}</p>
     </div>
     <div v-if="haveAccountList.length !== 0">
       <div style="margin-left: 20px;">
@@ -53,6 +48,7 @@
         total: 0,
         totalNum: 0,
         haveAccountList: [],
+        hintMsg: '数据加载中...',
 
       }
     },
@@ -60,15 +56,13 @@
       this.getHaveAccountList();
     },
     methods: {
-      pageSel() {
-        this.page = 1;
-      },
       // 模糊搜索
       stockInSearch() {
         if (this.keyword !== '') {
           this.haveAccountList = [];
           this.total = 0;
           this.totalNum = 0;
+          this.hintMsg = '数据加载中...';
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
@@ -83,7 +77,7 @@
               this.total = res.data.total;
               this.totalNum = res.data.watchtotal;
               if (this.haveAccountList.length == 0) {
-                this.$refs.hello.innerText = '啊哦~暂无数据'
+                this.hintMsg = '啊哦~暂无数据'
               }
             });
         }
@@ -97,6 +91,7 @@
       },
       // 获取待结算商品
       getHaveAccountList() {
+        this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderListEx', {
           page: this.page,
           pagenum: this.pagenum,
@@ -108,7 +103,7 @@
           this.total = res.data.total;
           this.totalNum = res.data.watchtotal;
           if (this.haveAccountList.length == 0) {
-            this.$refs.hello.innerText = '啊哦~暂无数据'
+            this.hintMsg = '啊哦~暂无数据'
           }
         }).catch((err) => {
           console.log(err);
@@ -118,35 +113,6 @@
   }
 </script>
 <style lang="scss" scoped>
-  .stockSearch {
-    width: 50%;
-    margin: 30px auto;
-
-    .el-input__inner {
-      width: 100%;
-      height: 48px;
-      margin: 0 auto;
-      -webkit-appearance: none;
-      background-color: #fff;
-      background-image: url("../../assets/imgs/search2.png");
-      background-size: 20px;
-      background-repeat: no-repeat;
-      background-position: 30px center;
-      border-radius: 30px;
-      border: 1px solid #dcdfe6;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      color: #606266;
-      display: inline-block;
-      font-size: inherit;
-      line-height: 40px;
-      outline: 0;
-      padding: 0 65px;
-      -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-      transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-    }
-  }
-
   .first-td {
     padding: 30px;
     padding-left: 0;

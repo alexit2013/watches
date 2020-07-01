@@ -2,21 +2,24 @@
   <div>
     <!-- <h3>批发价详情页面</h3> -->
     <div class="details-center">
-      <div class="back-img">
-        <img src="../../assets/imgs/goback.png" @click="gobackAdmin" />
+      <div class="back-img" @click="gobackAdmin">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
         <span class="font">返回</span>
       </div>
     </div>
     <div v-show="detailsList.length > 1" id="myChart" style="width: 80%;height: 400px;margin: 30px auto;"></div>
     <div style="width: 50%;margin: 30px auto;display: flex;">
       <el-input v-model="price" placeholder="请输入批发价格"></el-input>
-      <el-button type="primary" @click="priceAdd" style="width: 30%;">增加</el-button>
+      <el-button type="primary" @click="priceAdd" style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;">增
+        加</el-button>
     </div>
     <div v-if="detailsList.length == 0" style="text-align: center;">
       <p>暂无价格列表</p>
     </div>
     <div class="details-bottom" v-if="detailsList.length !== 0">
-      <div style="display: flex;justify-content: space-around;">
+      <div style="display: flex;justify-content: space-around;margin-bottom: 20px;">
         <div>
           <span>最高：</span>
           <span>{{'HKD ' + formatNumberRgx(priceList[priceList.length - 1])}}</span>
@@ -34,7 +37,7 @@
           <th>操作</th>
         </tr>
         <tr v-for="(item,index) in detailsList" :key="index">
-          <td class="first-td">{{"HKD " + formatNumberRgx(item.price)}}</td>
+          <td>{{"HKD " + formatNumberRgx(item.price)}}</td>
           <td>
             <!-- 数组最后一项不显示此内容，该判断条件也决定了数组的长度需大于1 -->
             <div v-if="index < detailsList.length-1">
@@ -42,8 +45,10 @@
             </div>
           </td>
           <td>{{item.time}}</td>
-          <td class="last-td">
-            <p class="font-style" @click="deletPrice(item.id)">删除</p>
+          <td>
+            <el-tooltip class="item" effect="light" content="删除信息" placement="top-end">
+              <img src="../../assets/imgs/delete.png" style="cursor:pointer;" @click="deletPrice(item.id)" />
+            </el-tooltip>
             <el-dialog title="删除批发价格" :visible.sync="dialogDeletPriceVisible">
               <div style="text-align: center;">
                 <p>确定删除该批发价格？删除后不可恢复</p>
@@ -73,8 +78,8 @@
         highest: 0,
         lowest: 0,
         tendencyImg: '',
-        img1: require('../../assets/imgs/upPrice .png'),
-        img2: require('../../assets/imgs/downPrice .png'),
+        img1: require('../../assets/imgs/upPrice.png'),
+        img2: require('../../assets/imgs/downPrice.png'),
         xList: [],
         yList: [],
         dataMaketPriceCount: 0,
@@ -106,9 +111,9 @@
       tendency2(i) {
         console.log('比较大小');
         if (this.detailsList[i].price > this.detailsList[i + 1].price) {
-          return require('../../assets/imgs/upPrice .png');
+          return require('../../assets/imgs/upPrice.png');
         } else {
-          return require('../../assets/imgs/downPrice .png');
+          return require('../../assets/imgs/downPrice.png');
         }
       },
       // 返回价格列表
@@ -248,27 +253,34 @@
 </script>
 <style lang="scss" scoped>
   .details-center {
-    width: 80%;
+    width: 95%;
     margin: 0 auto;
-    // display: flex;
-    // justify-content: space-between;
 
     .back-img {
-      height: 65px;
-      line-height: 65px;
+      width: 75px;
+      height: 45px;
+      line-height: 45px;
       display: flex;
+      justify-content: space-between;
       cursor: pointer;
 
+      div {
+        margin-top: 5px;
+
+        img {
+          width: 30px;
+          height: 25px;
+        }
+      }
+
       .font {
-        font-size: 30px;
-        color: #2d4e65;
+        font-size: 17px;
       }
     }
-
   }
 
   .details-bottom {
-    width: 80%;
+    width: 92%;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
@@ -278,26 +290,8 @@
       height: 60px;
       margin: 10px 0;
       padding: 20px 0;
-      background-color: #f2f5f7;
-      font-size: 17px;
-    }
-
-    .first-td {
-      border-top-left-radius: 30px;
-      border-bottom-left-radius: 30px;
-    }
-
-    .last-td {
-      border-top-right-radius: 30px;
-      border-bottom-right-radius: 30px;
-
-      .font-style {
-        margin: 0;
-        margin-top: 10px;
-        color: #0aa1ed;
-        font-size: 15px;
-        cursor: pointer;
-      }
+      background-color: #f3fbf9;
+      font-size: 15px;
     }
   }
 
@@ -305,7 +299,7 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: separate;
-    border-spacing: 0 30px;
+    border-spacing: 0;
 
     tr {
 

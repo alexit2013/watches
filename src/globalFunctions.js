@@ -11,9 +11,14 @@ exports.install = function (Vue, options) {
   };
   // 千分价格
   Vue.prototype.formatNumberRgx = function (num) {
-    let parts = num.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
+    // console.log(num);
+    if (num !== null && num !== undefined) {
+      let parts = num.toString().split(".");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return parts.join(".");
+    } else {
+      return 0;
+    }
   };
   Vue.prototype.formatStringRgx = function (param) {
     // console.log(param);
