@@ -9,22 +9,22 @@
     </div>
     <div class="comm-main" v-show="buy_commState == true">
       <div v-for="(item,index) in commissionList" :key="index" class="commTable">
-        <h4>{{item.buy_watchbrand + ' - ' + item.buy_watchmodel}}</h4>
+        <h4>{{item.buy_watchBrand + ' - ' + item.buy_watchModel}}</h4>
         <p>
-          不含税价： {{formatNumberRgx(item.buy_NoTaxMoney)}}
+          不含税价： {{formatNumberRgx(item.buy_noTaxMoney)}}
           <span>{{item.buy_commCurrency == null ? '' : item.buy_commCurrency}}</span>
         </p>
         <el-form label-width="120px">
           <el-form-item label="佣金比例：">
-            <!-- :disabled="item.buy_NoTaxMoney == 0 ? true : false" -->
+            <!-- :disabled="item.buy_noTaxMoney == 0 ? true : false" -->
             <el-input v-model="commSubmitList[index].commProp" class="input-style"
-              @focus="judgeNoTax(item.buy_NoTaxMoney)" @input="propChange(item.buy_NoTaxMoney,item.id,index)">
+              @focus="judgeNoTax(item.buy_noTaxMoney)" @input="propChange(item.buy_noTaxMoney,item.id,index)">
               <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">%</i>
             </el-input>
           </el-form-item>
           <el-form-item label="佣金金额：">
             <el-input v-model="commSubmitList[index].buy_commMoney" class="input-style"
-              @focus="judgeNoTax(item.buy_NoTaxMoney)" @input="moneyChange(item.buy_NoTaxMoney,item.id,index)">
+              @focus="judgeNoTax(item.buy_noTaxMoney)" @input="moneyChange(item.buy_noTaxMoney,item.id,index)">
               <i slot="suffix"
                 style="color: #000;margin-right:5%;font-style:normal;">{{item.buy_commCurrency == null ? '' : item.buy_commCurrency}}</i>
             </el-input>
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div style="width: 100%;margin-top: 50px;text-align: right;">
-      <el-button type="primary" @click="commissionSubmit">保 存</el-button>
+      <el-button type="primary" @click="commissionSubmit" v-preventClick>保 存</el-button>
     </div>
   </div>
 </template>
@@ -89,7 +89,7 @@
               id: this.commissionList[i].id,
               commProp: this.commissionList[i].buy_commMoney == 0 || this.commissionList[i].buy_commMoney ==
                 null ? '' : Number(this.commissionList[i]
-                  .buy_commMoney / this.commissionList[i].buy_NoTaxMoney *
+                  .buy_commMoney / this.commissionList[i].buy_noTaxMoney *
                   100)
                 .toFixed(2),
               buy_commMoney: this.commissionList[i].buy_commMoney == 0 || this.commissionList[i]
@@ -113,9 +113,9 @@
         })
       },
       // 判断是否可录入佣金
-      judgeNoTax(buy_NoTaxMoney) {
-        console.log(buy_NoTaxMoney);
-        if (buy_NoTaxMoney == 0 || buy_NoTaxMoney === null) {
+      judgeNoTax(buy_noTaxMoney) {
+        console.log(buy_noTaxMoney);
+        if (buy_noTaxMoney == 0 || buy_noTaxMoney === null) {
           this.$message.warning({
             message: '录入退税信息后，方可录入佣金信息',
             showClose: true,
@@ -164,7 +164,7 @@
           params = {
             buy_id: sessionStorage.getItem("buy_id"),
             buy_commState: this.buy_commState == false ? -1 : (this.buy_commStateOn == true ? 1 : 0),
-            buy_Comm: this.commSubmitList
+            buy_comm: this.commSubmitList
           }
         } else {
           params = {

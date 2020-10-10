@@ -22,11 +22,11 @@
               <tr v-for="(item,index) of stockOutList" :key="index">
                 <td>
                   <img v-image-preview
-                    :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
+                    :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ (item.buy_watchPics || '').split('|')[0]"
                     style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" class="first-img" />
                 </td>
-                <td>{{item.buy_watchbrand}}</td>
-                <td>{{item.buy_watchmodel}}</td>
+                <td>{{item.buy_watchBrand}}</td>
+                <td>{{item.buy_watchModel}}</td>
                 <td>{{item.watch.length}}</td>
                 <td>
                   <el-tooltip class="item" effect="light" content="查看详细信息" placement="top-end">
@@ -64,13 +64,13 @@
         <tr v-for="(items,index) of haveOutboundDetailsList" :key="index">
           <td>
             <img v-image-preview
-              :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
+              :src="items.watchPics == null || items.watchPics == '' ? '' : img + '/img/watch/'+ (items.watchPics || '').split('|')[0]"
               style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" class="first-img" />
           </td>
-          <td>{{items.stock_outtime}}</td>
+          <td>{{items.stock_outTime}}</td>
           <td>{{items.stock_No}}</td>
-          <td>{{items.buy_watchsn}}</td>
-          <td>{{items.sell_sendusernick}}</td>
+          <td>{{items.buy_watchSn}}</td>
+          <td>{{items.sell_sendUserNick}}</td>
         </tr>
       </table>
     </div>
@@ -83,12 +83,12 @@
         hintMsg: '数据加载中...',
         keyword: '',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         img: this.$store.state.baseUrl,
         total: 0,
         stockOutList: [], // 已出库库存列表
         haveOutboundDetailsList: [], // 详细信息
-        buy_watchpics: '',
+        buy_watchPics: '',
 
       }
     },
@@ -106,7 +106,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/StockOutList", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               keyword: this.keyword
             })
             .then(res => {
@@ -132,7 +132,7 @@
         this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/StockOutList', {
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('已出库库存列表');
           console.log(res);

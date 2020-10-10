@@ -3,19 +3,23 @@
     <!-- <h1>未出库商品列表页</h1> -->
     <div v-if="notOutbound.nots == 0">
       <div v-if="notOutbound.select == 2" class="not-outbound-top">
-        <el-radio v-model="filtrate1" label="0" border @change="getStockListAllList2">全部：采购中+已入库</el-radio>
-        <el-radio v-model="filtrate1" label="1" border @change="getStockList3">采购中</el-radio>
-        <el-radio v-model="filtrate1" label="2" border @change="getStockList4">已入库</el-radio>
+        <div class="radio-select">
+          <el-radio v-model="filtrate1" label="0" border @change="getStockListAllList2">全部：采购中+已入库</el-radio>
+          <el-radio v-model="filtrate1" label="1" border @change="getStockList3">采购中</el-radio>
+          <el-radio v-model="filtrate1" label="2" border @change="getStockList4">已入库</el-radio>
+        </div>
       </div>
       <div v-if="notOutbound.select == 1" class="not-outbound-top">
-        <el-radio v-model="filtrate" label="0" border @change="getStockListAllList1">全部：采购中+已入库</el-radio>
-        <el-radio v-model="filtrate" label="1" border @change="getStockList1">采购中</el-radio>
-        <el-radio v-model="filtrate" label="2" border @change="getStockList2">已入库</el-radio>
+        <div class="radio-select">
+          <el-radio v-model="filtrate" label="0" border @change="getStockListAllList1">全部：采购中+已入库</el-radio>
+          <el-radio v-model="filtrate" label="1" border @change="getStockList1">采购中</el-radio>
+          <el-radio v-model="filtrate" label="2" border @change="getStockList2">已入库</el-radio>
+        </div>
       </div>
-      <div v-show="notOrders.notOutboundList1.length == 0" style="text-align: center;">
+      <div v-show="notOrders.notOutboundList1.length == 0" style="margin-top: 80px;text-align: center;">
         <p>{{hintMsg}}</p>
       </div>
-      <div v-if="notOrders.notOutboundList1.length !== 0">
+      <div v-if="notOrders.notOutboundList1.length !== 0" style="margin-top: 80px;">
         <div style="margin-left: 5%;">
           <p style="font-size: 18px;">{{'商品数量: ' + ' ' + notOrders.totalNum1}}</p>
         </div>
@@ -30,15 +34,15 @@
             <tr v-for="(item,index) of notOrders.notOutboundList1" :key="index">
               <td>
                 <img v-image-preview
-                  :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
+                  :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ item.buy_watchPics.split('|')[0]"
                   class="first-img" />
               </td>
               <td>
                 <div>
-                  <p>{{item.buy_watchbrand}}</p>
+                  <p>{{item.buy_watchBrand}}</p>
                 </div>
                 <div>
-                  <p>{{item.buy_watchmodel}}</p>
+                  <p>{{item.buy_watchModel}}</p>
                 </div>
               </td>
               <td>
@@ -78,7 +82,7 @@
         filtrate: "0",
         keyword: "",
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         // notOutboundList: this.notOrders.notOutboundList1,
         // total: this.notOrders.total1,
         // totalNum: this.notOrders.totalNum1,
@@ -157,7 +161,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/StockList", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               type: this.filtrate,
               keyword: this.keyword
             })
@@ -169,10 +173,18 @@
               // this.totalNum = 0;
               this.notOrders.notOutboundList1 = res.data.lst;
               this.notOrders.total1 = res.data.total;
-              this.notOrders.totalNum1 = res.data.watchtotal;
+              this.notOrders.totalNum1 = res.data.watchTotal;
               if (this.notOrders.notOutboundList1.length == 0) {
                 this.hintMsg = "啊哦~暂无数据";
-              }
+              };
+              (function smoothscroll() {
+                var currentScroll =
+                  document.documentElement.scrollTop || document.body.scrollTop;
+                if (currentScroll > 0) {
+                  window.requestAnimationFrame(smoothscroll);
+                  window.scrollTo(0, currentScroll - currentScroll / 5);
+                }
+              })();
             });
         } else if (this.keyword == "") {
           console.log(this.keyword);
@@ -200,7 +212,7 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/StockList", {
             page: this.page,
-            pagenum: this.pagenum,
+            pageNum: this.pageNum,
             type: this.filtrate
           })
           .then(res => {
@@ -208,10 +220,18 @@
             console.log(res);
             this.notOrders.notOutboundList1 = res.data.lst;
             this.notOrders.total1 = res.data.total;
-            this.notOrders.totalNum1 = res.data.watchtotal;
+            this.notOrders.totalNum1 = res.data.watchTotal;
             if (this.notOrders.notOutboundList1.length == 0) {
               this.hintMsg = "啊哦~暂无数据";
-            }
+            };
+            (function smoothscroll() {
+              var currentScroll =
+                document.documentElement.scrollTop || document.body.scrollTop;
+              if (currentScroll > 0) {
+                window.requestAnimationFrame(smoothscroll);
+                window.scrollTo(0, currentScroll - currentScroll / 5);
+              }
+            })();
           })
           .catch(err => {
             console.log(err);
@@ -309,11 +329,26 @@
     width: 100%;
 
     .not-outbound-top {
-      width: 80%;
-      margin: 20px auto;
-      margin-top: 0;
-      display: flex;
-      justify-content: space-around;
+      // width: 80%;
+      // margin: 20px auto;
+      // margin-top: 0;
+      // display: flex;
+      // justify-content: space-around;
+      width: 100%;
+      background-color: #fff;
+
+      .radio-select {
+        width: 81%;
+        padding: 20px;
+        position: fixed;
+        top: 80px;
+        left: 324px;
+        background-color: #fff;
+        border-top: 1px solid #f3fbf9;
+        display: flex;
+        justify-content: space-around;
+        z-index: 1;
+      }
     }
 
     .not-container {

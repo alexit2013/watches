@@ -9,7 +9,7 @@
         <div v-if="forSaleWatchList.length !== 0">
           <div v-for="(item,index) of forSaleWatchList" :key="index" class="completed-table">
             <div>
-              <span class="purchase-number">销售单号: {{" " + item.sell_orderid}}</span>
+              <span class="purchase-number">销售单号: {{" " + item.sell_orderId}}</span>
               <span class="purchase-date">销售日期: {{item.sell_time}}</span>
             </div>
             <table class="list-table">
@@ -24,14 +24,14 @@
               <tr>
                 <td>
                   <img v-image-preview
-                    :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
+                    :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ (item.buy_watchPics || '').split('|')[0]"
                     style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
                 </td>
                 <td>
-                  <p>{{item.buy_watchbrand}}</p>
+                  <p>{{item.buy_watchBrand}}</p>
                 </td>
                 <td>
-                  <p>{{item.buy_watchmodel}}</p>
+                  <p>{{item.buy_watchModel}}</p>
                 </td>
                 <td>{{item.sell_custom}}</td>
                 <td>{{item.sell_currency +" "+ formatNumberRgx(item.sell_money)}}</td>
@@ -44,7 +44,7 @@
                       <div>
                         <el-form label-width="120px">
                           <el-form-item label="型号：">
-                            <span>{{detailsInfo.buy_watchbrand +' - '+ detailsInfo.buy_watchmodel}}</span>
+                            <span>{{detailsInfo.buy_watchBrand +' - '+ detailsInfo.buy_watchModel}}</span>
                           </el-form-item>
                           <el-form-item label="销售日期：">
                             <el-date-picker v-model="sell_time" type="date" class="input-style" readonly>
@@ -64,18 +64,18 @@
                       <div>
                         <div class="top-form">
                           <span class="top-span">是否全款：</span>
-                          <el-switch v-model="sell_payfull" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+                          <el-switch v-model="sell_payFull" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
                         </div>
-                        <div v-if="sell_payfull == false">
+                        <div v-if="sell_payFull == false">
                           <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
                             <p>定金：</p>
                             <el-form label-width="120px">
                               <el-form-item label="付款日期：">
-                                <el-date-picker v-model="sell_paytime1" type="date" class="input-style" readonly>
+                                <el-date-picker v-model="sell_payTime1" type="date" class="input-style" readonly>
                                 </el-date-picker>
                               </el-form-item>
                               <el-form-item label="付款金额：">
-                                <el-input type="text" v-model="sell_paymoney1" class="input-style" readonly>
+                                <el-input type="text" v-model="sell_payMoney1" class="input-style" readonly>
                                   <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                                 </el-input>
                               </el-form-item>
@@ -85,26 +85,26 @@
                             <p>尾款：</p>
                             <el-form label-width="120px">
                               <el-form-item label="付款日期：">
-                                <el-date-picker v-model="sell_paytime2" type="date" class="input-style" readonly>
+                                <el-date-picker v-model="sell_payTime2" type="date" class="input-style" readonly>
                                 </el-date-picker>
                               </el-form-item>
                               <el-form-item label="付款金额：">
-                                <el-input type="text" v-model="sell_paymoney2" class="input-style" readonly>
+                                <el-input type="text" v-model="sell_payMoney2" class="input-style" readonly>
                                   <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                                 </el-input>
                               </el-form-item>
                             </el-form>
                           </div>
                         </div>
-                        <div v-if="sell_payfull == true">
+                        <div v-if="sell_payFull == true">
                           <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
                             <el-form label-width="120px">
                               <el-form-item label="付款日期：">
-                                <el-date-picker v-model="sell_paytime1" type="date" class="input-style" readonly>
+                                <el-date-picker v-model="sell_payTime1" type="date" class="input-style" readonly>
                                 </el-date-picker>
                               </el-form-item>
                               <el-form-item label="付款金额：">
-                                <el-input type="text" v-model="sell_paymoney1" class="input-style" readonly>
+                                <el-input type="text" v-model="sell_payMoney1" class="input-style" readonly>
                                   <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                                 </el-input>
                               </el-form-item>
@@ -119,10 +119,10 @@
                       <div style="margin-bottom: 40px;">
                         <el-form label-width="120px">
                           <el-form-item label="出库日期：">
-                            <el-date-picker v-model="stock_outtime" class="input-style" readonly></el-date-picker>
+                            <el-date-picker v-model="stock_outTime" class="input-style" readonly></el-date-picker>
                           </el-form-item>
                           <el-form-item label="送货人：">
-                            <span>{{sell_sendusernick}}</span>
+                            <span>{{sell_sendUserNick}}</span>
                           </el-form-item>
                         </el-form>
                       </div>
@@ -154,7 +154,7 @@
         keyword: "",
         img: this.$store.state.baseUrl,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         forSaleWatchList: [],
         total: 0,
         detailsInfo: {},
@@ -163,14 +163,14 @@
         sell_money: "", // 销售金额
         sell_currency: "", // 币种
         sell_custom: "", // 客户名称
-        sell_payfull: false, // 是否全款   0:非全款 1:全款
-        sell_paymoney1: "", // 第一次付款（定金）
-        sell_paytime1: new Date(), // 第一次付款（定金）时间
-        sell_paymoney2: "", // 第二次付款（尾款）（sell_payfull为1时，该内容不传）
-        sell_paytime2: new Date(), // 第二次付款（尾款）时间（sell_payfull为1时，该内容不传）
+        sell_payFull: false, // 是否全款   0:非全款 1:全款
+        sell_payMoney1: "", // 第一次付款（定金）
+        sell_payTime1: new Date(), // 第一次付款（定金）时间
+        sell_payMoney2: "", // 第二次付款（尾款）（sell_payFull为1时，该内容不传）
+        sell_payTime2: new Date(), // 第二次付款（尾款）时间（sell_payFull为1时，该内容不传）
         sell_note: "", // 备注
-        stock_outtime: "", // 出库时间
-        sell_sendusernick: "", // 送货人
+        stock_outTime: "", // 出库时间
+        sell_sendUserNick: "", // 送货人
 
         hintMsg: '数据加载中',
 
@@ -188,7 +188,7 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/SellOrderList", {
             page: this.page,
-            pagenum: this.pagenum
+            pageNum: this.pageNum
           })
           .then(res => {
             console.log("已完成销售");
@@ -208,7 +208,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/SellOrderList", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               keyword: this.keyword
             })
             .then(res => {
@@ -239,20 +239,20 @@
         this.sell_money = item.sell_money;
         this.sell_currency = item.sell_currency;
         this.sell_custom = item.sell_custom;
-        if (item.sell_payfull == 0) {
-          this.sell_payfull = false;
-          this.sell_paymoney1 = item.sell_paymoney1;
-          this.sell_paytime1 = item.sell_paytime1;
-          this.sell_paymoney2 = item.sell_paymoney2;
-          this.sell_paytime2 = item.sell_paytime2;
-        } else if (item.sell_payfull == 1) {
-          this.sell_payfull = true;
-          this.sell_paymoney1 = item.sell_paymoney1;
-          this.sell_paytime1 = item.sell_paytime1;
+        if (item.sell_payFull == 0) {
+          this.sell_payFull = false;
+          this.sell_payMoney1 = item.sell_payMoney1;
+          this.sell_payTime1 = item.sell_payTime1;
+          this.sell_payMoney2 = item.sell_payMoney2;
+          this.sell_payTime2 = item.sell_payTime2;
+        } else if (item.sell_payFull == 1) {
+          this.sell_payFull = true;
+          this.sell_payMoney1 = item.sell_payMoney1;
+          this.sell_payTime1 = item.sell_payTime1;
         }
         this.sell_note = item.sell_note;
-        this.stock_outtime = item.stock_outtime;
-        this.sell_sendusernick = item.sell_sendusernick;
+        this.stock_outTime = item.stock_outTime;
+        this.sell_sendUserNick = item.sell_sendUserNick;
         this.dialogSaleListVisible = true;
         // this.forSaleListSelect.list = 1;
       },

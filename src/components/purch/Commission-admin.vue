@@ -33,7 +33,8 @@
               <td>{{item.obj.buy_id}}</td>
               <td>{{item.obj.buy_date}}</td>
               <td v-show="item.type == 0">
-                {{item.obj.city_CN == null ? item.obj.country_CN : item.obj.city_CN + ' / ' + item.obj.country_CN}}</td>
+                {{item.obj.city_CN == null || item.obj.city_CN == '' ? item.obj.country_CN : item.obj.city_CN + ' / ' + item.obj.country_CN}}
+              </td>
               <td>{{formatNumberRgx(item.obj.buy_commMoney) + ' ' +item.obj.buy_commCurrency}}</td>
               <td>
                 <el-button type="text" @click="checkDetails(item.obj.buy_id)">查看详情</el-button>
@@ -60,7 +61,7 @@
       return {
         msg: '数据加载中...',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         unCheckTotal: 0, // 未结笔数  需返店数量
         unCheckMoney: 0, // 未结金额
@@ -84,7 +85,7 @@
         this.msg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderCommList?java', {
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('佣金列表');
           console.log(res);

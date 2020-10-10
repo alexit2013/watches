@@ -7,99 +7,9 @@
           <div style="width: 180px;margin: 0 auto;padding-bottom: 10px;border-bottom:1px solid #f1f1f1;">
             <img src="../../assets/imgs/logo.png" class="logoImg" />
           </div>
-          <!-- 管理 -->
-          <ul class="person-ul" v-if="role == 1">
-            <li @click="admin1">
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 1 ? newProduct2 : newProduct1" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="purchase icon" style="color:#2e4d65;margin-right: 0;" ref="statistics">统计</span>
-                  <span v-show="adminLine == 1" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 2 ? my2 : my1" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="settleAccounts" @click="admin2">结算</span>
-                  <span v-show="adminLine == 2" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 3 ? my4 : my3" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="finalStament" @click="admin3">结算单</span>
-                  <span v-show="adminLine == 3" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li v-show="peerFlag == 1">
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 4 ? peerImg2 : peerImg1" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="peerAdmin3" @click="admin4">贸易商管理</span>
-                  <span v-show="adminLine == 4" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li v-show="marketPriceFlag == 1">
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 5 ? priceAdminImg2 : priceAdminImg1" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="priceAdmin3" @click="admin5">批发价管理</span>
-                    <p v-if="dataMaketPriceCount > 0"
-                      style="width: 10px; height: 10px;margin: 0;background-color: red;border-radius: 50%;"></p>
-                  </div>
-                  <span v-show="adminLine == 5" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li v-show="marketPriceFlag == 0">
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 6 ? priceInquireImg2 : priceInquireImg1" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="priceInquire3"
-                    @click="admin6">批发价查询</span>
-                  <span v-show="adminLine == 6" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 7 ? storeImg1 : storeImg2" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="storeQuery3" @click="admin7">店铺查询</span>
-                  <span v-show="adminLine == 7" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 8 ? rateImg1 : rateImg2" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="rateQuery2" @click="admin8">汇率查询</span>
-                  <span v-show="adminLine== 8" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <img class="icon icon-size" :src="adminSelected == 9 ? myReimImg1 : myReimImg2" />
-                <div style="width: 100%;display: flex;justify-content: space-between;">
-                  <span class="my-purchase icon" style="margin-right: 0;" ref="reimbursement4"
-                    @click="admin9">我的报销</span>
-                  <span v-show="adminLine== 9" class="span-line-style"></span>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <!-- 采购 -->
-          <ul class="person-ul" v-if="role == 2">
-            <li class="first-li">
+          <ul class="person-ul">
+            <li class="first-li"
+              v-show="authorityList[0] == 1 || authorityList[1] == 1 || authorityList[2] == 1 || authorityList[3] == 1 || authorityList[9] == 1 || authorityList[10] == 1 || authorityList[11] == 1">
               <div @click="closeAndOpen1"
                 style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
                 <div style="display: flex;">
@@ -109,48 +19,60 @@
                 <i id="arrows" class="el-icon-arrow-up"></i>
               </div>
               <ul id="openOrClose" class="open">
-                <li class="li-selected-background"
+                <li v-show="authorityList[0] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 10 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c7063;" ref="watchQuery"
-                    @click="selected10">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c7063;"
+                    :style="{color: selected == 10 ? '#0c7063' : '#fff'}" @click="selected10">
                     手表查询</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[1] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 9 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="storeQuery" @click="selected9">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 9 ? '#0c7063' : '#fff'}" @click="selected9">
                     店铺查询</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[9] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 6 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="peerAdmin" @click="selected6">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 6 ? '#0c7063' : '#fff'}" @click="selected6">
                     贸易商管理</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[10] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: marketSelect == 4 ? '#0c7063' : '#fff'}" @click="marketSelect6">
+                    客户管理</p>
+                </li>
+                <li v-show="authorityList[2] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 11 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="rateQuery" @click="selected11">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 11 ? '#0c7063' : '#fff'}" @click="selected11">
                     汇率查询</p>
                 </li>
-                <li v-show="marketPriceFlag == 1" class="li-selected-background"
+                <li v-show="authorityList[11] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 7 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
                   <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="priceAdmin" @click="selected7">批发价管理</span>
+                    <span class="icon" style="margin-right: 0;" :style="{color: selected == 7 ? '#0c7063' : '#fff'}"
+                      @click="selected7">批发价管理</span>
                     <p v-show="dataMaketPriceCount > 0" class="selected-circle-style">
                     </p>
                   </div>
                 </li>
-                <li v-show="marketPriceFlag == 0" class="li-selected-background"
+                <li v-show="authorityList[3] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 8 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="priceInquire" @click="selected8">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 8 ? '#0c7063' : '#fff'}" @click="selected8">
                     批发价查询</p>
                 </li>
-                <li class="li-selected-background"
+                <!-- <li class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 5 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="statement" @click="selected5">结算单
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"  :style="{color: selected == 5 ? '#0c7063' : '#fff'}"  @click="selected5">结算单
                   </p>
-                </li>
+                </li> -->
               </ul>
             </li>
-            <li class="first-li">
+            <li class="first-li"
+              v-show="authorityList[12] == 1 || authorityList[13] == 1 || authorityList[14] == 1 || authorityList[4] == 1 ">
               <div @click="closeAndOpen2"
                 style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
                 <div style="display: flex;">
@@ -160,28 +82,29 @@
                 <i id="arrows2" class="el-icon-arrow-down"></i>
               </div>
               <ul id="openOrClose2" class="close">
-                <li class="li-selected-background"
+                <li v-show="authorityList[12] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 1 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="purchase icon" style="margin: 0;text-align: left;" ref="purchase"
-                    @click="selected1($event)">代理商采购</p>
+                  <p class="purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 1 ? '#0c7063' : '#fff'}" @click="selected1($event)">代理商采购</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[13] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="purchase icon" style="margin: 0;text-align: left;" ref="trade" @click="selected3">贸易商采购</p>
+                  <p class="purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 3 ? '#0c7063' : '#fff'}" @click="selected3">贸易商采购</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[14] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="myPur"
-                    @click="closeAndOpen($event)">我的采购</p>
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 2 ? '#0c7063' : '#fff'}" @click="closeAndOpen">我的采购</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[4] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="logisticsView"
-                    @click="selected4">物流查询</p>
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 4 ? '#0c7063' : '#fff'}" @click="selected4">物流查询</p>
                 </li>
               </ul>
             </li>
-            <li class="first-li">
+            <li class="first-li" v-show="authorityList[15] == 1 || authorityList[16] == 1 || authorityList[17] == 1">
               <div @click="closeAndOpen3"
                 style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
                 <div style="display: flex;">
@@ -191,24 +114,97 @@
                 <i id="arrows3" class="el-icon-arrow-down"></i>
               </div>
               <ul id="openOrClose3" class="close">
-                <li class="li-selected-background"
+                <li v-show="authorityList[16] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 14 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="taxes" @click="selected14">税金管理
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 14 ? '#0c7063' : '#fff'}" @click="selected14">税金管理
                   </p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[15] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 15 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="commission" @click="selected15">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 15 ? '#0c7063' : '#fff'}" @click="selected15">
                     佣金管理</p>
                 </li>
-                <li class="li-selected-background"
+                <li v-show="authorityList[17] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 16 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="tipAdmin" @click="selected16">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 16 ? '#0c7063' : '#fff'}" @click="selected16">
                     小费管理</p>
                 </li>
               </ul>
             </li>
-            <li class="first-li">
+            <li class="first-li" v-show="authorityList[19] == 1 || authorityList[20] == 1 || authorityList[21] == 1">
+              <div @click="warehouseCloseAndOpen2"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/admin1.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">仓库货物管理</p>
+                </div>
+                <i id="warehouseArrows2" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="warehouseOpenOrClose2" class="close">
+                <li v-show="authorityList[19] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;" @click="select1($event)">
+                    <span class="icon" style="margin-right: 0;color:#2e4d65;"
+                      :style="{color:warehouseSelect == 0 ? '#0c7063' : '#fff'}">待入库</span>
+                    <p v-show="stockInCount !== 0" class="selected-circle-style"></p>
+                  </div>
+                </li>
+                <li v-show="authorityList[20] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select4"
+                    :style="{color:warehouseSelect == 2 ? '#0c7063' : '#fff'}">未出库
+                  </p>
+                </li>
+                <li v-show="authorityList[20] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select5"
+                    :style="{color:warehouseSelect == 3 ? '#0c7063' : '#fff'}">
+                    已出库
+                  </p>
+                </li>
+                <li v-show="authorityList[21] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:warehouseSelect == 4 ? '#0c7063' : '#fff'}" @click="select6">出库/查询</p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[22] == 1 || authorityList[23] == 1 || authorityList[24] == 1 ">
+              <div @click="marketCloseAndOpen2"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/admin2.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">销售货物管理</p>
+                </div>
+                <i id="marketArrows2" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="marketOpenOrClose2" class="close">
+                <li v-show="authorityList[22] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:marketSelect == 0 ? '#0c7063' : '#fff'}" @click="marketSelect1">库存
+                  </p>
+                </li>
+                <li v-show="authorityList[23] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;" @click="marketSelect4">
+                    <span class="icon" style="margin-right: 0;"
+                      :style="{color:marketSelect == 2 ? '#0c7063' : '#fff'}">进行中销售</span>
+                    <p v-show="sellPendOrderCount !== 0" class="selected-circle-style"></p>
+                  </div>
+                </li>
+                <li v-show="authorityList[24] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:marketSelect == 3 ? '#0c7063' : '#fff'}" @click="marketSelect5">已完成销售
+                  </p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[5] == 1 || authorityList[25] == 1 || authorityList[27] == 1">
               <div @click="closeAndOpen4"
                 style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
                 <div style="display: flex;">
@@ -218,283 +214,66 @@
                 <i id="arrows4" class="el-icon-arrow-down"></i>
               </div>
               <ul id="openOrClose4" class="close">
-                <li class="li-selected-background"
+                <li v-show="authorityList[5] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 12 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="reimbursement"
-                    @click="selected12">我的报销</p>
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 12 ? '#0c7063' : '#fff'}" @click="selected12">我的报销</p>
                 </li>
-                <li v-show="financeFlag == 1" class="li-selected-background"
+                <li v-show="authorityList[25] == 1" class="li-selected-background"
                   :style="{backgroundImage: 'url(' + (selected == 13 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
                   <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="reimbursementAdmin" @click="selected13">报销管理</span>
-                    <p v-if="reimData == 1" class="selected-circle-style"></p>
-                  </div>
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <!-- 仓库 -->
-          <ul class="person-ul" v-if="role == 3">
-            <li class="first-li">
-              <div @click="warehouseCloseAndOpen"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/msg-search.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">实用信息查询</p>
-                </div>
-                <i id="warehouseArrows" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="warehouseOpenOrClose" class="open">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 6 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c7063;" ref="watchQuery2"
-                    @click="select8">手表查询</p>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 7 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="rateQuery3" @click="select9">汇率查询
-                  </p>
-                </li>
-              </ul>
-            </li>
-            <li class="first-li">
-              <div @click="warehouseCloseAndOpen2"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/cargo.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">仓库货物管理</p>
-                </div>
-                <i id="warehouseArrows2" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="warehouseOpenOrClose2" class="close">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;" @click="select1($event)">
-                    <span class="icon" style="margin-right: 0;color:#2e4d65;" ref="stock">待入库</span>
-                    <p v-show="stockInCount !== 0" class="selected-circle-style"></p>
-                  </div>
-                </li>
-                <!-- <li>
-                  <div @click="select3($event)"
-                    style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                    <img class="icon icon-size"
-                      :src="warehouseSelect == 2 || warehouseSelect == 3 ? tabarImg4 : tabarImg3" />
-                    <div style="width: 100%;display: flex;justify-content: space-between;">
-                      <span class="icon" style="margin-right: 0;" ref="inventory">库存</span>
-                      <span v-show="stockLine == 2" class="span-line-style"></span>
-                    </div>
-                  </div>
-                  <ul id="haveAndNot" class="close">
-                    <li @click="select4" ref="notOutbound">未出库</li>
-                    <li @click="select5" ref="haveOutbound">已出库</li>
-                  </ul>
-                </li> -->
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select4" ref="notOutbound">未出库
-                  </p>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select5" ref="haveOutbound">
-                    已出库
-                  </p>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="icon" style="margin: 0;text-align: left;" ref="delivery" @click="select6">出库/查询</p>
-                </li>
-              </ul>
-            </li>
-            <li class="first-li">
-              <div @click="warehouseCloseAndOpen3"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/work.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">企业在线办公</p>
-                </div>
-                <i id="warehouseArrows3" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="warehouseOpenOrClose3" class="close">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 8 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="reimbursement2"
-                    @click="select10">我的报销</p>
-                </li>
-                <li v-show="financeFlag == 1" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (warehouseSelect == 9 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="reimbursementAdmin2" @click="select11">报销管理</span>
-                    <p v-if="reimData == 1" class="selected-circle-style"></p>
-                  </div>
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <!-- 销售 -->
-          <ul class="person-ul" v-if="role == 4">
-            <li class="first-li">
-              <div @click="marketCloseAndOpen"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/msg-search.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">实用信息查询</p>
-                </div>
-                <i id="marketArrows" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="marketOpenOrClose" class="open">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 7 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c8563;" ref="watchQuery3"
-                    @click="marketSelect9">手表查询</p>
-                </li>
-
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="peerAdmin3"
-                    @click="marketSelect6">客户管理</p>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 8 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="rateQuery4"
-                    @click="marketSelect10">汇率查询</p>
-                </li>
-                <li v-show="marketPriceFlag == 1" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 5 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="priceAdmin2" @click="marketSelect7">批发价管理</span>
-                    <p v-show="dataMaketPriceCount > 0" class="selected-circle-style"></p>
-                  </div>
-                </li>
-                <li v-show="marketPriceFlag == 0" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 6 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="priceInquire2"
-                    @click="marketSelect8">批发价查询</p>
-                </li>
-
-              </ul>
-            </li>
-            <li class="first-li">
-              <div @click="marketCloseAndOpen2"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/cargo.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">销售货物管理</p>
-                </div>
-                <i id="marketArrows2" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="marketOpenOrClose2" class="close">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="icon" style="margin: 0;text-align: left;" ref="marketInventory" @click="marketSelect1">库存
-                  </p>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;" @click="marketSelect4">
-                    <span class="icon" style="margin-right: 0;" ref="saveInProgress">进行中销售</span>
-                    <p v-show="sellPendOrderCount !== 0" class="selected-circle-style"></p>
-                  </div>
-                </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="icon" style="margin: 0;text-align: left;" ref="completedSales" @click="marketSelect5">已完成销售
-                  </p>
-                </li>
-
-              </ul>
-            </li>
-            <li class="first-li">
-              <div @click="marketCloseAndOpen3"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/work.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">企业在线办公</p>
-                </div>
-                <i id="marketArrows3" class="el-icon-arrow-down"></i>
-              </div>
-              <ul id="marketOpenOrClose3" class="close">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 9 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="reimbursement3"
-                    @click="marketSelect11">我的报销</p>
-                </li>
-                <li v-show="financeFlag == 1" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (marketSelect == 10 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="reimbursementAdmin3"
-                      @click="marketSelect12">报销管理</span>
-                    <!--   v-show="marketLine == 9" -->
+                    <span class="icon" style="margin-right: 0;" :style="{color:selected == 13 ? '#0c7063' : '#fff'}"
+                      @click="selected13">报销管理</span>
                     <p v-show="reimData == 1" class="selected-circle-style"></p>
                   </div>
                 </li>
-              </ul>
-            </li>
-          </ul>
-          <!-- 财务 -->
-          <ul class="person-ul" v-if="role == 5">
-            <li class="first-li">
-              <div @click="financeCloseAndOpen1"
-                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
-                <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/msg-search.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">实用信息查询</p>
-                </div>
-                <i id="financeArrows" class="el-icon-arrow-up"></i>
-              </div>
-              <ul id="financeOpenOrClose" class="open">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c7063;" ref="financeWatchQuery"
-                    @click="financeSelected1">
-                    手表查询</p>
+                <li v-show="authorityList[27] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 17 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 17 ? '#0c7063' : '#fff'}" @click="selected17">银行卡管理</p>
                 </li>
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 1 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="financeStoreQuery"
-                    @click="financeSelected2">
-                    店铺查询</p>
+                <li v-show="authorityList[27] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 18 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 18 ? '#0c7063' : '#fff'}" @click="selected18">我的借贷</p>
                 </li>
-
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="financeRateQuery"
-                    @click="financeSelected3">
-                    汇率查询</p>
+                <li v-show="authorityList[28] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 19 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 19 ? '#0c7063' : '#fff'}" @click="selected19">借贷审核</p>
                 </li>
-
-                <li v-show="marketPriceFlag == 0" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="financePriceInquire"
-                    @click="financeSelected4">
-                    批发价查询</p>
+                <li v-show="authorityList[29] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 20 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 20 ? '#0c7063' : '#fff'}" @click="selected20">借贷拨款</p>
                 </li>
-
+                <li v-show="authorityList[30] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 21 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 21 ? '#0c7063' : '#fff'}" @click="selected21">债务统计-个人</p>
+                </li>
+                <li v-show="authorityList[31] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 22 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 22 ? '#0c7063' : '#fff'}" @click="selected22">债务统计-公司</p>
+                </li>
               </ul>
             </li>
 
-            <li class="first-li">
-              <div @click="financeCloseAndOpen2"
+            <li class="first-li" v-show="authorityList[33] == 1">
+              <div @click="closeAndOpen5"
                 style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
                 <div style="display: flex;">
-                  <img class="icon icon-size" src="../../assets/imgs/work.png" />
-                  <p class="icon" style="color:#fff;margin: 0;">企业在线办公</p>
+                  <img class="icon icon-size" src="../../assets/imgs/report.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">统计报表</p>
                 </div>
-                <i id="financeArrows2" class="el-icon-arrow-down"></i>
+                <i id="arrows5" class="el-icon-arrow-down"></i>
               </div>
-              <ul id="financeOpenOrClose2" class="close">
-                <li class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <p class="my-purchase icon" style="margin: 0;text-align: left;" ref="financeReimbursement"
-                    @click="financeSelected5">我的报销</p>
-                </li>
-                <li v-show="financeFlag == 1" class="li-selected-background"
-                  :style="{backgroundImage: 'url(' + (financeSelect == 5 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
-                  <div style="display: flex;">
-                    <span class="icon" style="margin-right: 0;" ref="financeReimbursementAdmin"
-                      @click="financeSelected6">报销管理</span>
-                    <p v-if="reimData == 1" class="selected-circle-style"></p>
-                  </div>
+              <ul id="openOrClose5" class="close">
+                <li v-show="authorityList[33] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 23 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 23 ? '#0c7063' : '#fff'}" @click="selected23">采购报表</p>
                 </li>
               </ul>
             </li>
@@ -510,34 +289,6 @@
             <div class="main-top-right">
               <div style="display: flex;">
                 <div style="display: flex;" v-show="isSearch == 0">
-                  <!-- <div style="margin-top: 10px;" v-show="selected == 12 || warehouseSelect == 8 || marketSelect == 9">
-                    <img src="../../assets/imgs/filtrate.png" class="filtrate" @click="filtrateMsg" />
-                    <el-dialog :visible.sync="dialogFiltrateVisible" center>
-                      <div>
-                        <div style="margin-bottom: 30px;text-align: center;">
-                          <el-checkbox-group v-model="typeList">
-                            <el-checkbox label="行程报销"></el-checkbox>
-                            <el-checkbox label="非行程报销"></el-checkbox>
-                          </el-checkbox-group>
-                        </div>
-                        <el-form label-width="120px">
-                          <el-form-item label="开始时间：">
-                            <el-date-picker v-model="startTime" type="date" placeholder="请选择开始时间"
-                              value-format="yyyy-MM-dd" class="input-style" style="width: 70%;">
-                            </el-date-picker>
-                          </el-form-item>
-                          <el-form-item label="结束时间：">
-                            <el-date-picker v-model="endTime" type="date" placeholder="请选择结束时间"
-                              value-format="yyyy-MM-dd" class="input-style" style="width: 70%;"></el-date-picker>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div slot="footer">
-                        <el-button @click="dialogFiltrateVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="filtrateMsgSure">确 定</el-button>
-                      </div>
-                    </el-dialog>
-                  </div> -->
                   <el-input :placeholder="promptMessage" prefix-icon="el-icon-search"
                     style="width: 400px;margin-right: 20px;" v-model="fuzzyKeyword" @focus="pageSel"
                     @blur="keywordSure"></el-input>
@@ -581,7 +332,7 @@
                       </div>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="nickDialogVisible = false" style="margin-left: 35%;">取 消</el-button>
-                        <el-button type="primary" @click="updateNick">确 定</el-button>
+                        <el-button type="primary" @click="updateNick" v-preventClick>确 定</el-button>
                       </span>
                     </el-dialog>
                   </li>
@@ -612,7 +363,7 @@
                       </div>
                       <span slot="footer" class="dialog-footer">
                         <el-button @click="pswDialogVisible = false" style="margin-left: 35%;">取 消</el-button>
-                        <el-button type="primary" @click="updatePsw">确 定</el-button>
+                        <el-button type="primary" @click="updatePsw" v-preventClick>确 定</el-button>
                       </span>
                     </el-dialog>
                   </li>
@@ -629,7 +380,7 @@
             <Peer v-if="selected == 3" :purchaseSelect="purchaseSelect"></Peer>
             <!-- 我的采购 -->
             <My-purchase ref="myPurchase" v-if="selected == 2" :selectSearch="selectSearch" :numSelect="numSelect"
-              :orders="orders" @radioSel="radioSel">
+              @radioSel="radioSel">
             </My-purchase>
             <!-- 物流 -->
             <Logistics-view v-if="selected == 4" :logisticsView="logisticsView"></Logistics-view>
@@ -642,41 +393,45 @@
             <!-- 小费管理 -->
             <Tip-admin v-if="selected == 16" :tipSel="tipSel" @rateCalcJump="rateCalcJump"></Tip-admin>
             <!-- 贸易商/客户管理 -->
-            <Peer-admin ref="peerAdminMain" v-if="adminSelected == 4 || selected == 6 || marketSelect == 4"
-              @peerSel="peerSel">
+            <Peer-admin ref="peerAdminMain" v-if="selected == 6 || marketSelect == 4" @peerSel="peerSel">
             </Peer-admin>
             <!-- 批发价管理 -->
-            <Price-admin ref="priceAdminMain" v-if="adminSelected == 5 || selected == 7 || marketSelect == 5"
-              :priceAdmin="priceAdmin" @priceCount="priceCount">
+            <Price-admin ref="priceAdminMain" v-if="selected == 7" :priceAdmin="priceAdmin" @priceCount="priceCount">
             </Price-admin>
             <!-- 批发价查询 -->
-            <Price-inquire ref="priceInquireMain"
-              v-if="financeSelect == 3 || adminSelected == 6 || selected == 8 || marketSelect == 6"
-              :priceInquire="priceInquire">
+            <Price-inquire ref="priceInquireMain" v-if="selected == 8" :priceInquire="priceInquire">
             </Price-inquire>
             <!-- 店铺查询 -->
-            <Store-query ref="storeQueryMain" v-if="financeSelect == 1 || adminSelected == 7 || selected == 9"
-              @storeJump="storeJump" :storeQuerySel="storeQuerySel"></Store-query>
+            <Store-query ref="storeQueryMain" v-if="selected == 9" @storeJump="storeJump"
+              :storeQuerySel="storeQuerySel"></Store-query>
             <!-- 手表查询 -->
-            <Watch-query ref="watchQueryMain"
-              v-if="financeSelect == 0 || selected == 10 || warehouseSelect == 6 || marketSelect == 7"
-              :watchQuerySel="watchQuerySel"></Watch-query>
+            <Watch-query ref="watchQueryMain" v-if="selected == 10" :watchQuerySel="watchQuerySel"></Watch-query>
             <!-- 汇率查询 -->
-            <Rate-query
-              v-if="financeSelect == 2 || adminSelected == 8 || selected == 11 || warehouseSelect == 7 || marketSelect == 8"
-              :rateQuerySel="rateQuerySel">
+            <Rate-query v-if="selected == 11" :rateQuerySel="rateQuerySel">
             </Rate-query>
             <!-- 我的报销 -->
-            <Reimbursement ref="reimbursementMain"
-              v-if="financeSelect == 4 || selected == 12 || warehouseSelect == 8 || marketSelect == 9"
-              :reimbursementSel="reimbursementSel" @jumpRate="jumpRate" @reimListen="reimListen" @tabSelect="tabSelect">
+            <Reimbursement ref="reimbursementMain" v-if="selected == 12" :reimbursementSel="reimbursementSel"
+              @jumpRate="jumpRate" @reimListen="reimListen" @tabSelect="tabSelect">
             </Reimbursement>
             <!-- 报销管理 -->
-            <Reimbursement-admin ref="reimburseAdmin"
-              v-if="financeSelect == 5 || selected == 13 || warehouseSelect == 9 || marketSelect ==10 "
+            <Reimbursement-admin ref="reimburseAdmin" v-if="selected == 13"
               :reimbursementAdminSel="reimbursementAdminSel" @rateCalcJump="rateCalcJump" @reimListen="reimListen"
               @reimbursementKeyword="reimbursementKeyword">
             </Reimbursement-admin>
+            <!-- 银行卡管理 -->
+            <Bank-statement v-if="selected == 17"></Bank-statement>
+            <!-- 我的借贷 -->
+            <My-borrow ref="myBorrow" v-if="selected == 18" :myBorrowSelect="myBorrowSelect"></My-borrow>
+            <!-- 借贷审核 -->
+            <Borrow-audit ref="borrowingAudit" v-if="selected == 19"></Borrow-audit>
+            <!-- 借贷拨款 -->
+            <Appropriation ref="appropriation" v-if="selected == 20"></Appropriation>
+            <!-- 债务统计-个人 -->
+            <Debt-statistics-person ref="debtPerson" v-if="selected == 21" :debtPersonSelect="debtPersonSelect">
+            </Debt-statistics-person>
+            <!-- 债务统计-公司 -->
+            <Debt-statistics-company ref="debtCompany" v-if="selected == 22" :debtCompanySelect="debtCompanySelect">
+            </Debt-statistics-company>
             <!-- 待入库 -->
             <Stock-list ref="stockListMain" v-if="warehouseSelect == 0" :stock1="stock1" @getStockCount="getStockCount">
             </Stock-list>
@@ -695,6 +450,8 @@
             </On-sale>
             <!-- 已完成销售 -->
             <Completed-sale ref="completedSaleMain" v-if="marketSelect == 3"></Completed-sale>
+            <!--采购报表-->
+            <Purchase-reports v-if="selected== 23" :againclick="againclick" :key="timer"></Purchase-reports>
           </div>
         </el-col>
       </el-main>
@@ -708,14 +465,10 @@
       return {
         coverImgUrl: require('../../assets/imgs/selected.png'),
         baseImg: '',
-        peerFlag: '',
-        marketPriceFlag: '',
-        financeFlag: '',
         stockInCount: 0,
         sellPendOrderCount: 0,
         isRouterAlive: true,
-        msg: "我是home组件",
-        selected: 1,
+        selected: 10,
         breadList: [],
         actives: "1-1",
         updateUser: 1,
@@ -725,7 +478,6 @@
         pswDialogVisible: false,
         oldPsw: "",
         newPsw: "",
-        role: 0,
         selectSearch: {
           id: 1,
           msg: 0,
@@ -735,9 +487,8 @@
           id: 1,
           logisticsV: 0
         },
-        line: 1,
-        stockLine: 0,
-        warehouseSelect: 0,
+
+        warehouseSelect: 10,
         stock1: {
           id: 1,
           num: 0
@@ -760,8 +511,8 @@
           id: 1,
           have: 0
         },
-        marketSelect: 0,
-        marketLine: 0,
+        marketSelect: 10,
+
         forSale: {
           id: 1,
           sale: 0
@@ -771,16 +522,10 @@
           query: 0,
           msg: '',
         },
-        adminSelected: 1,
-        adminLine: 1,
+
         numSelect: {
           id: 0,
           select: 0
-        },
-        orders: {
-          purchaseOrder: [],
-          total: 0,
-          totalNum: 0,
         },
         priceAdmin: {
           id: 0,
@@ -831,54 +576,39 @@
           select: 0
         },
 
-        promptMessage: '',
+        promptMessage: '可输入手表品牌、系列、型号、昵称简称进行搜索',
         fuzzyKeyword: '',
-        dialogFiltrateVisible: false,
-        typeList: ['行程报销', '非行程报销'],
-        startTime: '',
-        endTime: '',
         isSearch: 0,
-        financeSelect: 0,
+        authorityList: [],
+
+        myBorrowSelect: {
+          select: 0,
+        },
+
+        debtPersonSelect: {
+          select: 0
+        },
+        debtCompanySelect: {
+          select: 0
+        },
+        againclick: {
+          times: 0
+        },
+        timer: '',
+
 
       };
     },
     created() {
-      console.log(sessionStorage.getItem('peerFlag'));
-      this.peerFlag = sessionStorage.getItem('peerFlag');
-      // this.peerFlag = 1;
-      this.marketPriceFlag = sessionStorage.getItem('marketPriceFlag');
-      this.financeFlag = sessionStorage.getItem('financeFlag');
+      this.authorityList = sessionStorage.getItem('authority').split('|');
+      console.log(this.authorityList);
       this.$store.state.nick = sessionStorage.getItem("nick");
       this.getBreadList();
-      this.role = sessionStorage.getItem("role");
-      if (this.role == 2) {
-        this.selected = 10;
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-      } else if (this.role !== 2) {
-        this.selected = 50;
-      }
-      if (this.role == 3) {
-        this.warehouseSelect = 6;
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-      } else if (this.role !== 3) {
-        this.warehouseSelect = 51;
-      }
-      if (this.role == 4) {
-        this.marketSelect = 7;
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-      } else if (this.role !== 4) {
-        this.marketSelect = 52;
-      };
-      if (this.role == 5) {
-        this.financeSelect = 0;
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-      } else if (this.role !== 5) {
-        this.financeSelect = 52;
-      };
     },
     mounted() {
       //防止页面后退
       this.keydown();
+
       this.$axios.post(this.$store.state.baseUrl + '/StockInCount').then((res) => {
         this.stockInCount = res.data.count;
       });
@@ -889,12 +619,444 @@
         console.log(res.data.total);
         this.dataMaketPriceCount = res.data.total;
       });
-      this.handleSureReimbursement();
+
+      let openOrClose = document.getElementById('openOrClose');
+      let arrows = document.getElementById('arrows');
+      let openOrClose2 = document.getElementById('openOrClose2');
+      let arrows2 = document.getElementById('arrows2');
+      let openOrClose3 = document.getElementById('openOrClose3');
+      let arrows3 = document.getElementById('arrows3');
+      let openOrClose4 = document.getElementById('openOrClose4');
+      let arrows4 = document.getElementById('arrows4');
+      let openOrClose5 = document.getElementById('openOrClose5');
+      let arrows5 = document.getElementById('arrows5');
+      let warehouseArrows2 = document.getElementById('warehouseArrows2');
+      let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
+      let marketArrows2 = document.getElementById('marketArrows2');
+      let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
     },
     methods: {
+      // 手表查询
+      selected10() {
+        this.selected = 10;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.watchQuerySel.select = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入手表品牌、系列、型号、昵称简称进行搜索';
+        this.backTop();
+        this.reload();
+      },
+      // 店铺查询
+      selected9() {
+        this.selected = 9;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入店铺名称、地址、国家等信息进行搜索';
+        this.storeQuerySel.select = 0;
+        this.backTop();
+      },
+      // 贸易商管理
+      selected6() {
+        this.selected = 6;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入贸易商名称进行搜索';
+        this.backTop();
+      },
+      // 客户管理
+      marketSelect6() {
+        this.marketSelect = 4;
+        this.warehouseSelect = 10;
+        this.selected = 50;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入贸易商名称进行搜索';
+        this.backTop();
+      },
+      // 汇率查询
+      selected11() {
+        this.selected = 11;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.rateQuerySel.select = 0;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        console.log(this.$refs.rateQuery);
+        this.backTop();
+      },
+
+      // 批发价管理
+      selected7() {
+        this.selected = 7;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号进行搜索';
+        this.priceAdmin.select = 0;
+        this.priceAdmin.keyword = '';
+        this.priceAdmin.page = 1;
+        this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
+          this.dataMaketPriceCount = res.data.total;
+        });
+        if (this.isFirst == false) {
+          this.isFirst = true;
+        } else if (this.isFirst == true) {
+          this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
+            page: this.priceAdmin.page,
+            pageNum: 10
+          }).then((res) => {
+            this.priceAdmin.total = res.data.total;
+            this.priceAdmin.dataMaketPriceList = res.data.watchs;
+          }).catch((err) => {
+            console.log(err);
+          })
+        };
+        this.backTop();
+      },
+      // 批发价查询
+      selected8() {
+        this.selected = 8;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.priceInquire.select = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号进行搜索';
+        this.backTop();
+      },
+      // 代理商采购
+      selected1() {
+        this.selected = 1;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.purchaseSelect.nums = 0;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+      // 贸易商采购
+      selected3() {
+        this.selected = 3;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.purchaseSelect.nums = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+      // 我的采购
+      closeAndOpen() {
+        console.log("5555");
+        this.selected = 2;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 0;
+        this.selectSearch.msg = 0;
+        this.numSelect.select = 2;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号、机芯号进行搜索';
+        console.log('选择');
+        console.log(this.numSelect.select);
+
+        this.backTop();
+
+        this.$nextTick(() => {
+          console.log(this.$refs.myPurchase);
+          this.$refs.myPurchase.shipping.msg = 0;
+          this.$refs.myPurchase.filtrate = '0';
+          this.$refs.myPurchase.radioChange();
+        })
+      },
+      // 物流查询
+      selected4() {
+        this.selected = 4;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.logisticsView.logisticsV = 1;
+        this.backTop();
+      },
+      // 采购结算单
+      selected5() {
+        this.selected = 5;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+      // 税金管理
+      selected14() {
+        this.selected = 14;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.taxesSel.select = 0;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+      // 佣金管理
+      selected15() {
+        this.selected = 15;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.commissionSel.select = 0;
+        this.backTop();
+      },
+      // 小费管理
+      selected16() {
+        this.selected = 16;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.tipSel.select = 0;
+        this.backTop();
+      },
+      // 银行卡管理
+      selected17() {
+        this.selected = 17;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+
+        this.backTop();
+      },
+      // 我的借贷
+      selected18() {
+        this.selected = 18;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.myBorrowSelect.select = 0;
+
+        this.backTop();
+
+        this.$nextTick(() => {
+          this.$refs.myBorrow.addBorrowListActiveName = 'backlog';
+          this.$refs.myBorrow.unHandleSelect.select = 0;
+        })
+      },
+      // 借贷审核
+      selected19() {
+        this.selected = 19;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+
+        this.backTop();
+
+        this.$nextTick(() => {
+          this.$refs.borrowingAudit.borrowingActiveName = 'borrowingBacklog';
+        })
+      },
+      // 借贷拨款
+      selected20() {
+        this.selected = 20;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+
+        this.backTop();
+
+        this.$nextTick(() => {
+          this.$refs.appropriation.appropriationActiveName = 'appropriationBacklog';
+          this.$refs.appropriation.appropriationUnHandleSelect.select = 0;
+        })
+      },
+      // 债务统计-个人
+      selected21() {
+        this.selected = 21;
+        this.debtPersonSelect.select = 0;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+
+      // 债务统计-公司
+      selected22() {
+        this.selected = 22;
+        this.debtCompanySelect.select = 0;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.backTop();
+      },
+      // 仓库
+      // 待入库
+      select1() {
+        this.warehouseSelect = 0;
+        this.marketSelect = 10;
+        this.selected = 50;
+        this.stock1.num = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入机芯号进行搜索';
+        this.backTop();
+      },
+      // 库存
+      select3(e) {
+        console.log(e);
+        this.warehouseSelect = 2;
+        this.marketSelect = 10;
+        this.selected = 50;
+        this.stockLine = 2;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌型号进行搜索';
+        this.backTop();
+      },
+      // 未出库
+      select4() {
+        this.warehouseSelect = 2;
+        this.marketSelect = 10;
+        this.selected = 50;
+        this.notOutbound.nots = 0;
+        this.notOutbound.select = 2;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌型号进行搜索';
+        this.$axios
+          .post(this.$store.state.baseUrl + "/StockList", {
+            page: 1,
+            pageNum: 10,
+            type: '0',
+          })
+          .then(res => {
+            console.log("未出库商品列表");
+            console.log(res);
+            this.notOrders.notOutboundList1 = res.data.lst;
+            this.notOrders.total1 = res.data.total;
+            this.notOrders.totalNum1 = res.data.watchTotal;
+            console.log(this.notOrders.notOutboundList1);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        this.backTop();
+      },
+      // 已出库
+      select5() {
+        this.warehouseSelect = 3;
+        this.marketSelect = 10;
+        this.selected = 50;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌型号进行搜索';
+        this.haveBound.have = 0;
+        this.backTop();
+      },
+      // 出库/查询
+      select6() {
+        this.warehouseSelect = 4;
+        this.marketSelect = 10;
+        this.selected = 50;
+        this.outboundQuery.query = 0;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.backTop();
+      },
+      // 销售页面的库存
+      marketSelect1() {
+        this.marketSelect = 0;
+        this.warehouseSelect = 10;
+        this.selected = 50;
+        this.forSale.sale = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号进行搜索';
+        this.backTop();
+      },
+      // 进行中的销售
+      marketSelect4() {
+        this.marketSelect = 2;
+        this.warehouseSelect = 10;
+        this.selected = 50;
+        this.onSaleSel.select = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号进行搜索';
+
+        this.backTop();
+      },
+      // 已完成销售
+      marketSelect5() {
+        this.marketSelect = 3;
+        this.warehouseSelect = 10;
+        this.selected = 50;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入品牌、型号进行搜索';
+
+        this.backTop();
+      },
+      // 我的报销
+      selected12() {
+        this.selected = 12;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.reimbursementSel.select = 0;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入行程名称或行程描述进行搜索';
+        this.backTop();
+      },
+      // 报销管理
+      selected13() {
+        this.selected = 13;
+        this.marketSelect = 10;
+        this.warehouseSelect = 10;
+        this.isSearch = 0;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '可输入用户名、昵称进行搜索';
+        this.reimbursementAdminSel.select = 0;
+        this.handleSureReimbursement();
+        this.backTop();
+      },
+      // 报表
+      // 采购报表
+      selected23() {
+        this.selected = 23;
+        this.isSearch = 1;
+        this.fuzzyKeyword = '';
+        this.promptMessage = '';
+        this.againclick.times = 0;
+        this.timer = new Date().getTime();
+        this.backTop();
+      },
+
       closeAndOpen1() {
-        let openOrClose = document.getElementById('openOrClose');
-        let arrows = document.getElementById('arrows');;
         console.log(arrows);
         if (openOrClose.className == 'close') {
           openOrClose.className = 'open';
@@ -905,22 +1067,20 @@
           openOrClose.className = 'close';
           arrows.className = 'el-icon-arrow-down';
         };
-        let openOrClose2 = document.getElementById('openOrClose2');
-        let arrows2 = document.getElementById('arrows2');
         openOrClose2.className = 'close';
         arrows2.className = 'el-icon-arrow-down';
-        let openOrClose3 = document.getElementById('openOrClose3');
-        let arrows3 = document.getElementById('arrows3');
         openOrClose3.className = 'close';
         arrows3.className = 'el-icon-arrow-down';
-        let openOrClose4 = document.getElementById('openOrClose4');
-        let arrows4 = document.getElementById('arrows4');
         openOrClose4.className = 'close';
         arrows4.className = 'el-icon-arrow-down';
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
       },
       closeAndOpen2() {
-        let openOrClose2 = document.getElementById('openOrClose2');
-        let arrows2 = document.getElementById('arrows2');;
         console.log(arrows2);
         if (openOrClose2.className == 'close') {
           openOrClose2.className = 'open';
@@ -931,22 +1091,20 @@
           openOrClose2.className = 'close';
           arrows2.className = 'el-icon-arrow-down';
         };
-        let openOrClose = document.getElementById('openOrClose');
-        let arrows = document.getElementById('arrows');
         openOrClose.className = 'close';
         arrows.className = 'el-icon-arrow-down';
-        let openOrClose3 = document.getElementById('openOrClose3');
-        let arrows3 = document.getElementById('arrows3');
         openOrClose3.className = 'close';
         arrows3.className = 'el-icon-arrow-down';
-        let openOrClose4 = document.getElementById('openOrClose4');
-        let arrows4 = document.getElementById('arrows4');
         openOrClose4.className = 'close';
         arrows4.className = 'el-icon-arrow-down';
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
       },
       closeAndOpen3() {
-        let openOrClose3 = document.getElementById('openOrClose3');
-        let arrows3 = document.getElementById('arrows3');
         console.log(arrows3);
         if (openOrClose3.className == 'close') {
           openOrClose3.className = 'open';
@@ -957,22 +1115,21 @@
           openOrClose3.className = 'close';
           arrows3.className = 'el-icon-arrow-down';
         };
-        let openOrClose = document.getElementById('openOrClose');
-        let arrows = document.getElementById('arrows');
         openOrClose.className = 'close';
         arrows.className = 'el-icon-arrow-down';
-        let openOrClose2 = document.getElementById('openOrClose2');
-        let arrows2 = document.getElementById('arrows2');
         openOrClose2.className = 'close';
         arrows2.className = 'el-icon-arrow-down';
-        let openOrClose4 = document.getElementById('openOrClose4');
-        let arrows4 = document.getElementById('arrows4');
         openOrClose4.className = 'close';
         arrows4.className = 'el-icon-arrow-down';
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
       },
       closeAndOpen4() {
-        let openOrClose4 = document.getElementById('openOrClose4');
-        let arrows4 = document.getElementById('arrows4');
+        this.handleSureReimbursement();
         console.log(arrows4);
         if (openOrClose4.className == 'close') {
           openOrClose4.className = 'open';
@@ -983,44 +1140,45 @@
           openOrClose4.className = 'close';
           arrows4.className = 'el-icon-arrow-down';
         };
-        let openOrClose = document.getElementById('openOrClose');
-        let arrows = document.getElementById('arrows');
         openOrClose.className = 'close';
         arrows.className = 'el-icon-arrow-down';
-        let openOrClose2 = document.getElementById('openOrClose2');
-        let arrows2 = document.getElementById('arrows2');
         openOrClose2.className = 'close';
         arrows2.className = 'el-icon-arrow-down';
-        let openOrClose3 = document.getElementById('openOrClose3');
-        let arrows3 = document.getElementById('arrows3');
         openOrClose3.className = 'close';
         arrows3.className = 'el-icon-arrow-down';
-      },
-      warehouseCloseAndOpen() {
-        let warehouseArrows = document.getElementById('warehouseArrows');
-        let warehouseOpenOrClose = document.getElementById('warehouseOpenOrClose');
-        if (warehouseOpenOrClose.className == 'close') {
-          warehouseOpenOrClose.className = 'open';
-          warehouseArrows.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.select8();
-        } else if (warehouseOpenOrClose.className == 'open') {
-          warehouseOpenOrClose.className = 'close';
-          warehouseArrows.className = 'el-icon-arrow-down';
-        };
-        let warehouseArrows2 = document.getElementById('warehouseArrows2');
-        let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
         warehouseOpenOrClose2.className = 'close';
         warehouseArrows2.className = 'el-icon-arrow-down';
-
-        let warehouseArrows3 = document.getElementById('warehouseArrows3');
-        let warehouseOpenOrClose3 = document.getElementById('warehouseOpenOrClose3');
-        warehouseOpenOrClose3.className = 'close';
-        warehouseArrows3.className = 'el-icon-arrow-down';
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
+      },
+      closeAndOpen5() {
+        if (openOrClose5.className == 'close') {
+          openOrClose5.className = 'open';
+          arrows5.className = 'el-icon-arrow-up';
+          this.isSearch = 0;
+          if (this.authorityList[33] == 1) {
+            this.selected23();
+          }
+        } else if (openOrClose5.className == 'open') {
+          openOrClose5.className = 'close';
+          arrows5.className = 'el-icon-arrow-down';
+        };
+        openOrClose.className = 'close';
+        arrows.className = 'el-icon-arrow-down';
+        openOrClose2.className = 'close';
+        arrows2.className = 'el-icon-arrow-down';
+        openOrClose3.className = 'close';
+        arrows3.className = 'el-icon-arrow-down';
+        openOrClose4.className = 'close';
+        arrows4.className = 'el-icon-arrow-down';
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
       },
       warehouseCloseAndOpen2() {
-        let warehouseArrows2 = document.getElementById('warehouseArrows2');
-        let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
         if (warehouseOpenOrClose2.className == 'close') {
           warehouseOpenOrClose2.className = 'open';
           warehouseArrows2.className = 'el-icon-arrow-up';
@@ -1030,68 +1188,20 @@
           warehouseOpenOrClose2.className = 'close';
           warehouseArrows2.className = 'el-icon-arrow-down';
         };
-
-        let warehouseArrows = document.getElementById('warehouseArrows');
-        let warehouseOpenOrClose = document.getElementById('warehouseOpenOrClose');
-        warehouseOpenOrClose.className = 'close';
-        warehouseArrows.className = 'el-icon-arrow-down';
-
-        let warehouseArrows3 = document.getElementById('warehouseArrows3');
-        let warehouseOpenOrClose3 = document.getElementById('warehouseOpenOrClose3');
-        warehouseOpenOrClose3.className = 'close';
-        warehouseArrows3.className = 'el-icon-arrow-down';
-      },
-      warehouseCloseAndOpen3() {
-        let warehouseArrows3 = document.getElementById('warehouseArrows3');
-        let warehouseOpenOrClose3 = document.getElementById('warehouseOpenOrClose3');
-        if (warehouseOpenOrClose3.className == 'close') {
-          warehouseOpenOrClose3.className = 'open';
-          warehouseArrows3.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.select10();
-        } else if (warehouseOpenOrClose3.className == 'open') {
-          warehouseOpenOrClose3.className = 'close';
-          warehouseArrows3.className = 'el-icon-arrow-down';
-        };
-        let warehouseArrows2 = document.getElementById('warehouseArrows2');
-        let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
-        warehouseOpenOrClose2.className = 'close';
-        warehouseArrows2.className = 'el-icon-arrow-down';
-
-        let warehouseArrows = document.getElementById('warehouseArrows');
-        let warehouseOpenOrClose = document.getElementById('warehouseOpenOrClose');
-        warehouseOpenOrClose.className = 'close';
-        warehouseArrows.className = 'el-icon-arrow-down';
-      },
-
-      marketCloseAndOpen() {
-        let marketArrows = document.getElementById('marketArrows');
-        let marketOpenOrClose = document.getElementById('marketOpenOrClose');
-        if (marketOpenOrClose.className == 'open') {
-          marketOpenOrClose.className = 'close';
-          marketArrows.className = 'el-icon-arrow-down';
-        } else if (marketOpenOrClose.className == 'close') {
-          marketOpenOrClose.className = 'open';
-          marketArrows.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.marketSelect9();
-        };
-
-        let marketArrows2 = document.getElementById('marketArrows2');
-        let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
+        openOrClose.className = 'close';
+        arrows.className = 'el-icon-arrow-down';
+        openOrClose2.className = 'close';
+        arrows2.className = 'el-icon-arrow-down';
+        openOrClose3.className = 'close';
+        arrows3.className = 'el-icon-arrow-down';
+        openOrClose4.className = 'close';
+        arrows4.className = 'el-icon-arrow-down';
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
         marketOpenOrClose2.className = 'close';
         marketArrows2.className = 'el-icon-arrow-down';
-
-        let marketArrows3 = document.getElementById('marketArrows3');
-        let marketOpenOrClose3 = document.getElementById('marketOpenOrClose3');
-        marketOpenOrClose3.className = 'close';
-        marketArrows3.className = 'el-icon-arrow-down';
       },
-
       marketCloseAndOpen2() {
-
-        let marketArrows2 = document.getElementById('marketArrows2');
-        let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
         if (marketOpenOrClose2.className == 'open') {
           marketOpenOrClose2.className = 'close';
           marketArrows2.className = 'el-icon-arrow-down';
@@ -1101,72 +1211,19 @@
           this.isSearch = 0;
           this.marketSelect1();
         };
-
-        let marketArrows = document.getElementById('marketArrows');
-        let marketOpenOrClose = document.getElementById('marketOpenOrClose');
-        marketOpenOrClose.className = 'close';
-        marketArrows.className = 'el-icon-arrow-down';
-
-        let marketArrows3 = document.getElementById('marketArrows3');
-        let marketOpenOrClose3 = document.getElementById('marketOpenOrClose3');
-        marketOpenOrClose3.className = 'close';
-        marketArrows3.className = 'el-icon-arrow-down';
+        openOrClose.className = 'close';
+        arrows.className = 'el-icon-arrow-down';
+        openOrClose2.className = 'close';
+        arrows2.className = 'el-icon-arrow-down';
+        openOrClose3.className = 'close';
+        arrows3.className = 'el-icon-arrow-down';
+        openOrClose4.className = 'close';
+        arrows4.className = 'el-icon-arrow-down';
+        openOrClose5.className = 'close';
+        arrows5.className = 'el-icon-arrow-down';
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
       },
-
-      marketCloseAndOpen3() {
-        let marketArrows3 = document.getElementById('marketArrows3');
-        let marketOpenOrClose3 = document.getElementById('marketOpenOrClose3');
-        if (marketOpenOrClose3.className == 'open') {
-          marketOpenOrClose3.className = 'close';
-          marketArrows3.className = 'el-icon-arrow-down';
-        } else if (marketOpenOrClose3.className == 'close') {
-          marketOpenOrClose3.className = 'open';
-          marketArrows3.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.marketSelect11();
-        };
-
-        let marketArrows = document.getElementById('marketArrows');
-        let marketOpenOrClose = document.getElementById('marketOpenOrClose');
-        marketOpenOrClose.className = 'close';
-        marketArrows.className = 'el-icon-arrow-down';
-
-        let marketArrows2 = document.getElementById('marketArrows2');
-        let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
-        marketOpenOrClose2.className = 'close';
-        marketArrows2.className = 'el-icon-arrow-down';
-      },
-
-      financeCloseAndOpen1() {
-        let financeArrows = document.getElementById('financeArrows');
-        let financeOpenOrClose = document.getElementById('financeOpenOrClose');
-        if (financeOpenOrClose.className == 'close') {
-          financeOpenOrClose.className = 'open';
-          financeArrows.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.financeSelected1();
-        };
-        let financeArrows2 = document.getElementById('financeArrows2');
-        let financeOpenOrClose2 = document.getElementById('financeOpenOrClose2');
-        financeOpenOrClose2.className = 'close';
-        financeArrows2.className = 'el-icon-arrow-down';
-      },
-
-      financeCloseAndOpen2() {
-        let financeArrows2 = document.getElementById('financeArrows2');
-        let financeOpenOrClose2 = document.getElementById('financeOpenOrClose2');
-        if (financeOpenOrClose2.className == 'close') {
-          financeOpenOrClose2.className = 'open';
-          financeArrows2.className = 'el-icon-arrow-up';
-          this.isSearch = 0;
-          this.financeSelected5();
-        };
-        let financeArrows = document.getElementById('financeArrows');
-        let financeOpenOrClose = document.getElementById('financeOpenOrClose');
-        financeOpenOrClose.className = 'close';
-        financeArrows.className = 'el-icon-arrow-down';
-      },
-
       radioSel() {
         this.fuzzyKeyword = '';
       },
@@ -1175,17 +1232,20 @@
         if (this.selected == 2) {
           this.$refs.myPurchase.page = 1;
         };
-        if (this.adminSelected == 5 || this.selected == 7 || this.marketSelect == 5) {
-          this.$refs.priceAdmin.page = 1;
+        if (this.selected == 6 || this.marketSelect == 4) {
+          this.$refs.peerAdminMain.page = 1;
+        }
+        if (this.selected == 7) {
+          this.$refs.priceAdminMain.page = 1;
           this.priceAdmin.page = 1;
         };
-        if (this.financeSelect == 3 || this.adminSelected == 6 || this.selected == 8 || this.marketSelect == 6) {
+        if (this.selected == 8) {
           this.$refs.priceInquireMain.page = 1;
         };
-        if (this.financeSelect == 0 || this.selected == 10 || this.warehouseSelect == 6 || this.marketSelect == 7) {
+        if (this.selected == 10) {
           this.$refs.watchQueryMain.page = 1;
         };
-        if (this.financeSelect == 4 || this.selected == 12 || this.warehouseSelect == 8 || this.marketSelect == 9) {
+        if (this.selected == 12) {
           this.$refs.reimbursementMain.page = 1;
         };
         if (this.warehouseSelect == 0) {
@@ -1207,7 +1267,7 @@
         if (this.marketSelect == 3) {
           this.$refs.completedSaleMain.page = 1;
         };
-        if (this.financeSelect == 5 || this.selected == 13 || this.warehouseSelect == 9 || this.marketSelect == 10) {
+        if (this.selected == 13) {
           this.$refs.reimburseAdmin.page = 1;
         }
       },
@@ -1217,24 +1277,24 @@
           this.$refs.myPurchase.keyword = this.fuzzyKeyword;
           this.selectSearch.keyword = this.fuzzyKeyword;
         };
-        if (this.adminSelected == 4 || this.selected == 6 || this.marketSelect == 4) {
+        if (this.selected == 6 || this.marketSelect == 4) {
           this.$refs.peerAdminMain.keyword = this.fuzzyKeyword;
         }
-        if (this.adminSelected == 5 || this.selected == 7 || this.marketSelect == 5) {
+        if (this.selected == 7) {
           this.$refs.priceAdminMain.keyword = this.fuzzyKeyword;
           this.priceAdmin.keyword = this.fuzzyKeyword;
         };
-        if (this.financeSelect == 3 || this.adminSelected == 6 || this.selected == 8 || this.marketSelect == 6) {
+        if (this.selected == 8) {
           this.$refs.priceInquireMain.keyword = this.fuzzyKeyword;
         };
-        if (this.financeSelect == 1 || this.adminSelected == 7 || this.selected == 9) {
+        if (this.selected == 9) {
           this.$refs.storeQueryMain.keyword = this.fuzzyKeyword;
         };
-        if (this.financeSelect == 0 || this.selected == 10 || this.warehouseSelect == 6 || this.marketSelect == 7) {
+        if (this.selected == 10) {
           console.log(this.fuzzyKeyword);
           this.$refs.watchQueryMain.keyword = this.fuzzyKeyword;
         };
-        if (this.financeSelect == 4 || this.selected == 12 || this.warehouseSelect == 8 || this.marketSelect == 9) {
+        if (this.selected == 12) {
           this.$refs.reimbursementMain.keyword = this.fuzzyKeyword;
         };
         if (this.warehouseSelect == 0) {
@@ -1255,7 +1315,7 @@
         if (this.marketSelect == 3) {
           this.$refs.completedSaleMain.keyword = this.fuzzyKeyword;
         };
-        if (this.financeSelect == 5 || this.selected == 13 || this.warehouseSelect == 9 || this.marketSelect == 10) {
+        if (this.selected == 13) {
           this.$refs.reimburseAdmin.keyword = this.fuzzyKeyword;
         }
       },
@@ -1264,60 +1324,73 @@
           console.log(this.$refs.myPurchase);
           this.$refs.myPurchase.keyword = this.fuzzyKeyword;
           this.selectSearch.keyword = this.fuzzyKeyword;
+          this.numSelect.select = 0;
           this.$refs.myPurchase.radioChange();
         };
-        if (this.adminSelected == 4 || this.selected == 6 || this.marketSelect == 4) {
+        if (this.selected == 6 || this.marketSelect == 4) {
           this.$refs.peerAdminMain.keyword = this.fuzzyKeyword;
           this.$refs.peerAdminMain.stockInSearch();
         }
-        if (this.adminSelected == 5 || this.selected == 7 || this.marketSelect == 5) {
+        if (this.selected == 7) {
           this.$refs.priceAdminMain.keyword = this.fuzzyKeyword;
           this.priceAdmin.keyword = this.fuzzyKeyword;
+          this.priceAdmin.select = 0;
           this.$refs.priceAdminMain.stockInSearch();
         };
-        if (this.financeSelect == 3 || this.adminSelected == 6 || this.selected == 8 || this.marketSelect == 6) {
+        if (this.selected == 8) {
           this.$refs.priceInquireMain.keyword = this.fuzzyKeyword;
+          this.priceInquire.select = 0;
           this.$refs.priceInquireMain.stockInSearch();
         };
-        if (this.financeSelect == 1 || this.adminSelected == 7 || this.selected == 9) {
+        if (this.selected == 9) {
           this.$refs.storeQueryMain.keyword = this.fuzzyKeyword;
           this.$refs.storeQueryMain.stockInSearch();
         };
-        if (this.financeSelect == 0 || this.selected == 10 || this.warehouseSelect == 6 || this.marketSelect == 7) {
+        if (this.selected == 10) {
           console.log(this.fuzzyKeyword);
           this.$refs.watchQueryMain.keyword = this.fuzzyKeyword;
+          this.watchQuerySel.select = 0;
           this.$refs.watchQueryMain.stockInSearch();
         };
-        if (this.financeSelect == 4 || this.selected == 12 || this.warehouseSelect == 8 || this.marketSelect == 9) {
+        if (this.selected == 12) {
           this.$refs.reimbursementMain.keyword = this.fuzzyKeyword;
+          this.reimbursementSel.select = 0;
           this.$refs.reimbursementMain.stockInSearch();
         };
         if (this.warehouseSelect == 0) {
           this.$refs.stockListMain.keyword = this.fuzzyKeyword;
+          this.stock1.num = 0;
           this.$refs.stockListMain.stockInSearch();
         };
         if (this.warehouseSelect == 2) {
           this.$refs.notOutboundMain.keyword = this.fuzzyKeyword;
+          this.notOutbound.nots = 0;
           this.$refs.notOutboundMain.stockInSearch();
         };
         if (this.warehouseSelect == 3) {
           this.$refs.haveOutboundMain.keyword = this.fuzzyKeyword;
+          this.haveBound.have = 0;
           this.$refs.haveOutboundMain.stockInSearch();
         };
         if (this.marketSelect == 0) {
           this.$refs.forsaleMain.keyword = this.fuzzyKeyword;
+          this.forSale.sale = 0;
           this.$refs.forsaleMain.stockInSearch();
         };
         if (this.marketSelect == 2) {
           this.$refs.onsaleMain.keyword = this.fuzzyKeyword;
+          this.onSaleSel.select = 0;
           this.$refs.onsaleMain.stockInSearch();
         };
         if (this.marketSelect == 3) {
           this.$refs.completedSaleMain.keyword = this.fuzzyKeyword;
           this.$refs.completedSaleMain.stockInSearch();
         };
-        if (this.financeSelect == 5 || this.selected == 13 || this.warehouseSelect == 9 || this.marketSelect == 10) {
+        if (this.selected == 13) {
           this.$refs.reimburseAdmin.keyword = this.fuzzyKeyword;
+          this.reimbursementAdminSel.select = 0;
+          this.$refs.reimburseAdmin.toConfirmedSel.select = 0;
+          this.$refs.reimburseAdmin.adminCompleteSel.select = 0;
           this.$refs.reimburseAdmin.stockInSearch();
         }
       },
@@ -1337,7 +1410,7 @@
       peerSel(val) {
         console.log(val);
         let openOrClose2 = document.getElementById('openOrClose2');
-        let arrows2 = document.getElementById('arrows2');;
+        let arrows2 = document.getElementById('arrows2');
         console.log(arrows2);
         openOrClose2.className = 'open';
         arrows2.className = 'el-icon-arrow-up';
@@ -1365,99 +1438,39 @@
         this.jumpRate();
       },
       jumpRate(val) {
-        if (this.role == 2) {
-          let openOrClose = document.getElementById('openOrClose');
-          let arrows = document.getElementById('arrows');;
-          console.log(arrows);
-          if (openOrClose.className == 'close') {
-            openOrClose.className = 'open';
-            arrows.className = 'el-icon-arrow-up';
-            this.selected11();
-          } else if (openOrClose.className == 'open') {
-            openOrClose.className = 'close';
-            arrows.className = 'el-icon-arrow-down';
-          };
-          let openOrClose2 = document.getElementById('openOrClose2');
-          let arrows2 = document.getElementById('arrows2');
-          openOrClose2.className = 'close';
-          arrows2.className = 'el-icon-arrow-down';
-          let openOrClose3 = document.getElementById('openOrClose3');
-          let arrows3 = document.getElementById('arrows3');
-          openOrClose3.className = 'close';
-          arrows3.className = 'el-icon-arrow-down';
-          let openOrClose4 = document.getElementById('openOrClose4');
-          let arrows4 = document.getElementById('arrows4');
-          openOrClose4.className = 'close';
-          arrows4.className = 'el-icon-arrow-down';
-        } else if (this.role == 3) {
-          let warehouseArrows = document.getElementById('warehouseArrows');
-          let warehouseOpenOrClose = document.getElementById('warehouseOpenOrClose');
-          if (warehouseOpenOrClose.className == 'close') {
-            warehouseOpenOrClose.className = 'open';
-            warehouseArrows.className = 'el-icon-arrow-up';
-            this.select9();
-          } else if (warehouseOpenOrClose.className == 'open') {
-            warehouseOpenOrClose.className = 'close';
-            warehouseArrows.className = 'el-icon-arrow-down';
-          };
-          let warehouseArrows2 = document.getElementById('warehouseArrows2');
-          let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
-          warehouseOpenOrClose2.className = 'close';
-          warehouseArrows2.className = 'el-icon-arrow-down';
-
-          let warehouseArrows3 = document.getElementById('warehouseArrows3');
-          let warehouseOpenOrClose3 = document.getElementById('warehouseOpenOrClose3');
-          warehouseOpenOrClose3.className = 'close';
-          warehouseArrows3.className = 'el-icon-arrow-down';
-        } else if (this.role == 4) {
-          let marketArrows = document.getElementById('marketArrows');
-          let marketOpenOrClose = document.getElementById('marketOpenOrClose');
-          if (marketOpenOrClose.className == 'open') {
-            marketOpenOrClose.className = 'close';
-            marketArrows.className = 'el-icon-arrow-down';
-          } else if (marketOpenOrClose.className == 'close') {
-            marketOpenOrClose.className = 'open';
-            marketArrows.className = 'el-icon-arrow-up';
-            this.marketSelect10();
-          };
-
-          let marketArrows2 = document.getElementById('marketArrows2');
-          let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
-          marketOpenOrClose2.className = 'close';
-          marketArrows2.className = 'el-icon-arrow-down';
-
-          let marketArrows3 = document.getElementById('marketArrows3');
-          let marketOpenOrClose3 = document.getElementById('marketOpenOrClose3');
-          marketOpenOrClose3.className = 'close';
-          marketArrows3.className = 'el-icon-arrow-down';
-        } else if (this.role == 5) {
-          let financeArrows = document.getElementById('financeArrows');
-          let financeOpenOrClose = document.getElementById('financeOpenOrClose');
-          if (financeOpenOrClose.className == 'close') {
-            financeOpenOrClose.className = 'open';
-            financeArrows.className = 'el-icon-arrow-up';
-            this.isSearch = 0;
-            this.financeSelected3();
-          };
-          let financeArrows2 = document.getElementById('financeArrows2');
-          let financeOpenOrClose2 = document.getElementById('financeOpenOrClose2');
-          financeOpenOrClose2.className = 'close';
-          financeArrows2.className = 'el-icon-arrow-down';
-        }
-      },
-      // 阻止页面后退
-      keydown() {
-        console.log("ggggggggggggggggggggggggggggg");
-        console.log(window);
-        window.document.onkeydown = function () {
-          if (
-            window.event.altKey &&
-            (window.event.keyCode == 37 || window.event.keyCode == 39)
-          ) {
-            // alert("不准你使用ALT+方向键前进或后退网页！");
-            event.returnValue = false;
-          }
+        let openOrClose = document.getElementById('openOrClose');
+        let arrows = document.getElementById('arrows');;
+        console.log(arrows);
+        if (openOrClose.className == 'close') {
+          openOrClose.className = 'open';
+          arrows.className = 'el-icon-arrow-up';
+          this.isSearch = 1;
+          this.selected11();
+        } else if (openOrClose.className == 'open') {
+          openOrClose.className = 'close';
+          arrows.className = 'el-icon-arrow-down';
         };
+        let openOrClose2 = document.getElementById('openOrClose2');
+        let arrows2 = document.getElementById('arrows2');
+        openOrClose2.className = 'close';
+        arrows2.className = 'el-icon-arrow-down';
+        let openOrClose3 = document.getElementById('openOrClose3');
+        let arrows3 = document.getElementById('arrows3');
+        openOrClose3.className = 'close';
+        arrows3.className = 'el-icon-arrow-down';
+        let openOrClose4 = document.getElementById('openOrClose4');
+        let arrows4 = document.getElementById('arrows4');
+        openOrClose4.className = 'close';
+        arrows4.className = 'el-icon-arrow-down';
+        let warehouseArrows2 = document.getElementById('warehouseArrows2');
+        let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
+        warehouseOpenOrClose2.className = 'close';
+        warehouseArrows2.className = 'el-icon-arrow-down';
+        let marketArrows2 = document.getElementById('marketArrows2');
+        let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
+        marketOpenOrClose2.className = 'close';
+        marketArrows2.className = 'el-icon-arrow-down';
+
       },
       listSelectSum(val) {
         console.log("gggg");
@@ -1480,6 +1493,7 @@
       },
       tabSelect(val) {
         this.isSearch = val;
+        this.fuzzyKeyword = '';
       },
       // 修改昵称
       nickUpdate() {
@@ -1506,7 +1520,6 @@
               this.$store.state.nick = sessionStorage.getItem("nick");
               this.nickDialogVisible = false;
               this.updateUser = 1;
-              this.newNick = '';
             }
           }).catch((err) => {
             console.log(err);
@@ -1529,7 +1542,7 @@
         console.log(this.oldPsw, this.newPsw);
         this.$axios
           .post(this.$store.state.baseUrl + "/UserModify", {
-            oldpsw: this.oldPsw,
+            oldPsw: this.oldPsw,
             psw: this.newPsw
           })
           .then(res => {
@@ -1543,8 +1556,6 @@
               sessionStorage.setItem("token", res.data.token);
               this.pswDialogVisible = false;
               this.updateUser = 1;
-              this.oldPsw = '';
-              this.newPsw = '';
             }
             console.log(sessionStorage.getItem("token"));
           }).catch((err) => {
@@ -1559,13 +1570,13 @@
       // 退出登录
       logOut() {
         this.$router.push('/login');
-        this.$store.dispatch('setRole', null);
+        this.$store.dispatch('setToken', null);
       },
       // 获取是否有需要确认的报销单 ReimburseList?java
       handleSureReimbursement() {
         this.$axios.post(this.$store.state.baseUrl + '/ClaimFormList?java', {
           page: 1,
-          pagenum: 10,
+          pageNum: 10,
           flag: 1
         }).then((res) => {
           console.log('是否有需要确认的报销单');
@@ -1579,1507 +1590,36 @@
           console.log(err);
         })
       },
-      // 管理统计
-      admin1() {
-        this.adminLine = 1;
-        this.adminSelected = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.statistics.style.color = '#2d4e65';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // location.reload();
-        this.reload();
-      },
-      // 结算
-      admin2() {
-        this.adminLine = 2;
-        this.adminSelected = 2;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#2d4e65';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理结算单
-      admin3() {
-        this.adminLine = 3;
-        this.adminSelected = 3;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#2d4e65';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理贸易商管理
-      admin6() {
-        this.adminLine = 4;
-        this.adminSelected = 4;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#2d4e65';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理批发价管理
-      admin4() {
-        this.adminLine = 5;
-        this.adminSelected = 5;
-        this.priceAdmin.select = 0;
-        this.priceAdmin.keyword = '';
-        this.priceAdmin.page = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#2d4e65';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
-          this.dataMaketPriceCount = res.data.total;
-        });
-        if (this.isFirst == false) {
-          this.isFirst = true;
-        } else if (this.isFirst == true) {
-          this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
-            page: this.priceAdmin.page,
-            pagenum: 10
-          }).then((res) => {
-            this.priceAdmin.total = res.data.total;
-            this.priceAdmin.dataMaketPriceList = res.data.watchs;
-          }).catch((err) => {
-            console.log(err);
-          })
-        }
-      },
-      // 管理批发价查询
-      admin5() {
-        this.adminLine = 6;
-        this.adminSelected = 6;
-        this.priceInquire.select = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#2d4e65';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理店铺查询
-      admin7() {
-        this.adminLine = 7;
-        this.adminSelected = 7;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入店铺名称、地址、国家等信息进行查询';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#2d4e65';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理汇率查询
-      admin8() {
-        this.adminLine = 8;
-        this.adminSelected = 8;
-        this.rateQuerySel.select = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#2d4e65';
-        this.$refs.reimbursement4.style.color = '#c8c8c8';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 管理我的报销
-      admin9() {
-        this.adminLine = 9;
-        this.adminSelected = 9;
-        this.reimbursementSel.select = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入行程名称或行程描述进行搜索';
-        this.$refs.statistics.style.color = '#c8c8c8';
-        this.$refs.settleAccounts.style.color = '#c8c8c8';
-        this.$refs.finalStament.style.color = '#c8c8c8';
-        this.$refs.peerAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceAdmin3.style.color = '#c8c8c8';
-        this.$refs.priceInquire3.style.color = '#c8c8c8';
-        this.$refs.storeQuery3.style.color = '#c8c8c8';
-        this.$refs.rateQuery2.style.color = '#c8c8c8';
-        this.$refs.reimbursement4.style.color = '#2d4e65';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 财务手表查询
-      financeSelected1() {
-        this.financeSelect = 0;
-        this.watchQuerySel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-        this.$refs.financeWatchQuery.style.color = '#0c7063';
-        this.$refs.financeStoreQuery.style.color = '#fff';
-        this.$refs.financeRateQuery.style.color = '#fff';
-        this.$refs.financePriceInquire.style.color = '#fff';
-        this.$refs.financeReimbursement.style.color = '#fff';
-        this.$refs.financeReimbursementAdmin.style.color = '#fff';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        this.reload();
-      },
 
-      // 财务店铺查询
-      financeSelected2() {
-        this.financeSelect = 1;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入店铺名称、地址、国家等信息进行查询';
-        this.storeQuerySel.select = 0;
-        this.$refs.financeWatchQuery.style.color = '#fff';
-        this.$refs.financeStoreQuery.style.color = '#0c7063';
-        this.$refs.financeRateQuery.style.color = '#fff';
-        this.$refs.financePriceInquire.style.color = '#fff';
-        this.$refs.financeReimbursement.style.color = '#fff';
-        this.$refs.financeReimbursementAdmin.style.color = '#fff';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
+      // 页面回到顶部
+      backTop() {
+        let timer = null;
+        cancelAnimationFrame(timer);
+        timer = requestAnimationFrame(function fn() {
+          var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+          if (oTop > 0) {
+            document.body.scrollTop = document.documentElement.scrollTop = oTop - 100;
+            timer = requestAnimationFrame(fn);
+          } else {
+            cancelAnimationFrame(timer);
           }
-        })();
-      },
-      // 财务汇率查询
-      financeSelected3() {
-        this.financeSelect = 2;
-        this.rateQuerySel.select = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.financeWatchQuery.style.color = '#fff';
-        this.$refs.financeStoreQuery.style.color = '#fff';
-        this.$refs.financeRateQuery.style.color = '#0c7063';
-        this.$refs.financePriceInquire.style.color = '#fff';
-        this.$refs.financeReimbursement.style.color = '#fff';
-        this.$refs.financeReimbursementAdmin.style.color = '#fff';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 财务批发价查询
-      financeSelected4() {
-        this.financeSelect = 3;
-        this.priceInquire.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.financeWatchQuery.style.color = '#fff';
-        this.$refs.financeStoreQuery.style.color = '#fff';
-        this.$refs.financeRateQuery.style.color = '#fff';
-        this.$refs.financePriceInquire.style.color = '#0c7063';
-        this.$refs.financeReimbursement.style.color = '#fff';
-        this.$refs.financeReimbursementAdmin.style.color = '#fff';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 财务我的报销
-      financeSelected5() {
-        this.financeSelect = 4;
-        this.reimbursementSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入行程名称或行程描述进行搜索';
-        this.$refs.financeWatchQuery.style.color = '#fff';
-        this.$refs.financeStoreQuery.style.color = '#fff';
-        this.$refs.financeRateQuery.style.color = '#fff';
-        this.$refs.financePriceInquire.style.color = '#fff';
-        this.$refs.financeReimbursement.style.color = '#0c7063';
-        this.$refs.financeReimbursementAdmin.style.color = '#fff';
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 财务报销管理
-      financeSelected6() {
-        this.financeSelect = 5;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入用户名、昵称进行查询';
-        this.reimbursementAdminSel.select = 0;
-        this.$refs.financeWatchQuery.style.color = '#fff';
-        this.$refs.financeStoreQuery.style.color = '#fff';
-        this.$refs.financeRateQuery.style.color = '#fff';
-        this.$refs.financePriceInquire.style.color = '#fff';
-        this.$refs.financeReimbursement.style.color = '#fff';
-        this.$refs.financeReimbursementAdmin.style.color = '#0c7063';
-        this.handleSureReimbursement();
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 代理商采购
-      selected1() {
-        this.selected = 1;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        // this.purchaseSelect.num = 0;
-        this.$refs.purchase.style.color = "#0c7063";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 贸易商采购
-      selected3() {
-        this.selected = 3;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#0c7063";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 我的采购
-      closeAndOpen(e) {
-        console.log("5555");
-        this.selected = 2;
-        this.isSearch = 0;
-        this.selectSearch.msg = 0;
-        this.numSelect.select = 2;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号、机芯号进行搜索';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#0c7063";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        console.log('选择');
-        console.log(this.numSelect.select);
-        this.$axios
-          .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
-            page: 1,
-            pagenum: 10,
-            type: 0
-          })
-          .then(res => {
-            console.log("获取订单");
-            console.log(res);
-            this.orders.purchaseOrder = res.data.orders;
-            this.orders.total = res.data.total;
-            this.orders.totalNum = res.data.watchtotal;
-            console.log(this.orders.purchaseOrder);
-            // this.page = 1;
-          });
-
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 物流查询
-      selected4() {
-        this.selected = 4;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#0c7063";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        this.logisticsView.logisticsV = 1;
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购结算单
-      selected5() {
-        this.selected = 5;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#0c7063";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购税金管理
-      selected14() {
-        this.selected = 14;
-        this.taxesSel.select = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#0c7063";
-        this.$refs.commission.style.color = "#fff";
-        this.$refs.tipAdmin.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购佣金管理
-      selected15() {
-        this.selected = 15;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.commissionSel.select = 0;
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#0c7063";
-        this.$refs.tipAdmin.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购小费管理
-      selected16() {
-        this.selected = 16;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.tipSel.select = 0;
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        this.$refs.tipAdmin.style.color = "#0c7063";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购贸易商管理
-      selected6() {
-        this.selected = 6;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入贸易商名称进行搜索';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#0c7063";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购批发价管理
-      selected7() {
-        this.selected = 7;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.priceAdmin.select = 0;
-        this.priceAdmin.keyword = '';
-        this.priceAdmin.page = 1;
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#0c7063";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
-          this.dataMaketPriceCount = res.data.total;
         });
-        if (this.isFirst == false) {
-          this.isFirst = true;
-        } else if (this.isFirst == true) {
-          this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
-            page: this.priceAdmin.page,
-            pagenum: 10
-          }).then((res) => {
-            this.priceAdmin.total = res.data.total;
-            this.priceAdmin.dataMaketPriceList = res.data.watchs;
-          }).catch((err) => {
-            console.log(err);
-          })
-        }
       },
-      // 采购批发价查询
-      selected8() {
-        this.selected = 8;
-        this.priceInquire.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#0c7063";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
+      // 阻止页面后退
+      keydown() {
+        console.log(window);
+        window.document.onkeydown = function () {
+          if (
+            window.event.altKey &&
+            (window.event.keyCode == 37 || window.event.keyCode == 39)
+          ) {
+            // alert("不准你使用ALT+方向键前进或后退网页！");
+            event.returnValue = false;
           }
-        })();
-      },
-      // 采购店铺查询
-      selected9() {
-        this.selected = 9;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入店铺名称、地址、国家等信息进行查询';
-        this.storeQuerySel.select = 0;
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#0c7063";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购手表查询
-      selected10() {
-        this.selected = 10;
-        this.watchQuerySel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#0c7063";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        this.reload();
-      },
-      // 采购汇率查询
-      selected11() {
-        this.selected = 11;
-        this.rateQuerySel.select = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#0c7063";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购我的报销
-      selected12() {
-        this.selected = 12;
-        this.reimbursementSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入行程名称或行程描述进行搜索';
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#0c7063";
-        this.$refs.reimbursementAdmin.style.color = "#fff";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 采购报销管理
-      selected13() {
-        this.selected = 13;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入用户名、昵称进行查询';
-        this.reimbursementAdminSel.select = 0;
-        this.$refs.purchase.style.color = "#fff";
-        this.$refs.trade.style.color = "#fff";
-        this.$refs.logisticsView.style.color = "#fff";
-        this.$refs.myPur.style.color = "#fff";
-        this.$refs.statement.style.color = "#fff";
-        this.$refs.peerAdmin.style.color = "#fff";
-        this.$refs.priceAdmin.style.color = "#fff";
-        this.$refs.priceInquire.style.color = "#fff";
-        this.$refs.storeQuery.style.color = "#fff";
-        this.$refs.watchQuery.style.color = "#fff";
-        this.$refs.rateQuery.style.color = "#fff";
-        this.$refs.reimbursement.style.color = "#fff";
-        this.$refs.reimbursementAdmin.style.color = "#0c7063";
-        this.$refs.taxes.style.color = "#fff";
-        this.$refs.commission.style.color = "#fff";
-        this.handleSureReimbursement();
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 仓库
-      // 待入库
-      select1() {
-        this.warehouseSelect = 0;
-        this.stock1.num = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入机芯号进行搜索';
-        this.$refs.stock.style.color = "#0c8563";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = "#fff";
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        // this.reload();
-      },
-      // 库存
-      select3(e) {
-        console.log(e);
-        this.warehouseSelect = 2;
-        this.stockLine = 2;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌型号进行搜索';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#0c8563";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = "#fff";
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // if (haveAndNot.className == "close") {
-        //   haveAndNot.className = "open";
-        //   this.warehouseSelect = 2;
-        // } else if (haveAndNot.className == "open") {
-        //   haveAndNot.className = "close";
-        // }
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 未出库
-      select4() {
-        this.warehouseSelect = 2;
-        this.notOutbound.nots = 0;
-        this.notOutbound.select = 2;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌型号进行搜索';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#0c7063";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        this.$axios
-          .post(this.$store.state.baseUrl + "/StockList", {
-            page: 1,
-            pagenum: 10,
-            type: '0',
-          })
-          .then(res => {
-            console.log("未出库商品列表");
-            console.log(res);
-            this.notOrders.notOutboundList1 = res.data.lst;
-            this.notOrders.total1 = res.data.total;
-            this.notOrders.totalNum1 = res.data.watchtotal;
-            console.log(this.notOrders.notOutboundList1);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 已出库
-      select5() {
-        this.warehouseSelect = 3;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌型号进行搜索';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#0c7063";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        this.haveBound.have = 0;
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 出库/查询
-      select6() {
-        this.warehouseSelect = 4;
-        this.outboundQuery.query = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#0c7063';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 仓库手表查询
-      select8() {
-        this.warehouseSelect = 6;
-        this.watchQuerySel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#0c7063";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 仓库汇率查询
-      select9() {
-        this.warehouseSelect = 7;
-        this.rateQuerySel.select = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#0c7063";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 仓库我的报销
-      select10() {
-        this.warehouseSelect = 8;
-        this.reimbursementSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入行程名称或行程描述进行搜索';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#0c7063";
-        this.$refs.reimbursementAdmin2.style.color = "#fff";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 仓库报销管理
-      select11() {
-        this.warehouseSelect = 9;
-        this.reimbursementAdminSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入用户名、昵称进行查询';
-        this.$refs.stock.style.color = "#fff";
-        // this.$refs.inventory.style.color = "#fff";
-        this.$refs.notOutbound.style.color = "#fff";
-        this.$refs.haveOutbound.style.color = "#fff";
-        this.$refs.delivery.style.color = '#fff';
-        this.$refs.watchQuery2.style.color = "#fff";
-        this.$refs.rateQuery3.style.color = "#fff";
-        this.$refs.reimbursement2.style.color = "#fff";
-        this.$refs.reimbursementAdmin2.style.color = "#0c7063";
-        // let haveAndNot = document.getElementById("haveAndNot");
-        // haveAndNot.className = "close";
-        this.handleSureReimbursement();
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售页面的库存
-      marketSelect1() {
-        this.marketSelect = 0;
-        this.forSale.sale = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.marketInventory.style.color = "#0c8563";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        // this.reload();
-      },
-      // 进行中的销售
-      marketSelect4() {
-        this.marketSelect = 2;
-        this.onSaleSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#0c8563";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // this.$axios.post(this.$store.state.baseUrl + '/SellPendOrderCount').then((res) => {
-        //   this.sellPendOrderCount = res.data.count;
-        // });
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 已完成销售
-      marketSelect5() {
-        this.marketSelect = 3;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#0c8563";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售客户管理
-      marketSelect6() {
-        this.marketSelect = 4;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入客户名称进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#0c8563';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售批发价管理
-      marketSelect7() {
-        this.marketSelect = 5;
-        this.priceAdmin.select = 0;
-        this.priceAdmin.keyword = '';
-        this.priceAdmin.page = 1;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#0c8563";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-        this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
-          this.dataMaketPriceCount = res.data.total;
-        });
-        if (this.isFirst == false) {
-          this.isFirst = true;
-        } else if (this.isFirst == true) {
-          this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
-            page: this.priceAdmin.page,
-            pagenum: 10
-          }).then((res) => {
-            this.priceAdmin.total = res.data.total;
-            this.priceAdmin.dataMaketPriceList = res.data.watchs;
-          }).catch((err) => {
-            console.log(err);
-          })
-        }
-      },
-      // 销售批发价查询
-      marketSelect8() {
-        this.marketSelect = 6;
-        this.priceInquire.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入品牌、型号进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#0c8563";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售手表查询
-      marketSelect9() {
-        this.marketSelect = 7;
-        this.watchQuerySel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入手表品牌、系列、型号进行查询';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = '#fff';
-        this.$refs.peerAdmin3.style.color = "#fff";
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#0c8563";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售汇率查询
-      marketSelect10() {
-        this.marketSelect = 8;
-        this.rateQuerySel.select = 0;
-        this.isSearch = 1;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#0c8563";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售我的报销
-      marketSelect11() {
-        this.marketSelect = 9;
-        this.reimbursementSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入行程名称或行程描述进行搜索';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#0c8563";
-        this.$refs.reimbursementAdmin3.style.color = "#fff";
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
-      },
-      // 销售报销管理
-      marketSelect12() {
-        this.marketSelect = 10;
-        this.reimbursementAdminSel.select = 0;
-        this.isSearch = 0;
-        this.fuzzyKeyword = '';
-        this.promptMessage = '可输入用户名、昵称进行查询';
-        this.$refs.marketInventory.style.color = "#fff";
-        this.$refs.saveInProgress.style.color = "#fff";
-        this.$refs.completedSales.style.color = "#fff";
-        this.$refs.peerAdmin3.style.color = '#fff';
-        this.$refs.priceAdmin2.style.color = "#fff";
-        this.$refs.priceInquire2.style.color = "#fff";
-        this.$refs.watchQuery3.style.color = "#fff";
-        this.$refs.rateQuery4.style.color = "#fff";
-        this.$refs.reimbursement3.style.color = "#fff";
-        this.$refs.reimbursementAdmin3.style.color = "#0c8563";
-        this.handleSureReimbursement();
-        // 页面回到顶部
-        (function smoothscroll() {
-          var currentScroll =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          if (currentScroll > 0) {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - currentScroll / 5);
-          }
-        })();
+        };
       },
     }
-  };
+  }
 </script>
 <style lang="scss" scoped>
   .selected-circle-style {
@@ -3123,6 +1663,7 @@
   .aside {
     width: 324px;
     padding-top: 30px;
+    padding-bottom: 30px;
     background: #0c7063;
 
     ul li {
@@ -3157,6 +1698,7 @@
 
       .person-ul {
         width: 100%;
+        padding-bottom: 30px;
 
         .first-li {
           padding-left: 30px;
@@ -3217,7 +1759,6 @@
     position: relative;
 
     .main-top {
-      // width: 89%;
       height: 80px;
       padding-left: 50px;
       margin-bottom: 30px;
@@ -3225,10 +1766,8 @@
       top: 0;
       left: 324px;
       line-height: 80px;
-      // border-bottom: 1px solid #dedede;
-      // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
       background-color: #fff;
-      z-index: 1;
+      z-index: 9999;
 
       .main-top-left {
         position: absolute;
@@ -3435,7 +1974,7 @@
     }
 
     .el-button+.el-button {
-      margin-left: 10%;
+      margin-left: 5%;
     }
 
 
@@ -3515,10 +2054,10 @@
       height: 28px;
     }
 
-    input[type=checkbox]:after {
-      width: 20px;
-      height: 20px;
-    }
+    // input[type=checkbox]:after {
+    //   width: 20px;
+    //   height: 20px;
+    // }
 
     .el-dialog__footer {
       padding: 10px 60px 30px;
@@ -3541,6 +2080,12 @@
     table>tr>td {
       background-color: #f3fbf9;
       border-bottom: 1px solid #d7ebe7;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
     }
   }
 </style>

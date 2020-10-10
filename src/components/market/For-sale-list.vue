@@ -12,32 +12,31 @@
         <tr>
           <th>图片</th>
           <th>货号</th>
-          <th v-if="item.LOG_state == 1 || item.LOG_state == 2">仓库</th>
+          <th v-if="item.log_state == 1 || item.log_state == 2">仓库</th>
           <th>保卡日期</th>
           <th>商品状态</th>
-          <th v-if="item.LOG_state == 0 || item.LOG_state == 1">{{item.LOG_state == 0 ? '采购时间' : '预计到库时间'}}</th>
+          <th v-if="item.log_state == 0 || item.log_state == 1">{{item.log_state == 0 ? '采购时间' : '预计到库时间'}}</th>
           <th>状态</th>
           <th>操作</th>
         </tr>
         <tr>
           <td>
+            <!-- item.watchPics -->
             <img v-image-preview
-              :src="item.watchpics == null || item.watchpics == '' ? '' : img + '/img/watch/'+ (item.watchpics || '').split('|')[0]"
+              :src="forSaleWatchList.buy_watchPics == null || forSaleWatchList.buy_watchPics == '' ? '' : img + '/img/watch/'+ (forSaleWatchList.buy_watchPics || '').split('|')[0]"
               style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
           </td>
           <td>{{item.stock_No}}</td>
-          <td v-if="item.LOG_state == 1 || item.LOG_state == 2">{{item.LOG_warehouse}}</td>
-          <td>{{item.buy_watchcard}}</td>
+          <td v-if="item.log_state == 1 || item.log_state == 2">{{item.log_warehouse}}</td>
+          <td>{{item.buy_watchCard}}</td>
           <td>
-            <div v-for="(states,index) of item.watchstate.split('|')" :key="index">
-              <p>{{states}}</p>
-            </div>
+            <p>{{item.watchState}}</p>
           </td>
-          <td v-if="item.LOG_state == 0 || item.LOG_state == 1">
-            {{item.LOG_state == 0 ? item.buy_date : (item.LOG_state == 1 ? item.LOG_arrivetime: '')}}</td>
-          <td>{{item.LOG_state == 0 ? '采购中' : (item.LOG_state == 1 ? '运输中' : '已入库')}}</td>
+          <td v-if="item.log_state == 0 || item.log_state == 1">
+            {{item.log_state == 0 ? item.buy_date : (item.log_state == 1 ? item.log_arriveTime: '')}}</td>
+          <td>{{item.log_state == 0 ? '采购中' : (item.log_state == 1 ? '运输中' : '已入库')}}</td>
           <td>
-            <el-button type="text" @click="sellWatch(item.id,index,item.LOG_state)">出售</el-button>
+            <el-button type="text" @click="sellWatch(item.id,index,item.log_state)">出售</el-button>
           </td>
         </tr>
       </table>
@@ -53,7 +52,7 @@
         <div>
           <el-form label-width="120px">
             <el-form-item label="型号：">
-              <span>{{forSaleWatchList.buy_watchbrand +'-'+ forSaleWatchList.buy_watchmodel}}</span>
+              <span>{{forSaleWatchList.buy_watchBrand +'-'+ forSaleWatchList.buy_watchModel}}</span>
             </el-form-item>
             <el-form-item label="销售日期：">
               <el-date-picker v-model="sell_time" type="date" class="input-style"></el-date-picker>
@@ -72,17 +71,17 @@
         <div>
           <div class="top-form">
             <span class="top-span">是否全款：</span>
-            <el-switch v-model="sell_payfull" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+            <el-switch v-model="sell_payFull" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
           </div>
-          <div v-if="sell_payfull == false" style="width: 75%;">
+          <div v-if="sell_payFull == false" style="width: 75%;">
             <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
               <p>定金：</p>
               <el-form label-width="120px">
                 <el-form-item label="付款日期：">
-                  <el-date-picker v-model="sell_paytime1" type="date" class="input-style"></el-date-picker>
+                  <el-date-picker v-model="sell_payTime1" type="date" class="input-style"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="付款金额：">
-                  <el-input type="text" v-model="sell_paymoney1" class="input-style">
+                  <el-input type="text" v-model="sell_payMoney1" class="input-style">
                     <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                   </el-input>
                 </el-form-item>
@@ -92,24 +91,24 @@
               <p>尾款：</p>
               <el-form label-width="120px">
                 <el-form-item label="付款日期：">
-                  <el-date-picker v-model="sell_paytime2" type="date" class="input-style"></el-date-picker>
+                  <el-date-picker v-model="sell_payTime2" type="date" class="input-style"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="付款金额：">
-                  <el-input type="text" v-model="sell_paymoney2" class="input-style">
+                  <el-input type="text" v-model="sell_payMoney2" class="input-style">
                     <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                   </el-input>
                 </el-form-item>
               </el-form>
             </div>
           </div>
-          <div v-if="sell_payfull == true" style="width: 75%;">
+          <div v-if="sell_payFull == true" style="width: 75%;">
             <div style="margin: 20px;padding: 20px;border: 1px solid #000;border-radius: 30px;">
               <el-form label-width="120px">
                 <el-form-item label="付款日期：">
-                  <el-date-picker v-model="sell_paytime1" type="date" class="input-style"></el-date-picker>
+                  <el-date-picker v-model="sell_payTime1" type="date" class="input-style"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="付款金额：">
-                  <el-input type="text" v-model="sell_paymoney1" class="input-style">
+                  <el-input type="text" v-model="sell_payMoney1" class="input-style">
                     <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                   </el-input>
                 </el-form-item>
@@ -128,7 +127,7 @@
         </div>
         <!-- </div> -->
         <div style="margin-top: 30px;text-align: center;">
-          <el-button type="primary" @click="sellOrderSave" style="margin: 0 auto;">保存</el-button>
+          <el-button type="primary" @click="sellOrderSave" style="margin: 0 auto;" v-preventClick>保 存</el-button>
         </div>
       </div>
     </div>
@@ -169,8 +168,8 @@
                   </el-form-item>
                   <el-form-item label="国家：" required>
                     <el-select v-model="country" placeholder="请选择" class="input-style">
-                      <el-option v-for="(coun,index) of countryList" :key="index" :label="coun.CnName"
-                        :value="coun.CnName">
+                      <el-option v-for="(coun,index) of countryList" :key="index" :label="coun.cnName"
+                        :value="coun.cnName">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -187,7 +186,7 @@
                 </el-form>
                 <div slot="footer">
                   <el-button @click="dialogAddPeerVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="surePeerAdd">确 定</el-button>
+                  <el-button type="primary" @click="surePeerAdd" v-preventClick>确 定</el-button>
                 </div>
               </el-dialog>
             </div>
@@ -210,7 +209,7 @@
                 <td>{{item.type == 0 ? '贸易商公司' : (item.type == 1 ? '贸易商个体' : '散客')}}</td>
                 <td>
                   <p type="text" style="color: #0aa1ed;cursor: pointer;" @click="addPurchase(item)">
-                    选择该用户
+                    选择该客户
                   </p>
                 </td>
               </tr>
@@ -231,21 +230,21 @@
         dialogSaleListVisible: false,
         sell_time: new Date(), // 销售日期
         sell_money: "", // 销售金额
-        sell_customid: 0, // 客户id
+        sell_customId: 0, // 客户id
         sell_custom: "", // 客户名称
-        sell_payfull: false, // 是否全款   0:非全款 1:全款
-        sell_paymoney1: "", // 第一次付款（定金）
-        sell_paytime1: new Date(), // 第一次付款（定金）时间
-        sell_paymoney2: "", // 第二次付款（尾款）（sell_payfull为1时，该内容不传）
-        sell_paytime2: new Date(), // 第二次付款（尾款）时间（sell_payfull为1时，该内容不传）
+        sell_payFull: false, // 是否全款   0:非全款 1:全款
+        sell_payMoney1: "", // 第一次付款（定金）
+        sell_payTime1: new Date(), // 第一次付款（定金）时间
+        sell_payMoney2: "", // 第二次付款（尾款）（sell_payFull为1时，该内容不传）
+        sell_payTime2: new Date(), // 第二次付款（尾款）时间（sell_payFull为1时，该内容不传）
         sell_note: "", // 备注
         paramsSave: {},
-        sell_stockouttoken: "", // 出库验证码(该值用于生成出库二维码)
+        sell_stockOutToken: "", // 出库验证码(该值用于生成出库二维码)
         options: {
           text: "",
           render: "canvas",
-          width: 200,
-          height: 200,
+          width: 150,
+          height: 150,
           typeNumber: -1,
           correctLevel: 2,
           background: "#ffffff",
@@ -299,11 +298,11 @@
         this.sell_time = new Date();
         this.sell_money = "";
         this.sell_custom = "";
-        this.sell_payfull = true;
-        this.sell_paymoney1 = "";
-        this.sell_paytime1 = new Date();
-        this.sell_paymoney2 = "";
-        this.sell_paytime2 = new Date();
+        this.sell_payFull = true;
+        this.sell_payMoney1 = "";
+        this.sell_payTime1 = new Date();
+        this.sell_payMoney2 = "";
+        this.sell_payTime2 = new Date();
         this.sell_note = "";
         this.forSaleSel.select = 1;
       },
@@ -434,9 +433,10 @@
             this.dialogAddPeerVisible = false;
             loading.close();
             // this.handlePeerList();
-            this.sell_customid = res.data.id;
+            this.sell_customId = res.data.id;
             this.sell_custom = res.data.name;
             this.forSaleSel.select = 1;
+            this.handlePeerList();
           }).catch((err) => {
             loading.close();
             this.$message.error({
@@ -447,17 +447,17 @@
           })
         }
       },
-      // 选择该用户
+      // 选择该客户
       addPurchase(item) {
         console.log(item);
-        this.sell_customid = item.id;
+        this.sell_customId = item.id;
         this.sell_custom = item.name;
         this.forSaleSel.select = 1;
       },
       // 新增销售单前数据的验证
       sellOrderSave1() {
         console.log("新增销售单");
-        console.log(this.sell_payfull);
+        console.log(this.sell_payFull);
         if (this.sell_custom == '') {
           this.$message.error({
             message: '请选择客户',
@@ -466,38 +466,38 @@
           });
           return 3;
         }
-        if (this.sell_payfull == false) {
+        if (this.sell_payFull == false) {
           this.paramsSave = {
             id: this.id,
             sell_time: this.shellDate(this.sell_time),
             sell_money: Number(this.sell_money),
-            sell_customid: this.sell_customid,
+            sell_customId: this.sell_customId,
             sell_custom: this.sell_custom,
-            sell_payfull: 0,
-            sell_paymoney1: this.sell_paymoney1,
-            sell_paytime1: this.sell_paytime1 == "" ? "" : this.shellDate(this.sell_paytime1),
-            sell_paymoney2: this.sell_paymoney2,
-            sell_paytime2: this.sell_paymoney2 == "" ? "" : this.shellDate(this.sell_paytime2),
+            sell_payFull: 0,
+            sell_payMoney1: this.sell_payMoney1,
+            sell_payTime1: this.sell_payTime1 == "" ? "" : this.shellDate(this.sell_payTime1),
+            sell_payMoney2: this.sell_payMoney2,
+            sell_payTime2: this.sell_payMoney2 == "" ? "" : this.shellDate(this.sell_payTime2),
             sell_note: this.sell_note
           };
           return 1;
         }
-        if (this.sell_payfull == true) {
+        if (this.sell_payFull == true) {
           this.paramsSave = {
             id: this.id,
             sell_time: this.shellDate(this.sell_time),
             sell_money: Number(this.sell_money),
-            sell_customid: this.sell_customid,
+            sell_customId: this.sell_customId,
             sell_custom: this.sell_custom,
-            sell_payfull: 1,
-            sell_paymoney1: this.sell_paymoney1,
-            sell_paytime1: this.sell_paytime1 == "" ? "" : this.shellDate(this.sell_paytime1),
+            sell_payFull: 1,
+            sell_payMoney1: this.sell_payMoney1,
+            sell_payTime1: this.sell_payTime1 == "" ? "" : this.shellDate(this.sell_payTime1),
             sell_note: this.sell_note
           };
-          if (this.sell_paymoney1 !== "") {
-            if (this.sell_paymoney1 == this.sell_money) {
+          if (this.sell_payMoney1 !== "") {
+            if (this.sell_payMoney1 == this.sell_money) {
               return 1;
-            } else if (this.sell_paymoney1 !== this.sell_money) {
+            } else if (this.sell_payMoney1 !== this.sell_money) {
               this.$message.error({
                 message: "付款金额与销售金额不等，不能保存，请重新填写"
               });
@@ -529,10 +529,10 @@
             });
             loading.close();
             if (res.data !== "") {
-              this.sell_stockouttoken = res.data.sell_stockouttoken;
-              console.log(this.sell_stockouttoken);
+              this.sell_stockOutToken = res.data.sell_stockOutToken;
+              console.log(this.sell_stockOutToken);
               if (this.logState == 2) {
-                this.options.text = this.sell_stockouttoken;
+                this.options.text = this.sell_stockOutToken;
               } else {
                 this.options.text = "";
               };
@@ -553,7 +553,7 @@
       sellOrderSaveSure() {
         this.forSaleWatchList.watch.splice(this.watchIndex, 1);
         this.forSaleSel.select = 0;
-        this.keyword = "";
+        // this.keyword = "";
         console.log(this.forSaleWatchList.watch);
         if (this.forSaleWatchList.watch.length == 0) {
           this.$emit("gobackForSale", 0);

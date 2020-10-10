@@ -168,6 +168,9 @@
       goback() {
         this.$emit("goback", 0);
         this.$emit('shippingState', 0);
+        this.$emit("backbuy",0)
+        
+
       },
       listenWatch(watchstate) {
         // console.log('详细信息填写页面');
@@ -317,7 +320,7 @@
 
       .goback {
         height: 60px;
-        margin: 0 90px 0 50px;
+        margin: 0 50px 0 50px;
         line-height: 60px;
         display: flex;
         justify-content: space-between;
@@ -343,7 +346,7 @@
         width: 100%;
         margin: 0;
         padding-left: 0;
-        padding-right: 90px;
+        padding-right: 50px;
         display: flex;
         justify-content: space-between;
 

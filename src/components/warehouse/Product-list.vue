@@ -18,36 +18,36 @@
                 <th>物流状态</th>
                 <th>销售状态</th>
                 <th>
-                  {{items.sell_state == 1 ? '销售员' : (items.LOG_state == 0 ? '采购时间' : (items.LOG_state == 1 ? '预计到达时间' : ''))}}
+                  {{items.sell_state == 1 ? '销售员' : (items.log_state == 0 ? '采购时间' : (items.log_state == 1 ? '预计到达时间' : ''))}}
                 </th>
                 <th>库存信息</th>
               </tr>
               <tr>
                 <td>
                   <img v-image-preview
-                    :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
+                    :src="items.watchPics == null || items.watchPics == '' ? '' : img + '/img/watch/'+ (items.watchPics || '').split('|')[0]"
                     class="first-img" />
                 </td>
-                <td>{{items.buy_watchcard}}</td>
+                <td>{{items.buy_watchCard}}</td>
                 <td>
-                  <div v-for="(stateCon,index) of items.watchstate.split('|')" :key="index">
+                  <div v-for="(stateCon,index) of items.watchState.split('|')" :key="index">
                     <p>{{stateCon}}</p>
                   </div>
                 </td>
                 <td>
-                  {{items.LOG_state == 0 ? '采购中' : (items.LOG_state == 1 ? '运输中' : '已入库')}}
+                  {{items.log_state == 0 ? '采购中' : (items.log_state == 1 ? '运输中' : '已入库')}}
                 </td>
                 <td>
                   {{items.sell_state == 1 ? '已出售' : '未出售'}}
                 </td>
                 <td>
-                  {{items.sell_state == 1 ? items.sell_usernick : (items.LOG_state == 0 ? items.buy_date : (items.LOG_state == 1 ? items.LOG_arrivetime : ''))}}
+                  {{items.sell_state == 1 ? items.sell_userNick : (items.log_state == 0 ? items.buy_date : (items.log_state == 1 ? items.log_arriveTime : ''))}}
                 </td>
                 <td>
-                  <div v-show="items.LOG_state !== 2">
+                  <div v-show="items.log_state !== 2">
                     <span style="font-size: 15px;">当前商品未入库，暂无库存信息</span>
                   </div>
-                  <div v-show="items.LOG_state == 2">
+                  <div v-show="items.log_state == 2">
                     <span @click="inventoryInfo(items.id)"
                       style="font-size: 15px;color: #0aa1ed;cursor: pointer;">查看库存信息</span>
                   </div>
@@ -94,14 +94,14 @@
               </div>
               <div slot="footer">
                 <el-button @click="dialogShelfNoAVisible = false">取 消</el-button>
-                <el-button type="primary" @click="ShelfNoASure">确 定</el-button>
+                <el-button type="primary" @click="ShelfNoASure" v-preventClick>确 定</el-button>
               </div>
             </el-dialog>
           </div>
           <div class="style-margin" v-if="stockwatchinfo == 1">
             <span>
               出售状态：
-              <span>已被 {{stockwatchinfo.sell_usernick}} 出售</span>
+              <span>已被 {{stockwatchinfo.sell_userNick}} 出售</span>
             </span>
           </div>
         </div>
@@ -110,11 +110,11 @@
             <div style="margin: 30px 0;display: flex;justify-content: space-between;">
               <div style="width: 33%;display: flex;">
                 <span>品牌：</span>
-                <span>{{stockwatchinfo.buy_watchbrand}}</span>
+                <span>{{stockwatchinfo.buy_watchBrand}}</span>
               </div>
               <div style="width: 33%;display: flex;">
                 <span>型号：</span>
-                <span>{{stockwatchinfo.buy_watchmodel}}</span>
+                <span>{{stockwatchinfo.buy_watchModel}}</span>
               </div>
               <div style="width: 33%;display: flex;">
                 <span>库存：</span>
@@ -124,11 +124,11 @@
             <div style="display: flex;justify-content: space-between;">
               <div style="width: 33%;display: flex;">
                 <span>机芯号：</span>
-                <span>{{stockwatchinfo.buy_watchsn}}</span>
+                <span>{{stockwatchinfo.buy_watchSn}}</span>
               </div>
               <div style="width: 33%;display: flex;">
                 <span>保卡日期：</span>
-                <span>{{stockwatchinfo.buy_watchcard}}</span>
+                <span>{{stockwatchinfo.buy_watchCard}}</span>
               </div>
               <div style="width: 33%;display: flex;">
                 <span>状态：</span>
@@ -149,7 +149,8 @@
                     @click="checkWatch">查看与此手表同型号的未出库的手表</el-button>
                 </el-col>
                 <el-col :span="12">
-                  <el-button type="primary" @click="getQRCode" style="width: 300px;margin-top: 30px;font-size: 14px;">
+                  <el-button type="primary" @click="getQRCode" v-preventClick
+                    style="width: 300px;margin-top: 30px;font-size: 14px;">
                     打印二维码</el-button>
                 </el-col>
               </el-row>
@@ -175,10 +176,10 @@
         imgs: [],
         watchid: 0, // 手表id
         stockWatchList: [], // 同型号手表
-        buy_watchbrand: '',
-        buy_watchmodel: '',
+        buy_watchBrand: '',
+        buy_watchModel: '',
         stock_No: '',
-        stock_Nocrc: '',
+        stock_NoCrc: '',
 
       };
     },
@@ -202,21 +203,21 @@
             console.log("手表库存信息");
             console.log(res);
             this.stockwatchinfo = res.data;
-            this.watchState = this.stockwatchinfo.watchstate.split("|");
-            // 手表id  buy_watchid 用于获取同品牌未出库手表列表
-            this.watchid = this.stockwatchinfo.buy_watchid;
-            if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
-              if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
-                this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+            this.watchState = this.stockwatchinfo.watchState.split("|");
+            // 手表id  buy_watchId 用于获取同品牌未出库手表列表
+            this.watchid = this.stockwatchinfo.buy_watchId;
+            if (this.stockwatchinfo.stock_inPic !== '' && this.stockwatchinfo.stock_inPic !== null) {
+              if (this.stockwatchinfo.stock_inPic.indexOf('|') !== -1) {
+                this.imgs = this.stockwatchinfo.stock_inPic.split("|");
               } else {
-                this.imgs.push(this.stockwatchinfo.stock_inpic);
+                this.imgs.push(this.stockwatchinfo.stock_inPic);
               }
             }
             console.log(this.imgs);
-            this.buy_watchbrand = this.stockwatchinfo.buy_watchbrand;
-            this.buy_watchmodel = this.stockwatchinfo.buy_watchmodel;
+            this.buy_watchBrand = this.stockwatchinfo.buy_watchBrand;
+            this.buy_watchModel = this.stockwatchinfo.buy_watchModel;
             this.stock_No = this.stockwatchinfo.stock_No;
-            this.stock_Nocrc = this.stockwatchinfo.stock_Nocrc;
+            this.stock_NoCrc = this.stockwatchinfo.stock_NoCrc;
             this.deliveryList.delivery = 1;
             // 页面回到顶部
             (function smoothscroll() {
@@ -268,7 +269,7 @@
         console.log(this.watchid);
         this.$axios
           .post(this.$store.state.baseUrl + "/StockWatchList", {
-            buy_watchid: this.watchid
+            buy_watchId: this.watchid
           })
           .then(res => {
             console.log(res);
@@ -295,8 +296,8 @@
       getQRCode() {
         this.$axios.post('http://127.0.0.1:8079', {
           CMD: "1",
-          CMDDATA: this.buy_watchbrand + '`' + this.buy_watchmodel + '`' + this.stock_No + '-A`' + this.stock_No +
-            '-A|' + this.stock_Nocrc
+          CMDDATA: this.buy_watchBrand + '`' + this.buy_watchModel + '`' + this.stock_No + '-A`' + this.stock_No +
+            '-A|' + this.stock_NoCrc
         }).then((res) => {
           console.log(res);
           this.$message.success({

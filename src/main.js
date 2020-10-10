@@ -6,19 +6,31 @@ import router from './router'
 import axios from 'axios'
 import store from '@/vuex/store'
 
+// 标签访问组件
 import global from '@/components/global.js'
-import functions from './globalFunctions.js'
+// 全局函数
+import functions from './utils/globalFunctions.js'
+import JsonExcel from 'vue-json-excel'
+Vue.component('downloadExcel', JsonExcel)//excel
+// 防止重复点击
+import preventClick from './utils/clickStatefrom' // 根据自己的路径
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// 生成二维码
 import qrcode from 'vue-qrcode-directive'
+// 点击查看大图
 import vueDirectiveImagePreviewer from 'vue-directive-image-previewer'
 import 'vue-directive-image-previewer/dist/assets/style.css'
+import ECharts from 'vue-echarts'
+// import 'echarts/lib/chart/bar'
+Vue.component('chart', ECharts)
 
 // 引入 ECharts 主模块
 let echarts = require('echarts/lib/echarts');
 // 引入折线图组件
 require('echarts/lib/chart/line')
+require('echarts/lib/chart/bar')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/title')
 require('echarts/lib/component/grid')
@@ -33,6 +45,7 @@ Vue.prototype.$echarts = echarts
 
 Vue.use(ElementUI)
 Vue.use(functions)
+Vue.use(preventClick)
 Vue.use(qrcode)
 Vue.use(vueDirectiveImagePreviewer)
 
@@ -52,7 +65,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next() // 确保一定要有next()被调用
   }
-
 
   let allowBack = false //    给个默认值true
   if (to.meta.allowBack !== undefined) {
@@ -75,11 +87,13 @@ axios.interceptors.request.use(config => {
     if (pathname !== '#/' && pathname !== '#/login') {
       config.headers.common['token'] = sessionStorage.getItem('token');
     }
-  }
-  return config;
+  };
+
+  return config
 }, err => {
   return Promise.reject(err);
 })
+
 // 响应拦截器
 axios.interceptors.response.use(
   response => {
@@ -102,7 +116,8 @@ axios.interceptors.response.use(
       }
     }
     return Promise.reject(error.response)
-  });
+  }
+);
 
 
 /* eslint-disable no-new */

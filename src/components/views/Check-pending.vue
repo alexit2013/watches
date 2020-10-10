@@ -15,7 +15,7 @@
           </tr>
           <tr v-for="(item,index) in checkPendingList" :key="index">
             <td>{{item.bxNumber}}</td>
-            <td>{{formatNumberRgx(item.sysCheckMoney)+ ' ' + 'HKD'}}</td>
+            <td>{{formatNumberRgx(item.sysCheckMoney)+ ' ' + item.settle_currency}}</td>
             <td>{{item.subTime}}</td>
             <td>
               <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
@@ -41,7 +41,7 @@
         </div>
         <span class="font">返回</span>
       </div>
-      <el-form label-width="140px" class="check-pending-details-list">
+      <el-form label-width="130px" class="check-pending-details-list">
         <el-form-item label="报销单号：">
           <span>{{checkPendingDetailsMsg.bxNumber}}</span>
         </el-form-item>
@@ -49,7 +49,7 @@
           <span>{{checkPendingDetailsMsg.subTime}}</span>
         </el-form-item>
         <el-form-item label="预估报销金额：">
-          <span>{{formatNumberRgx(checkPendingDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span>
+          <span>{{formatNumberRgx(checkPendingDetailsMsg.sysCheckMoney) + ' ' + checkPendingDetailsMsg.settle_currency}}</span>
         </el-form-item>
       </el-form>
       <div style="width: 95%;margin: 0 auto;">
@@ -85,7 +85,8 @@
                 :close-on-press-escape="false" :close-on-click-modal="false">
                 <div>
                   <div style="text-align: center;">
-                    <p>{{formatNumberRgx(notEstimateMoney) + ' ' + notCurrency}}</p>
+                    <p style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(notEstimateMoney) + ' ' + notCurrency}}
+                    </p>
                   </div>
                   <el-form label-width="120px">
                     <el-form-item label="日期：">
@@ -97,8 +98,13 @@
                           <div style="display:flex;position:relative;" id="delImg">
                             <div v-for="(imgurl,index) of imgurls" :key="index"
                               style="margin-left:10px;position:relative;">
-                              <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                style="border-radius:5px;object-fit:cover;" />
+                              <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                  height="100px" style="border-radius:5px;object-fit:cover;" />
+                                <img v-else :src="pdfImg" width="100px" height="100px"
+                                  style="border-radius:5px;object-fit:cover;" />
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -143,7 +149,7 @@
         <div>
           <div style="margin-top: 15px;">
             <span>预估报销金额：</span>
-            <span>{{formatNumberRgx(sum) + ' ' + 'HKD'}}</span>
+            <span>{{formatNumberRgx(sum) + ' ' + settle_currency}}</span>
           </div>
           <p style="margin: 0;font-size: 14px;color: #bbb;">实际报销费用以财务核算为准</p>
           <div v-if="records.length !== 0">
@@ -167,7 +173,8 @@
                     :close-on-press-escape="false" :close-on-click-modal="false">
                     <div>
                       <div style="text-align: center;">
-                        <p>{{formatNumberRgx(estimateMoney) + ' ' +currency}}</p>
+                        <p style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(estimateMoney) + ' ' +currency}}
+                        </p>
                       </div>
                       <el-form label-width="120px">
                         <el-form-item label="日期：">
@@ -179,8 +186,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -209,10 +221,11 @@
   export default {
     data() {
       return {
+        pdfImg: require('../../assets/imgs/pdf.png'),
         dataMsg: '数据加载中...',
         img: this.$store.state.baseUrl,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         checkPendingList: [],
         checkPendingDetailsMsg: {},
@@ -244,6 +257,8 @@
         notCurrency: '', // 币种
         notRemark: '', // 备注
         dialogUpdateRecordVisible: false,
+
+        settle_currency: '',
       }
     },
     props: ['checkPendingSel'],
@@ -251,6 +266,16 @@
       this.handleReimburseList();
     },
     methods: {
+      isPdf(img) {
+        // console.log(img);
+        if (img !== '' && img !== null) {
+          if (img.indexOf('pdf') === -1) {
+            return 0;
+          } else {
+            return 1;
+          }
+        }
+      },
       // 获取待审核列表
       handleReimburseList() {
         this.checkPendingList = [];
@@ -259,7 +284,7 @@
         this.$axios.post(this.$store.state.baseUrl + '/UserClaimFormList?java', {
           flag: 0,
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('获取待审核列表');
           console.log(res);
@@ -332,6 +357,7 @@
             this.startTime2.push(res.data.endTime);
             this.des = res.data.des;
             this.sum = res.data.sysCheckMoney;
+            this.settle_currency = res.data.settle_currency;
             this.records = res.data.recordList;
             // for (let item of this.records) {
             //   console.log(item.sysCheckMoney);
@@ -351,11 +377,11 @@
             this.notTime = res.data.time;
             this.notEstimateMoney = res.data.estimateMoney;
             this.notCurrency = res.data.currency;
-            if (res.data.billpics !== '') {
-              if (res.data.billpics.indexOf('|') !== -1) {
-                this.imgurls = res.data.billpics.split('|');
+            if (res.data.billPics !== '') {
+              if (res.data.billPics.indexOf('|') !== -1) {
+                this.imgurls = res.data.billPics.split('|');
               } else {
-                this.imgurls.push(res.data.billpics);
+                this.imgurls.push(res.data.billPics);
               }
             } else {
               this.imgurls = [];
@@ -389,11 +415,11 @@
         this.time = record.time;
         this.estimateMoney = record.estimateMoney;
         this.currency = record.currency;
-        if (record.billpics !== '') {
-          if (record.billpics.indexOf('|') !== -1) {
-            this.imgurls = record.billpics.split('|');
+        if (record.billPics !== '') {
+          if (record.billPics.indexOf('|') !== -1) {
+            this.imgurls = record.billPics.split('|');
           } else {
-            this.imgurls.push(record.billpics);
+            this.imgurls.push(record.billPics);
           }
         } else {
           this.imgurls = [];
@@ -431,7 +457,6 @@
     width: 75px;
     height: 45px;
     margin-left: 30px;
-    margin-top: 20px;
     line-height: 45px;
     display: flex;
     justify-content: space-between;

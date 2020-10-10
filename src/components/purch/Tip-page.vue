@@ -9,21 +9,21 @@
     <div v-if="buy_feeState == true" class="tip-center">
       <el-form label-width="10%">
         <el-form-item label="小费日期：">
-          <el-date-picker v-model="buy_feetime" type="date" class="input-style"></el-date-picker>
+          <el-date-picker v-model="buy_feeTime" type="date" class="input-style"></el-date-picker>
         </el-form-item>
         <el-form-item label="小费金额：">
-          <el-input v-model="buy_feemoney" class="input-style">
-            <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_feecurrency}}</i>
+          <el-input v-model="buy_feeMoney" class="input-style">
+            <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_feeCurrency}}</i>
           </el-input>
         </el-form-item>
         <el-form-item label="备注：">
-          <el-input type="textarea" :autosize="{ minRows: 6}" placeholder="请输入备注内容" v-model="buy_feenote"
+          <el-input type="textarea" :autosize="{ minRows: 6}" placeholder="请输入备注内容" v-model="buy_feeNote"
             class="input-style"></el-input>
         </el-form-item>
       </el-form>
     </div>
     <div class="drawback-submit">
-      <el-button type="primary" @click="submitTip">保 存</el-button>
+      <el-button type="primary" @click="submitTip" v-preventClick>保 存</el-button>
     </div>
   </div>
 </template>
@@ -32,10 +32,10 @@
     data() {
       return {
         buy_feeState: true, // 是否有小费
-        buy_feetime: new Date(), // 小费时间
-        buy_feemoney: "", // 小费金额
-        buy_feecurrency: "", // 小费金额币种
-        buy_feenote: "" // 小费备注
+        buy_feeTime: new Date(), // 小费时间
+        buy_feeMoney: "", // 小费金额
+        buy_feeCurrency: "", // 小费金额币种
+        buy_feeNote: "" // 小费备注
       };
     },
     created() {
@@ -49,15 +49,15 @@
           })
           .then(res => {
             for (let item of res.data.watch) {
-              this.buy_feecurrency = item.buy_watchcurrency;
+              this.buy_feeCurrency = item.buy_watchCurrency;
             };
             if (res.data.fee.buy_feeState == -1) {
               this.buy_feeState = false;
             } else if (res.data.fee.buy_feeState == 0 || res.data.fee.buy_feeState == 1) {
               this.buy_feeState = true;
-              this.buy_feetime = res.data.fee.buy_feetime;
-              this.buy_feemoney = res.data.fee.buy_feemoney;
-              this.buy_feenote = res.data.fee.buy_feenote;
+              this.buy_feeTime = res.data.fee.buy_feeTime;
+              this.buy_feeMoney = res.data.fee.buy_feeMoney;
+              this.buy_feeNote = res.data.fee.buy_feeNote;
             }
           });
       },
@@ -67,10 +67,10 @@
           .post(this.$store.state.baseUrl + "/BuyFeeSave", {
             buy_id: sessionStorage.getItem("buy_id"),
             buy_feeState: this.buy_feeState == true ? 1 : -1,
-            buy_feetime: this.buy_feeState == true ? this.shellDate(this.buy_feetime) : "",
-            buy_feemoney: this.buy_feeState == true ? this.buy_feemoney : "",
-            buy_feecurrency: this.buy_feeState == true ? this.buy_feecurrency : "",
-            buy_feenote: this.buy_feeState == true ? this.buy_feenote : ""
+            buy_feeTime: this.buy_feeState == true ? this.shellDate(this.buy_feeTime) : "",
+            buy_feeMoney: this.buy_feeState == true ? this.buy_feeMoney : "",
+            buy_feeCurrency: this.buy_feeState == true ? this.buy_feeCurrency : "",
+            buy_feeNote: this.buy_feeState == true ? this.buy_feeNote : ""
           })
           .then(res => {
             console.log("小费信息提交成功");

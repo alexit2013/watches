@@ -106,7 +106,7 @@
       // 组件内守卫
       // 已登录状态回到登录状态，即 登出
       next(vm => {
-        vm.$store.dispatch('setRole', null)
+        vm.$store.dispatch('setToken', null)
       })
     },
     methods: {
@@ -152,28 +152,22 @@
               duration: 2000
             });
             // 将用户昵称、用户角色和token等放入sessionStorage
+            sessionStorage.setItem('id', res.data.id);
+            console.log(sessionStorage.getItem('id'));
             sessionStorage.setItem('nick', res.data.nick);
             console.log(sessionStorage.getItem('nick'));
-            sessionStorage.setItem('role', res.data.role);
             sessionStorage.setItem('token', res.data.token);
             console.log(sessionStorage.getItem('token'));
-            sessionStorage.setItem('peerFlag', res.data.PeerFlag);
-            sessionStorage.setItem('marketPriceFlag', res.data.MarketPriceFlag);
-            sessionStorage.setItem('storeFlag', res.data.StoreFlag);
-            sessionStorage.setItem('watchFlag', res.data.WatchFlag);
-            sessionStorage.setItem('rateFlag', res.data.RateFlag);
-            sessionStorage.setItem('financeFlag', res.data.FinanceFlag);
+            sessionStorage.setItem('authority', res.data.authority);
+            console.log(sessionStorage.getItem('authority'));
+            sessionStorage.setItem('userRecordId', res.data.nick)
+
             // 将用户昵称、用户角色及token等放入vuex
             this.$store.dispatch('setNick', res.data.nick);
-            this.$store.dispatch('setRole', res.data.role);
             this.$store.dispatch('setToken', res.data.token);
-            this.$store.dispatch('setPeerFlag', res.data.PeerFlag);
-            this.$store.dispatch('setMarketPriceFlag', res.data.MarketPriceFlag);
-            this.$store.dispatch('setStoreFlag', res.data.StoreFlag);
-            this.$store.dispatch('setWatchFlag', res.data.WatchFlag);
-            this.$store.dispatch('setRateFlag', res.data.RateFlag);
-            this.$store.dispatch('setFinanceFlag', res.data.FinanceFlag);
+
             console.log(this.$store.state.isLogin);
+
             this.$router.push('/home');
             // 页面回到顶部
             (function smoothscroll() {
@@ -191,7 +185,7 @@
               showClose: true,
               duration: 2000
             });
-            this.$store.dispatch('setRole', null);
+            this.$store.dispatch('setToken', null);
             this.loginForm.password = "";
             console.log(err);
             console.log('fffffffff');

@@ -18,11 +18,11 @@
             <tr v-for="(item,index) of sellStockList" :key="index">
               <td>
                 <img v-image-preview
-                  :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
+                  :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ (item.buy_watchPics || '').split('|')[0]"
                   style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
               </td>
-              <td>{{item.buy_watchbrand}}</td>
-              <td>{{item.buy_watchmodel}}</td>
+              <td>{{item.buy_watchBrand}}</td>
+              <td>{{item.buy_watchModel}}</td>
               <td>
                 <p>总数：{{item.watch.length}}</p>
                 <p>采购中：{{item | formatSaleNumRgx(0)}}</p>
@@ -36,7 +36,7 @@
         </div>
         <div style="width: 100%;height: 50px;">
           <div style="margin:15px 0;position:absolute;right:6%;">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
+            <el-pagination @current-change="handleCurrentChange" :current-page="page"
               layout="total, prev, pager, next, jumper" :total="total"></el-pagination>
           </div>
         </div>
@@ -55,7 +55,7 @@
         img: this.$store.state.baseUrl,
         keyword: "",
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         sellStockList: [], // 可出售库存列表
         forSaleWatch: "",
@@ -103,8 +103,8 @@
     methods: {
       gobackForSale(val) {
         this.forSale.sale = val;
-        this.keyword = "";
-        this.handleSellStockList();
+        // this.keyword = "";
+        this.stockInSearch();
       },
       // 待售商品初始数据
       handleSellStockList() {
@@ -112,7 +112,7 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/SellStockList", {
             page: this.page,
-            pagenum: this.pagenum
+            pageNum: this.pageNum
           })
           .then(res => {
             console.log("待售商品列表");
@@ -137,7 +137,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/SellStockList", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               keyword: this.keyword
             })
             .then(res => {
@@ -160,12 +160,8 @@
         }
       },
       // 分页
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
-        this.page = 1;
         this.page = val;
         console.log(this.page);
         if (this.keyword !== "") {
@@ -188,6 +184,7 @@
         console.log("待售手表");
         console.log(this.forSaleWatch);
         this.forSale.sale = 1;
+        this.forSaleSel.select = 0;
         // 页面回到顶部
         (function smoothscroll() {
           var currentScroll =

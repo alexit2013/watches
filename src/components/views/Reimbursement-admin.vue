@@ -21,7 +21,7 @@
                   <td>{{item.nick}}</td>
                   <td>{{item.bxNumber}}</td>
                   <td>{{item.subTime}}</td>
-                  <td>{{formatNumberRgx(item.sysCheckMoney) + ' ' + 'HKD'}}</td>
+                  <td>{{formatNumberRgx(item.sysCheckMoney) + ' ' + item.settle_currency}}</td>
                   <td>
                     <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
                       <img src="../../assets/imgs/details.png" style="cursor:pointer;"
@@ -54,10 +54,10 @@
                 <span>提交时间：<span>{{reimburseDetailsMsg.subTime}}</span></span>
               </p>
               <p>
-                <span>预估报销金额：<span>{{formatNumberRgx(reimburseDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span></span>
+                <span>预估报销金额：<span>{{formatNumberRgx(reimburseDetailsMsg.sysCheckMoney) + ' ' + reimburseDetailsMsg.settle_currency}}</span></span>
               </p>
               <p>
-                <span>核算报销金额：<span>{{reimburseDetailsMsg.checkMoney == null ? '' : formatNumberRgx(reimburseDetailsMsg.checkMoney) + ' ' + 'HKD'}}</span></span>
+                <span>核算报销金额：<span>{{reimburseDetailsMsg.checkMoney == null ? '' : formatNumberRgx(reimburseDetailsMsg.checkMoney) + ' ' + reimburseDetailsMsg.settle_currency}}</span></span>
               </p>
             </div>
             <div style="width: 95%;margin: 0 auto;margin-top: 30px;">
@@ -79,7 +79,9 @@
                     <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
                   </td>
                   <td>{{reim.type == 0 ? reim.obj.name : reim.obj.type}}</td>
-                  <td>{{reim.obj.checkMoney == null ? '待核算' : formatNumberRgx(reim.obj.checkMoney) + ' ' + 'HKD'}}</td>
+                  <td>
+                    {{reim.obj.checkMoney == null ? '待核算' : formatNumberRgx(reim.obj.checkMoney) + ' ' + reimburseDetailsMsg.settle_currency}}
+                  </td>
                   <td>
                     <p v-if="reim.type == 0" style="margin: 0;">{{reim.obj.startTime}}</p>
                     <p v-if="reim.type == 0" style="margin: 0;">至</p>
@@ -94,7 +96,8 @@
                     <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible" center>
                       <div>
                         <p style="text-align: center;">
-                          <span>{{unJourneyInfo.estimateMoney == 0 || unJourneyInfo.estimateMoney == null ? '' : formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
+                          <span
+                            style="font-size: 17px;color: #0c8563;">{{unJourneyInfo.estimateMoney == 0 || unJourneyInfo.estimateMoney == null ? '' : formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
                         </p>
                         <p>
                           <span>日期： <span>{{unJourneyInfo.time}}</span></span>
@@ -104,8 +107,13 @@
                           <div style="display:flex;position:relative;" id="delImg">
                             <div v-for="(imgurl,index) of imgurls" :key="index"
                               style="margin-left:10px;position:relative;">
-                              <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                style="border-radius:5px;object-fit:cover;" />
+                              <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                  height="100px" style="border-radius:5px;object-fit:cover;" />
+                                <img v-else :src="pdfImg" width="100px" height="100px"
+                                  style="border-radius:5px;object-fit:cover;" />
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -115,17 +123,21 @@
                         <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                           <p>财务核算：</p>
                           <div style="display: flex;justify-content: space-between;">
-                            <p>当日汇率：<span>{{unJourneyInfo.rate}}</span></p>
+                            <p>汇率：<span>{{unJourneyInfo.rate}}</span></p>
                             <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                               @click="jumpRate" />
                           </div>
+                          <p style="margin-top: 0;">
+                            汇率日期：<span>{{unJourneyInfo.rateTime}}</span>
+                          </p>
                           <p>
-                            预估报销金额：<span>{{unJourneyInfo.sysCheckMoney == 0 || unJourneyInfo.sysCheckMoney == null ? '' : formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                            预估报销金额：<span>{{unJourneyInfo.sysCheckMoney == 0 || unJourneyInfo.sysCheckMoney == null ? '' : formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
                           </p>
                           <div>
                             <span>核算报销金额：</span>
                             <el-input style="width: 50%;height: auto;line-height: 40px;" v-model="calculationAmount">
-                              <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                              <i slot="suffix"
+                                style="color: #000;margin-right:5%;font-style:normal;">{{unJourneyInfo.settle_currency}}</i>
                             </el-input>
                           </div>
                         </div>
@@ -175,7 +187,7 @@
                 <tr v-for="(every,index) in journeyInfo.recordList" :key="index">
                   <td>{{every.type}}</td>
                   <td>
-                    {{every.checkMoney == 0 || every.checkMoney == null ? '待核算' : formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+                    {{every.checkMoney == 0 || every.checkMoney == null ? '待核算' : formatNumberRgx(every.checkMoney) + ' ' + journeyInfo.settle_currency}}
                   </td>
                   <td>{{every.time}}</td>
                   <td>
@@ -185,7 +197,8 @@
                     <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible" center>
                       <div>
                         <p style="text-align: center;">
-                          <span>{{recordDetailsMsg.estimateMoney == 0 || recordDetailsMsg.estimateMoney == null ? '' : formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
+                          <span
+                            style="font-size: 17px;color: #0c8563;">{{recordDetailsMsg.estimateMoney == 0 || recordDetailsMsg.estimateMoney == null ? '' : formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
                         </p>
                         <p>
                           <span>日期： <span>{{recordDetailsMsg.time}}</span></span>
@@ -195,8 +208,13 @@
                           <div style="display:flex;position:relative;" id="delImg">
                             <div v-for="(imgurl,index) of imgurls" :key="index"
                               style="margin-left:10px;position:relative;">
-                              <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                style="border-radius:5px;object-fit:cover;" />
+                              <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                  height="100px" style="border-radius:5px;object-fit:cover;" />
+                                <img v-else :src="pdfImg" width="100px" height="100px"
+                                  style="border-radius:5px;object-fit:cover;" />
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -206,17 +224,21 @@
                         <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                           <p>财务核算：</p>
                           <div style="display: flex;justify-content: space-between;">
-                            <p>当日汇率：<span>{{recordDetailsMsg.rate}}</span></p>
+                            <p>汇率：<span>{{recordDetailsMsg.rate}}</span></p>
                             <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                               @click="jumpRate" />
                           </div>
+                          <p style="margin-top: 0;">
+                            汇率日期：<span>{{recordDetailsMsg.rateTime}}</span>
+                          </p>
                           <p>
-                            预估报销金额：<span>{{recordDetailsMsg.sysCheckMoney == 0 || recordDetailsMsg.sysCheckMoney == null ? '' : formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                            预估报销金额：<span>{{recordDetailsMsg.sysCheckMoney == 0 || recordDetailsMsg.sysCheckMoney == null ? '' : formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
                           </p>
                           <div>
                             <span>核算报销金额：</span>
                             <el-input style="width: 50%;height: auto;line-height: 40px;" v-model="calculationAmount">
-                              <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
+                              <i slot="suffix"
+                                style="color: #000;margin-right:5%;font-style:normal;">{{journeyInfo.settle_currency}}</i>
                             </el-input>
                           </div>
                         </div>
@@ -232,8 +254,10 @@
             </div>
             <div style="width: 95%;margin: 0 auto;">
               <p>财务核算：</p>
-              <p style="margin-left: 20px;">预估报销金额：<span>{{journeyInfo.sysCheckMoney + ' ' + 'HKD'}}</span></p>
-              <p style="margin-left: 20px;">核算报销金额：<span>{{journeyInfo.checkMoney + ' ' + 'HKD'}}</span></p>
+              <p style="margin-left: 20px;">
+                预估报销金额：<span>{{journeyInfo.sysCheckMoney + ' ' + journeyInfo.settle_currency}}</span></p>
+              <p style="margin-left: 20px;">
+                核算报销金额：<span>{{journeyInfo.checkMoney + ' ' + journeyInfo.settle_currency}}</span></p>
             </div>
             <div style="margin-top: 30px;text-align: right;">
               <el-button type="primary" @click="reimbursementCalcSure">确 认</el-button>
@@ -241,7 +265,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="待确认" name="two">
-          <div slot="label" style="display: flex;font-size: 15px;">待确认
+          <div slot="label" style="display: flex;justify-content: center;font-size: 15px;">待确认
             <p style="margin-top: -10px;margin-left: 3px;">
               <img v-if="whether == 1" src="../../assets/imgs/circle.png" style="width: 10px;height: 10px;" />
             </p>
@@ -296,8 +320,12 @@
                   </p>
                 </div>
                 <div class="details-top" style="margin: 30px auto;">
-                  <p>预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + 'HKD'}}</span></p>
-                  <p>核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + 'HKD'}}</span></p>
+                  <p>
+                    预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+                  </p>
+                  <p>
+                    核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+                  </p>
                 </div>
                 <div class="details-main">
                   <p>消费记录：</p>
@@ -318,7 +346,7 @@
                         <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
                       </td>
                       <td>{{reim.type == 0 ? reim.obj.name : reim.obj.type}}</td>
-                      <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + 'HKD'}}</td>
+                      <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
                       <td>
                         <p v-if="reim.type == 0" style="margin: 0;">{{reim.obj.startTime}}</p>
                         <p v-if="reim.type == 0" style="margin: 0;">至</p>
@@ -333,7 +361,8 @@
                         <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible2" center>
                           <div>
                             <p style="text-align: center;">
-                              <span>{{formatNumberRgx(unJourneyInfo2.estimateMoney) + ' ' + unJourneyInfo2.currency}}</span>
+                              <span
+                                style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(unJourneyInfo2.estimateMoney) + ' ' + unJourneyInfo2.currency}}</span>
                             </p>
                             <p>
                               <span>日期： <span>{{unJourneyInfo2.time}}</span></span>
@@ -343,8 +372,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -354,15 +388,18 @@
                             <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                               <p>财务核算：</p>
                               <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                                <p>当日汇率：<span>{{unJourneyInfo2.rate}}</span></p>
+                                <p>汇率：<span>{{unJourneyInfo2.rate}}</span></p>
                                 <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                                   @click="jumpRate" />
                               </div>
-                              <p style="padding-left: 15px;">
-                                预估报销金额：<span>{{formatNumberRgx(unJourneyInfo2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                              <p style="margin-top: 0;padding-left: 15px;">
+                                汇率日期：<span>{{unJourneyInfo2.rateTime}}</span>
                               </p>
                               <p style="padding-left: 15px;">
-                                核算报销金额：<span>{{formatNumberRgx(unJourneyInfo2.checkMoney) + ' ' + 'HKD'}}</span>
+                                预估报销金额：<span>{{formatNumberRgx(unJourneyInfo2.sysCheckMoney) + ' ' + unJourneyInfo2.settle_currency}}</span>
+                              </p>
+                              <p style="padding-left: 15px;">
+                                核算报销金额：<span>{{formatNumberRgx(unJourneyInfo2.checkMoney) + ' ' + unJourneyInfo2.settle_currency}}</span>
                               </p>
                             </div>
                           </div>
@@ -405,7 +442,7 @@
                     <tr v-for="(every,index) in journeyInfo2.recordList" :key="index">
                       <td>{{every.type}}</td>
                       <td>
-                        {{formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+                        {{formatNumberRgx(every.checkMoney) + ' ' + journeyInfo2.settle_currency}}
                       </td>
                       <td>{{every.time}}</td>
                       <td>
@@ -416,7 +453,8 @@
                         <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible2" center>
                           <div>
                             <p style="text-align: center;">
-                              <span>{{formatNumberRgx(recordDetailsMsg2.estimateMoney) + ' ' + recordDetailsMsg2.currency}}</span>
+                              <span
+                                style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(recordDetailsMsg2.estimateMoney) + ' ' + recordDetailsMsg2.currency}}</span>
                             </p>
                             <p>
                               <span>日期： <span>{{recordDetailsMsg2.time}}</span></span>
@@ -426,8 +464,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -437,15 +480,18 @@
                             <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                               <p>财务核算：</p>
                               <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                                <p>当日汇率：<span>{{recordDetailsMsg2.rate}}</span></p>
+                                <p>汇率：<span>{{recordDetailsMsg2.rate}}</span></p>
                                 <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                                   @click="jumpRate" />
                               </div>
-                              <p style="padding-left: 15px;">
-                                预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                              <p style="margin-top: 0;padding-left: 15px;">
+                                汇率日期：<span>{{recordDetailsMsg2.rateTime}}</span>
                               </p>
                               <p style="padding-left: 15px;">
-                                核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.checkMoney) + ' ' + 'HKD'}}</span>
+                                预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.sysCheckMoney) + ' ' + journeyInfo2.settle_currency}}</span>
+                              </p>
+                              <p style="padding-left: 15px;">
+                                核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.checkMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                               </p>
                             </div>
                           </div>
@@ -461,10 +507,10 @@
                 <div style="width: 95%;margin: 0 auto;">
                   <p>财务核算：</p>
                   <p style="margin-left: 20px;">
-                    预估报销金额：<span>{{formatNumberRgx(journeyInfo2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                    预估报销金额：<span>{{formatNumberRgx(journeyInfo2.sysCheckMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                   </p>
                   <p style="margin-left: 20px;">
-                    核算报销金额：<span>{{formatNumberRgx(journeyInfo2.checkMoney) + ' ' + 'HKD'}}</span>
+                    核算报销金额：<span>{{formatNumberRgx(journeyInfo2.checkMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                   </p>
                 </div>
               </div>
@@ -522,8 +568,12 @@
                   </p>
                 </div>
                 <div class="details-top" style="margin: 30px auto;">
-                  <p>预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + 'HKD'}}</span></p>
-                  <p>核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + 'HKD'}}</span></p>
+                  <p>
+                    预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+                  </p>
+                  <p>
+                    核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+                  </p>
                 </div>
                 <div class="details-main">
                   <p>消费记录：</p>
@@ -544,7 +594,7 @@
                         <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
                       </td>
                       <td>{{reim.type == 0 ? reim.obj.name : reim.obj.type}}</td>
-                      <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + 'HKD'}}</td>
+                      <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
                       <td>
                         <p v-if="reim.type == 0" style="margin: 0;">{{reim.obj.startTime}}</p>
                         <p v-if="reim.type == 0" style="margin: 0;">至</p>
@@ -559,7 +609,8 @@
                         <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible2" center>
                           <div>
                             <p style="text-align: center;">
-                              <span>{{formatNumberRgx(unJourneyInfo2.estimateMoney) + ' ' + unJourneyInfo2.currency}}</span>
+                              <span
+                                style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(unJourneyInfo2.estimateMoney) + ' ' + unJourneyInfo2.currency}}</span>
                             </p>
                             <p>
                               <span>日期： <span>{{unJourneyInfo2.time}}</span></span>
@@ -569,8 +620,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -580,15 +636,18 @@
                             <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                               <p>财务核算：</p>
                               <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                                <p>当日汇率：<span>{{unJourneyInfo2.rate}}</span></p>
+                                <p>汇率：<span>{{unJourneyInfo2.rate}}</span></p>
                                 <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                                   @click="jumpRate" />
                               </div>
-                              <p style="padding-left: 15px;">
-                                预估报销金额：<span>{{formatNumberRgx(unJourneyInfo2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                              <p style="margin-top: 0;padding-left: 15px;">
+                                汇率日期：<span>{{unJourneyInfo2.rateTime}}</span>
                               </p>
                               <p style="padding-left: 15px;">
-                                核算报销金额：<span>{{formatNumberRgx(unJourneyInfo2.checkMoney) + ' ' + 'HKD'}}</span>
+                                预估报销金额：<span>{{formatNumberRgx(unJourneyInfo2.sysCheckMoney) + ' ' + unJourneyInfo2.settle_currency}}</span>
+                              </p>
+                              <p style="padding-left: 15px;">
+                                核算报销金额：<span>{{formatNumberRgx(unJourneyInfo2.checkMoney) + ' ' + unJourneyInfo2.settle_currency}}</span>
                               </p>
                             </div>
                           </div>
@@ -631,7 +690,7 @@
                     <tr v-for="(every,index) in journeyInfo2.recordList" :key="index">
                       <td>{{every.type}}</td>
                       <td>
-                        {{formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+                        {{formatNumberRgx(every.checkMoney) + ' ' + journeyInfo2.settle_currency}}
                       </td>
                       <td>{{every.time}}</td>
                       <td>
@@ -642,7 +701,8 @@
                         <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible2" center>
                           <div>
                             <p style="text-align: center;">
-                              <span>{{formatNumberRgx(recordDetailsMsg2.estimateMoney) + ' ' + recordDetailsMsg2.currency}}</span>
+                              <span
+                                style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(recordDetailsMsg2.estimateMoney) + ' ' + recordDetailsMsg2.currency}}</span>
                             </p>
                             <p>
                               <span>日期： <span>{{recordDetailsMsg2.time}}</span></span>
@@ -652,8 +712,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -663,15 +728,18 @@
                             <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                               <p>财务核算：</p>
                               <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                                <p>当日汇率：<span>{{recordDetailsMsg2.rate}}</span></p>
+                                <p>汇率：<span>{{recordDetailsMsg2.rate}}</span></p>
                                 <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                                   @click="jumpRate" />
                               </div>
-                              <p style="padding-left: 15px;">
-                                预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                              <p style="margin-top: 0;padding-left: 15px;">
+                                汇率日期：<span>{{recordDetailsMsg2.rateTime}}</span>
                               </p>
                               <p style="padding-left: 15px;">
-                                核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.checkMoney) + ' ' + 'HKD'}}</span>
+                                预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.sysCheckMoney) + ' ' + journeyInfo2.settle_currency}}</span>
+                              </p>
+                              <p style="padding-left: 15px;">
+                                核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg2.checkMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                               </p>
                             </div>
                           </div>
@@ -687,10 +755,10 @@
                 <div style="width: 95%;margin: 0 auto;">
                   <p>财务核算：</p>
                   <p style="margin-left: 20px;">
-                    预估报销金额：<span>{{formatNumberRgx(journeyInfo2.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                    预估报销金额：<span>{{formatNumberRgx(journeyInfo2.sysCheckMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                   </p>
                   <p style="margin-left: 20px;">
-                    核算报销金额：<span>{{formatNumberRgx(journeyInfo2.checkMoney) + ' ' + 'HKD'}}</span>
+                    核算报销金额：<span>{{formatNumberRgx(journeyInfo2.checkMoney) + ' ' + journeyInfo2.settle_currency}}</span>
                   </p>
                 </div>
               </div>
@@ -706,11 +774,12 @@
   export default {
     data() {
       return {
+        pdfImg: require('../../assets/imgs/pdf.png'),
         img: this.$store.state.baseUrl,
         img1: require('../../assets/imgs/reim.png'),
         img2: require('../../assets/imgs/notReim.png'),
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         keyword: '',
         flag: 0,
@@ -760,11 +829,21 @@
       this.handleSureReimbursement();
     },
     methods: {
+      isPdf(img) {
+        // console.log(img);
+        if (img !== '' && img !== null) {
+          if (img.indexOf('pdf') === -1) {
+            return 0;
+          } else {
+            return 1;
+          }
+        }
+      },
       // 获取是否有需要确认的报销单 ReimburseList?java
       handleSureReimbursement() {
         this.$axios.post(this.$store.state.baseUrl + '/ClaimFormList?java', {
           page: 1,
-          pagenum: 10,
+          pageNum: 10,
           flag: 1
         }).then((res) => {
           console.log('是否有需要确认的报销单');
@@ -786,7 +865,7 @@
         this.$axios.post(this.$store.state.baseUrl + '/ClaimFormSearch?java', {
           flag: this.flag,
           page: this.page,
-          pagenum: this.pagenum,
+          pageNum: this.pageNum,
           keyword: this.keyword
         }).then((res) => {
           console.log('模糊搜索报销单');
@@ -813,7 +892,7 @@
         this.$axios.post(this.$store.state.baseUrl + '/ClaimFormList?java', {
           flag: this.flag,
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('报销单列表');
           console.log(res);
@@ -898,11 +977,11 @@
             };
             console.log(this.unJourneyInfo);
             this.imgurls = [];
-            if (this.unJourneyInfo.billpics !== null && this.unJourneyInfo.billpics !== '') {
-              if (this.unJourneyInfo.billpics.indexOf('|') !== -1) {
-                this.imgurls = this.unJourneyInfo.billpics.split('|');
+            if (this.unJourneyInfo.billPics !== null && this.unJourneyInfo.billPics !== '') {
+              if (this.unJourneyInfo.billPics.indexOf('|') !== -1) {
+                this.imgurls = this.unJourneyInfo.billPics.split('|');
               } else {
-                this.imgurls.push(this.unJourneyInfo.billpics);
+                this.imgurls.push(this.unJourneyInfo.billPics);
               }
             } else {
               this.imgurls = [];
@@ -925,11 +1004,11 @@
           this.calculationAmount = '';
         }
         this.imgurls = [];
-        if (this.recordDetailsMsg.billpics !== null && this.recordDetailsMsg.billpics !== '') {
-          if (this.recordDetailsMsg.billpics.indexOf('|') !== -1) {
-            this.imgurls = this.recordDetailsMsg.billpics.split('|');
+        if (this.recordDetailsMsg.billPics !== null && this.recordDetailsMsg.billPics !== '') {
+          if (this.recordDetailsMsg.billPics.indexOf('|') !== -1) {
+            this.imgurls = this.recordDetailsMsg.billPics.split('|');
           } else {
-            this.imgurls.push(this.recordDetailsMsg.billpics);
+            this.imgurls.push(this.recordDetailsMsg.billPics);
           }
         } else {
           this.imgurls = [];
@@ -1189,11 +1268,11 @@
             this.unJourneyInfo2 = res.data;
             console.log(this.unJourneyInfo2);
             this.imgurls = [];
-            if (this.unJourneyInfo2.billpics !== null && this.unJourneyInfo2.billpics !== '') {
-              if (this.unJourneyInfo2.billpics.indexOf('|') !== -1) {
-                this.imgurls = this.unJourneyInfo2.billpics.split('|');
+            if (this.unJourneyInfo2.billPics !== null && this.unJourneyInfo2.billPics !== '') {
+              if (this.unJourneyInfo2.billPics.indexOf('|') !== -1) {
+                this.imgurls = this.unJourneyInfo2.billPics.split('|');
               } else {
-                this.imgurls.push(this.unJourneyInfo2.billpics);
+                this.imgurls.push(this.unJourneyInfo2.billPics);
               }
             } else {
               this.imgurls = [];
@@ -1209,11 +1288,11 @@
         this.recordDetailsMsg2 = every;
         console.log(this.recordDetailsMsg2);
         this.imgurls = [];
-        if (this.recordDetailsMsg2.billpics !== null && this.recordDetailsMsg2.billpics !== '') {
-          if (this.recordDetailsMsg2.billpics.indexOf('|') !== -1) {
-            this.imgurls = this.recordDetailsMsg2.billpics.split('|');
+        if (this.recordDetailsMsg2.billPics !== null && this.recordDetailsMsg2.billPics !== '') {
+          if (this.recordDetailsMsg2.billPics.indexOf('|') !== -1) {
+            this.imgurls = this.recordDetailsMsg2.billPics.split('|');
           } else {
-            this.imgurls.push(this.recordDetailsMsg2.billpics);
+            this.imgurls.push(this.recordDetailsMsg2.billPics);
           }
         } else {
           this.imgurls = [];
@@ -1393,6 +1472,54 @@
 
     .el-checkbox__label {
       font-size: 15px;
+    }
+
+    .el-tabs--border-card {
+      background: transparent;
+      border: transparent;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .el-tabs--border-card>.el-tabs__header {
+      background-color: transparent;
+      border-bottom: none;
+      margin: 0;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+      background-color: #ddebec;
+    }
+
+    .el-tabs__item {
+      width: 160px;
+      height: 48px !important;
+      line-height: 48px !important;
+      font-size: 16px !important;
+      text-align: center;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      color: #000;
+    }
+
+    .el-tabs__content {
+      background-color: #fff;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+      color: #000;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+      color: #000;
+      background-color: #FFF;
+      border-right-color: transparent;
+      border-left-color: transparent;
+    }
+
+
+    .el-tabs--border-card>.el-tabs__content {
+      padding: 20px 30px;
     }
   }
 </style>

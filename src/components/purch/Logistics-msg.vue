@@ -10,7 +10,7 @@
     <div class="msg-info-first">
       <el-form label-width="150px">
         <el-form-item label="发货时间：">
-          <el-date-picker class="input-style" v-model="LOG_sendtime" type="date" placeholder="date"></el-date-picker>
+          <el-date-picker class="input-style" v-model="log_sendTime" type="date" placeholder="date"></el-date-picker>
         </el-form-item>
         <el-form-item label="预计到达时间：">
           <el-date-picker class="input-style" v-model="arriveTime" type="date"></el-date-picker>
@@ -46,19 +46,19 @@
           <tr v-for="(item,index) in watchFreightList" :key="index">
             <td>
               <img v-image-preview
-                :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ (item.buy_watchpics || '').split('|')[0]"
+                :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ (item.buy_watchPics || '').split('|')[0]"
                 style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
             </td>
             <td>
               <div>
-                <span>{{item.buy_watchbrand}}</span>
+                <span>{{item.buy_watchBrand}}</span>
               </div>
               <div>
-                <span>{{item.buy_watchmodel}}</span>
+                <span>{{item.buy_watchModel}}</span>
               </div>
             </td>
-            <td>{{item.buy_watchsn}}</td>
-            <td>{{item.buy_watchcurrency}} {{formatNumberRgx(item.buy_watchprice)}}</td>
+            <td>{{item.buy_watchSn}}</td>
+            <td>{{item.buy_watchCurrency}} {{formatNumberRgx(item.buy_watchPrice)}}</td>
             <td>
               <div style="width: 75%;margin: 0 auto;padding-left: 5px;border-bottom: 1px solid #000;display: flex;">
                 <input type="text" v-model="arries[index]" class="freight-input" @input="inputChange" />
@@ -78,7 +78,7 @@
   export default {
     data() {
       return {
-        LOG_sendtime: new Date(),
+        log_sendTime: new Date(),
         img: this.$store.state.baseUrl,
         arriveTime: "",
         warehouseList: [],
@@ -94,7 +94,7 @@
         sum3: 0,
         sum4: 0,
         id: 0,
-        log_moneyex: 0, // 每块表分摊金额
+        log_moneyEx: 0, // 每块表分摊金额
         mathes1: 0,
         mathes2: 0,
         rateArr: [], // 汇率
@@ -128,7 +128,6 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/RatesGet", {
             // source: item.buy_watchcurrency
-            time: '2020-06-29',
             source: "CNY"
           })
           .then(res => {
@@ -138,123 +137,132 @@
             for (let arr of this.watchFreightList) {
               this.sum += arr.buy_watchprice;
             }
-            if (this.watchFreightList.length == 1) {
+            if (this.freight == 0) {
               this.arries = [];
-              console.log("ffff");
-              this.arries.push(this.freight);
-              console.log(this.arries);
-            }
-            if (this.watchFreightList.length == 2) {
-              this.arries = [];
-              this.mathes1 = 0;
-              this.sum2 = 0;
-              console.log("dddddddd");
-              console.log(this.arries);
               for (let i = 0; i < this.watchFreightList.length; i++) {
-                if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
-                  this.sum2 += Number(this.watchFreightList[i].buy_watchprice);
-                  console.log('7777755555---' + this.watchFreightList[i].buy_watchprice);
-                }
+                this.arries.splice(i, 1, 0);
               }
-              for (let items of this.rateArr) {
-                for (let i = 0; i < this.watchFreightList.length; i++) {
-                  if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
-                    if (items.type == 0) {
-                      if (items.dest === this.watchFreightList[i].buy_watchcurrency) {
-                        console.log('价格' + this.watchFreightList[i].buy_watchprice);
-                        console.log('汇率' + items.rate);
-                        this.sum2 += Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate);
-                        console.log('ggggggggggggg----' + this.sum2);
-                      }
-                    }
-                  }
-                }
+            } else {
+              if (this.watchFreightList.length == 1) {
+                this.arries = [];
+                console.log("ffff");
+                this.arries.push(this.freight);
+                console.log(this.arries);
               }
-              console.log('999999999777777777---' + this.sum2);
-              for (let i = 0; i < this.watchFreightList.length; i++) {
-                this.arries.push(i);
-              }
-              console.log('数据');
-              console.log(this.arries);
-              for (let ite of this.rateArr) {
-                console.log('sum2---' + this.sum2);
+              if (this.watchFreightList.length == 2) {
+                this.arries = [];
+                this.mathes1 = 0;
+                this.sum2 = 0;
+                console.log("dddddddd");
+                console.log(this.arries);
                 for (let i = 0; i < this.watchFreightList.length; i++) {
                   if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
-                    this.mathes1 = Number(Number(this.watchFreightList[i].buy_watchprice) / this.sum2 * this.freight);
-                    this.mathes1 = this.mathes1.toFixed(0);
-                    // this.arries.push(this.mathes1);
-                    this.arries.splice(i, 1, this.mathes1);
-                    console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
-                    console.log(this.arries);
-                  } else if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
-                    if (ite.type == 0) {
-                      if (ite.dest == this.watchFreightList[i].buy_watchcurrency) {
-                        console.log('====-----' + ite.dest + '---' + ite.rate);
-                        this.mathes1 = Number(Number(this.watchFreightList[i].buy_watchprice) * Number(ite.rate) /
-                          this.sum2 * this.freight);
-                        this.mathes1 = this.mathes1.toFixed(0);
-                        // this.arries.push(this.mathes1);
-                        this.arries.splice(i, 1, this.mathes1);
-                        console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
-                        console.log(this.arries);
+                    this.sum2 += Number(this.watchFreightList[i].buy_watchprice);
+                    console.log('7777755555---' + this.watchFreightList[i].buy_watchprice);
+                  }
+                }
+                for (let items of this.rateArr) {
+                  for (let i = 0; i < this.watchFreightList.length; i++) {
+                    if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
+                      if (items.type == 0) {
+                        if (items.dest === this.watchFreightList[i].buy_watchcurrency) {
+                          console.log('价格' + this.watchFreightList[i].buy_watchprice);
+                          console.log('汇率' + items.rate);
+                          this.sum2 += Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate);
+                          console.log('ggggggggggggg----' + this.sum2);
+                        }
                       }
                     }
                   }
                 }
-              }
-            }
-            if (this.watchFreightList.length > 2) {
-              this.arries = [];
-              this.mathes2 = 0;
-              this.sum2 = 0;
-              for (let i = 0; i < this.watchFreightList.length; i++) {
-                if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
-                  this.sum2 += Number(this.watchFreightList[i].buy_watchprice);
-                  console.log('7777755555---' + this.watchFreightList[i].buy_watchprice);
-                }
-              }
-              for (let items of this.rateArr) {
+                console.log('999999999777777777---' + this.sum2);
                 for (let i = 0; i < this.watchFreightList.length; i++) {
-                  if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
-                    if (items.type == 0) {
-                      if (items.dest === this.watchFreightList[i].buy_watchcurrency) {
-                        console.log('价格' + this.watchFreightList[i].buy_watchprice);
-                        console.log('汇率' + items.rate);
-                        this.sum2 += Number(Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate));
+                  this.arries.push(i);
+                }
+                console.log('数据');
+                console.log(this.arries);
+                for (let ite of this.rateArr) {
+                  console.log('sum2---' + this.sum2);
+                  for (let i = 0; i < this.watchFreightList.length; i++) {
+                    if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
+                      this.mathes1 = Number(Number(this.watchFreightList[i].buy_watchprice) / this.sum2 * this
+                        .freight);
+                      this.mathes1 = this.mathes1.toFixed(0);
+                      // this.arries.push(this.mathes1);
+                      this.arries.splice(i, 1, this.mathes1);
+                      console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
+                      console.log(this.arries);
+                    } else if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
+                      if (ite.type == 0) {
+                        if (ite.dest == this.watchFreightList[i].buy_watchcurrency) {
+                          console.log('====-----' + ite.dest + '---' + ite.rate);
+                          this.mathes1 = Number(Number(this.watchFreightList[i].buy_watchprice) * Number(ite.rate) /
+                            this.sum2 * this.freight);
+                          this.mathes1 = this.mathes1.toFixed(0);
+                          // this.arries.push(this.mathes1);
+                          this.arries.splice(i, 1, this.mathes1);
+                          console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
+                          console.log(this.arries);
+                        }
                       }
                     }
                   }
                 }
-                console.log('999999999999---' + this.sum2);
               }
-              console.log(this.watchFreightList);
-              for (let i = 0; i < this.watchFreightList.length; i++) {
-                this.arries.push(i);
-              }
-              console.log('数据');
-              console.log(this.arries);
-              for (let items of this.rateArr) {
+              if (this.watchFreightList.length > 2) {
+                this.arries = [];
+                this.mathes2 = 0;
+                this.sum2 = 0;
                 for (let i = 0; i < this.watchFreightList.length; i++) {
                   if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
-                    this.mathes2 = Number(Number(this.watchFreightList[i].buy_watchprice) / Number(this.sum2) *
-                      Number(this.freight));
-                    this.arries.splice(i, 1, this.mathes2.toFixed(0));
-                    console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
-                  } else if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
-                    if (items.type == 0) {
-                      if (items.dest == this.watchFreightList[i].buy_watchcurrency) {
-                        this.mathes2 = Number(Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate) /
-                          Number(this.sum2) * Number(this.freight));
-                        // this.arries.push(this.mathes2.toFixed(0));
-                        this.arries.splice(i, 1, this.mathes2.toFixed(0));
-                        console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
-                        console.log(this.arries);
+                    this.sum2 += Number(this.watchFreightList[i].buy_watchprice);
+                    console.log('7777755555---' + this.watchFreightList[i].buy_watchprice);
+                  }
+                }
+                for (let items of this.rateArr) {
+                  for (let i = 0; i < this.watchFreightList.length; i++) {
+                    if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
+                      if (items.type == 0) {
+                        if (items.dest === this.watchFreightList[i].buy_watchcurrency) {
+                          console.log('价格' + this.watchFreightList[i].buy_watchprice);
+                          console.log('汇率' + items.rate);
+                          this.sum2 += Number(Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate));
+                        }
+                      }
+                    }
+                  }
+                  console.log('999999999999---' + this.sum2);
+                }
+                console.log(this.watchFreightList);
+                for (let i = 0; i < this.watchFreightList.length; i++) {
+                  this.arries.push(i);
+                }
+                console.log('数据');
+                console.log(this.arries);
+                for (let items of this.rateArr) {
+                  for (let i = 0; i < this.watchFreightList.length; i++) {
+                    if (this.watchFreightList[i].buy_watchcurrency == 'CNY') {
+                      this.mathes2 = Number(Number(this.watchFreightList[i].buy_watchprice) / Number(this.sum2) *
+                        Number(this.freight));
+                      this.arries.splice(i, 1, this.mathes2.toFixed(0));
+                      console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
+                    } else if (this.watchFreightList[i].buy_watchcurrency !== 'CNY') {
+                      if (items.type == 0) {
+                        if (items.dest == this.watchFreightList[i].buy_watchcurrency) {
+                          this.mathes2 = Number(Number(this.watchFreightList[i].buy_watchprice) * Number(items.rate) /
+                            Number(this.sum2) * Number(this.freight));
+                          // this.arries.push(this.mathes2.toFixed(0));
+                          this.arries.splice(i, 1, this.mathes2.toFixed(0));
+                          console.log(i + '位置' + this.watchFreightList[i].buy_watchprice + '计算--' + this.mathes2);
+                          console.log(this.arries);
+                        }
                       }
                     }
                   }
                 }
               }
             }
+
           });
       },
       // 继续选择要发货的商品
@@ -279,7 +287,7 @@
           return 1;
         }
         if (
-          this.LOG_sendtime == null ||
+          this.log_sendTime == null ||
           this.arriveTime == null ||
           this.warehouse == "" ||
           this.freight == ""
@@ -305,10 +313,10 @@
         for (let index in this.watchFreightList) {
           let watchOne = {
             id: 0,
-            LOG_moneyex: 0
+            log_moneyEx: 0
           };
           watchOne.id = this.watchFreightList[index].id;
-          watchOne.LOG_moneyex = this.arries[index];
+          watchOne.log_moneyEx = this.arries[index];
           this.log_watch.push(watchOne);
         }
         // console.log('pppp');
@@ -321,12 +329,12 @@
         });
         this.$axios
           .post(this.$store.state.baseUrl + "/LOGInsert", {
-            LOG_sendtime: this.shellDate(this.LOG_sendtime),
-            LOG_arrivetime: this.shellDate(this.arriveTime),
-            LOG_warehouseid: this.warehouseId,
-            LOG_warehouse: this.warehouse,
-            LOG_money: this.freight,
-            LOG_watch: this.log_watch
+            log_sendTime: this.shellDate(this.log_sendTime),
+            log_arriveTime: this.shellDate(this.arriveTime),
+            log_warehouseId: this.warehouseId,
+            log_warehouse: this.warehouse,
+            log_money: this.freight,
+            log_watch: this.log_watch
           })
           .then(res => {
             console.log("本次商品发货成功");

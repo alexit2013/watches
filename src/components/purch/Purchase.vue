@@ -32,20 +32,20 @@
               :close-on-click-modal="false" style="padding: 20px 30px;">
               <el-form label-width="100px">
                 <el-form-item label="手表型号:" required>
-                  <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
+                  <el-autocomplete v-model="model" placeholder="请输入手表品牌、型号或昵称简称" :fetch-suggestions="fetchSuggestions"
                     :trigger-on-focus="false" @select="handleModel"></el-autocomplete>
                 </el-form-item>
                 <el-form-item label="采购价格:" required>
-                  <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
+                  <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchPrice" class="input-style"
                     @input="watchprice">
-                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
+                    <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchCurrency}}</i>
                   </el-input>
                 </el-form-item>
                 <el-form-item label="机芯号:">
-                  <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
+                  <el-input placeholder="请输入机芯号" v-model="buy_watchSn" class="input-style"></el-input>
                 </el-form-item>
                 <el-form-item label="保卡日期:">
-                  <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期"></el-date-picker>
+                  <el-date-picker v-model="buy_watchCard" type="date" placeholder="选择日期"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="配件:">
                   <el-checkbox-group required>
@@ -56,7 +56,7 @@
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="额外表带:">
-                  <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
+                  <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchBand" class="input-style"
                     @input="waychbandInput">
                     <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
                   </el-input>
@@ -64,7 +64,7 @@
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="messageSure">保 存</el-button>
+                <el-button type="primary" @click="messageSure" v-preventClick>保 存</el-button>
               </div>
             </el-dialog>
             <button class="top-search-button" @click="submitPurchase">提 交</button>
@@ -74,7 +74,8 @@
               </div>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="addNew" style="width: 35%;margin-right:10px;">添加新的采购单</el-button>
-                <el-button @click="complete" style="width: 35%;background:#0c8563;color:#fff;">继续完善该采购单</el-button>
+                <el-button @click="complete" style="width: 35%;background:#0c8563;color:#fff;" v-preventClick>继续完善该采购单
+                </el-button>
               </span>
             </el-dialog>
           </div>
@@ -93,10 +94,10 @@
                     style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
                 </td>
                 <td>
-                  <p style="margin: 0;">{{item.buy_watchbrand}}</p>
-                  <p style="margin: 0;">{{item.buy_watchmodel}}</p>
+                  <p style="margin: 0;">{{item.buy_watchBrand}}</p>
+                  <p style="margin: 0;">{{item.buy_watchModel}}</p>
                 </td>
-                <td>{{item.buy_watchcurrency}} {{formatNumberRgx(item.buy_watchprice)}}</td>
+                <td>{{item.buy_watchCurrency}} {{formatNumberRgx(item.buy_watchPrice)}}</td>
                 <td>
                   <el-tooltip class="item" effect="light" content="修改查看信息" placement="top-end">
                     <img src="../../assets/imgs/details.png" style="cursor:pointer;" @click="updateWatch(item,index)" />
@@ -105,22 +106,22 @@
                     :close-on-click-modal="false">
                     <el-form label-width="120px">
                       <el-form-item label="手表型号:" required>
-                        <el-autocomplete v-model="model" placeholder="请输入品牌或型号" :fetch-suggestions="fetchSuggestions"
-                          :trigger-on-focus="false" @select="handleModel">
+                        <el-autocomplete v-model="model" placeholder="请输入手表品牌、型号或昵称简称"
+                          :fetch-suggestions="fetchSuggestions" :trigger-on-focus="false" @select="handleModel">
                         </el-autocomplete>
                       </el-form-item>
                       <el-form-item label="采购价格:" required>
-                        <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchprice" class="input-style"
+                        <el-input placeholder="请输入采购价格" type="text" v-model="buy_watchPrice" class="input-style"
                           @input="watchprice">
                           <i slot="suffix"
-                            style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchcurrency}}</i>
+                            style="color: #000;margin-right:5%;font-style:normal;">{{buy_watchCurrency}}</i>
                         </el-input>
                       </el-form-item>
                       <el-form-item label="机芯号：">
-                        <el-input placeholder="请输入机芯号" v-model="buy_watchsn" class="input-style"></el-input>
+                        <el-input placeholder="请输入机芯号" v-model="buy_watchSn" class="input-style"></el-input>
                       </el-form-item>
                       <el-form-item label="保卡日期：">
-                        <el-date-picker v-model="buy_watchcard" type="date" placeholder="选择日期" class="input-style">
+                        <el-date-picker v-model="buy_watchCard" type="date" placeholder="选择日期" class="input-style">
                         </el-date-picker>
                       </el-form-item>
                       <el-form-item label="配件：">
@@ -133,7 +134,7 @@
                         </el-checkbox-group>
                       </el-form-item>
                       <el-form-item label="额外表带：">
-                        <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchband" class="input-style"
+                        <el-input placeholder="请输入额外表带数" type="text" v-model="buy_watchBand" class="input-style"
                           @input="waychbandInput">
                           <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">条</i>
                         </el-input>
@@ -141,7 +142,7 @@
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                       <el-button @click="dialogUpdateWatchVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="messageSureUpdate">保 存</el-button>
+                      <el-button type="primary" @click="messageSureUpdate" v-preventClick>保 存</el-button>
                     </div>
                   </el-dialog>
                   <el-tooltip class="item" effect="light" content="删除" placement="top-end">
@@ -154,7 +155,7 @@
                     </div>
                     <span slot="footer" class="dialog-footer">
                       <el-button @click="centerDialogVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="delMessage">确 定</el-button>
+                      <el-button type="primary" @click="delMessage" v-preventClick>确 定</el-button>
                     </span>
                   </el-dialog>
                 </td>
@@ -184,7 +185,7 @@
         dialogUpdateWatchVisible: false,
         dialogVisible: false,
         addDialog: false,
-        buy_storeid: 0, //采购店铺id
+        buy_storeId: 0, //采购店铺id
         country: "",
         keyword: "", //采购关键字
         buy_watch: "", //采购手表列表
@@ -192,13 +193,13 @@
         models: [],
         myBrand: "",
         myModel: "",
-        buy_watchid: "", //采购手表id
+        buy_watchId: "", //采购手表id
         watch_model: "",
-        buy_watchprice: "", //采购价格
-        buy_watchcurrency: "", //价格币种
-        buy_watchsn: "", //机芯号
-        buy_watchcard: new Date(), //采购保卡日期
-        buy_watchparts: "", //采购配件
+        buy_watchPrice: "", //采购价格
+        buy_watchCurrency: "", //价格币种
+        buy_watchSn: "", //机芯号
+        buy_watchCard: new Date(), //采购保卡日期
+        buy_watchParts: "", //采购配件
         accessory: [],
         accessories: [
           "保卡",
@@ -214,7 +215,7 @@
           "便携盒",
           "特殊表盒"
         ],
-        buy_watchband: "", //采购额外表带数
+        buy_watchBand: "", //采购额外表带数
         watch: {},
         watchList: [],
         buy_id: 0, //采购单id
@@ -240,8 +241,7 @@
       this.keyword = this.purchasePro.name;
       this.store = this.purchasePro.name;
       this.country = this.purchasePro.country;
-      this.price();
-      this.buy_storeid = this.purchasePro.id;
+      this.buy_storeId = this.purchasePro.id;
     },
     methods: {
       goback(val) {
@@ -254,7 +254,7 @@
         this.watchList = [];
         this.pics = [];
         this.imgSels = '';
-        this.buy_watchid = '';
+        this.buy_watchId = '';
         this.model = '';
         this.models = [];
         this.myBrand = '';
@@ -273,9 +273,9 @@
               console.log(res);
               for (let item of res.data) {
                 // console.log(item);
-                item.value = item.name + "（地址：" + (item.AddrCn == '' ? item.AddrEn : item.AddrCn) + "）";
+                item.value = item.name + "（地址：" + (item.addrCn == '' ? item.addrEn : item.addrCn) + "）";
                 item.id = item.id;
-                item.CountryCn = item.CountryCn;
+                item.countryCn = item.countryCn;
               }
               this.restaurants = res.data;
               console.log(this.restaurants);
@@ -293,10 +293,11 @@
       },
       handleSelect(item) {
         console.log("restnhjnjn");
-        console.log(item.CountryCn);
-        this.buy_storeid = item.id;
-        this.country = item.CountryCn;
+        console.log(item.countryCn);
+        this.buy_storeId = item.id;
+        this.country = item.countryCn;
         this.store = item.value;
+        console.log(this.country);
       },
       // 添加手表
       addWatch() {
@@ -317,37 +318,22 @@
         } else {
           this.dialogFormVisible = true;
         };
+        this.price();
         this.watch = {};
-        this.buy_watchprice = "";
-        this.buy_watchsn = "";
+        this.buy_watchPrice = "";
+        this.buy_watchSn = "";
         this.accessory = [];
-        this.buy_watchparts = '';
-        this.buy_watchband = "";
-        this.buy_watchbrand = "";
-        this.buy_watchmodel = "";
+        this.buy_watchParts = '';
+        this.buy_watchBand = "";
+        this.buy_watchBrand = "";
+        this.buy_watchModel = "";
       },
       // 手表型号
       fetchSuggestions(queryString, callback) {
-        let param = {};
-        console.log(this.model);
-        let reg = /[\u4E00-\u9FA5]/;
-        if (this.model !== "") {
-          console.log(this.model);
-          if (reg.test(this.model) == true) {
-            console.log(this.model);
-            param = {
-              brand: this.model
-            };
-          } else {
-            param = {
-              model: this.model
-            };
-          }
-        }
-        console.log(this.param);
         this.$axios
-          .post(this.$store.state.baseUrl + "/WatchSearch", param)
-          .then(res => {
+          .post(this.$store.state.baseUrl + "/WatchSearch", {
+            keyword: this.model
+          }).then(res => {
             console.log(res);
             for (let item of res.data) {
               item.value = item.brand + "-" + item.model;
@@ -361,7 +347,7 @@
           });
       },
       handleModel(item) {
-        this.buy_watchid = item.id;
+        this.buy_watchId = item.id;
         this.myBrand = item.brand;
         this.myModel = item.model;
         console.log(item);
@@ -373,7 +359,7 @@
       },
       // 采购价格
       watchprice() {
-        if (this.buy_watchprice < 0) {
+        if (this.buy_watchPrice < 0) {
           this.$message.error({
             message: '价格不能为负，请重新输入',
             showClose: true,
@@ -386,10 +372,11 @@
         this.$axios.post(this.$store.state.baseUrl + "/CountryGet").then(res => {
           // console.log('价格币种');
           // console.log(res);
+          console.log(this.country);
           for (let item of res.data) {
             // console.log(this.country);
-            if (this.country == item.CnName) {
-              this.buy_watchcurrency = item.EnCurrency;
+            if (this.country == item.cnName) {
+              this.buy_watchCurrency = item.enCurrency;
             }
           }
         });
@@ -398,14 +385,14 @@
       verify() {
         console.log("111");
         console.log(this.buy_date);
-        if (this.buy_watchid == "") {
+        if (this.buy_watchId == "") {
           this.$message.error({
             message: "手表型号不能为空",
             showClose: true,
             duration: 2000
           })
           return 1;
-        } else if (this.buy_watchprice == "") {
+        } else if (this.buy_watchPrice == "") {
           this.$message.error({
             message: "采购价格不能为空",
             showClose: true,
@@ -420,35 +407,35 @@
       messageSure() {
         if (this.verify() == 2) {
           // console.log(this.accessory);
-          // this.buy_watchparts = '';
+          // this.buy_watchParts = '';
           for (let item of this.accessory) {
-            this.buy_watchparts += item + "|";
+            this.buy_watchParts += item + "|";
           }
           if (
-            this.buy_watchid == "" ||
-            this.buy_watchprice == "" ||
-            this.buy_watchcurrency == "" ||
-            this.buy_watchsn == "" ||
-            this.buy_watchcard == "" ||
-            this.buy_watchparts == "" ||
-            this.buy_watchband == "" ||
-            this.buy_watchbrand == "" ||
-            this.buy_watchmodel == ""
+            this.buy_watchId == "" ||
+            this.buy_watchPrice == "" ||
+            this.buy_watchCurrency == "" ||
+            this.buy_watchSn == "" ||
+            this.buy_watchCard == "" ||
+            this.buy_watchParts == "" ||
+            this.buy_watchBand == "" ||
+            this.buy_watchBrand == "" ||
+            this.buy_watchModel == ""
           ) {
             this.buy_watchState = 0;
           } else {
             this.buy_watchState = 1;
           }
           this.watch = {
-            buy_watchid: this.buy_watchid,
-            buy_watchprice: this.buy_watchprice,
-            buy_watchcurrency: this.buy_watchcurrency,
-            buy_watchsn: this.buy_watchsn,
-            buy_watchcard: this.shellDate(this.buy_watchcard),
-            buy_watchparts: this.buy_watchparts,
-            buy_watchband: this.buy_watchband,
-            buy_watchbrand: this.myBrand,
-            buy_watchmodel: this.myModel,
+            buy_watchId: this.buy_watchId,
+            buy_watchPrice: this.buy_watchPrice,
+            buy_watchCurrency: this.buy_watchCurrency,
+            buy_watchSn: this.buy_watchSn,
+            buy_watchCard: this.shellDate(this.buy_watchCard),
+            buy_watchParts: this.buy_watchParts,
+            buy_watchBand: this.buy_watchBand,
+            buy_watchBrand: this.myBrand,
+            buy_watchModel: this.myModel,
             buy_watchState: this.buy_watchState,
             buy_pics: this.imgSels
             // buy_watchpics: this.$store.state.imgUrl
@@ -458,13 +445,13 @@
           // console.log(this.shellDate(this.buy_date));
           this.watch = {};
           this.dialogFormVisible = false;
-          this.buy_watchprice = "";
-          this.buy_watchsn = "";
+          this.buy_watchPrice = "";
+          this.buy_watchSn = "";
           this.accessory = [];
-          this.buy_watchparts = '';
-          this.buy_watchband = "";
-          this.buy_watchbrand = "";
-          this.buy_watchmodel = "";
+          this.buy_watchParts = '';
+          this.buy_watchBand = "";
+          this.buy_watchBrand = "";
+          this.buy_watchModel = "";
           console.log(this.pics);
         }
       },
@@ -474,43 +461,43 @@
         console.log(index);
         this.updateIndex = index;
         this.dialogUpdateWatchVisible = true;
-        this.model = item.buy_watchbrand + '-' + item.buy_watchmodel;
-        this.buy_watchprice = item.buy_watchprice;
-        this.buy_watchsn = item.buy_watchsn;
-        this.buy_watchcard = item.buy_watchcard;
-        this.accessory = item.buy_watchparts.split("|");
-        this.buy_watchband = item.buy_watchband;
+        this.model = item.buy_watchBrand + '-' + item.buy_watchModel;
+        this.buy_watchPrice = item.buy_watchPrice;
+        this.buy_watchSn = item.buy_watchSn;
+        this.buy_watchCard = item.buy_watchCard;
+        this.accessory = item.buy_watchParts.split("|");
+        this.buy_watchBand = item.buy_watchBand;
       },
       // 确认修改
       messageSureUpdate() {
         for (let item of this.accessory) {
-          this.buy_watchparts += item + "|";
+          this.buy_watchParts += item + "|";
         }
         if (
-          this.buy_watchid == "" ||
-          this.buy_watchprice == "" ||
-          this.buy_watchcurrency == "" ||
-          this.buy_watchsn == "" ||
-          this.buy_watchcard == "" ||
-          this.buy_watchparts == "" ||
-          this.buy_watchband == "" ||
-          this.buy_watchbrand == "" ||
-          this.buy_watchmodel == ""
+          this.buy_watchId == "" ||
+          this.buy_watchPrice == "" ||
+          this.buy_watchCurrency == "" ||
+          this.buy_watchSn == "" ||
+          this.buy_watchCard == "" ||
+          this.buy_watchParts == "" ||
+          this.buy_watchBand == "" ||
+          this.buy_watchBrand == "" ||
+          this.buy_watchModel == ""
         ) {
           this.buy_watchState = 0;
         } else {
           this.buy_watchState = 1;
         }
         this.watch = {
-          buy_watchid: this.buy_watchid,
-          buy_watchprice: this.buy_watchprice,
-          buy_watchcurrency: this.buy_watchcurrency,
-          buy_watchsn: this.buy_watchsn,
-          buy_watchcard: this.shellDate(this.buy_watchcard),
-          buy_watchparts: this.buy_watchparts,
-          buy_watchband: this.buy_watchband,
-          buy_watchbrand: this.myBrand,
-          buy_watchmodel: this.myModel,
+          buy_watchId: this.buy_watchId,
+          buy_watchPrice: this.buy_watchPrice,
+          buy_watchCurrency: this.buy_watchCurrency,
+          buy_watchSn: this.buy_watchSn,
+          buy_watchCard: this.shellDate(this.buy_watchCard),
+          buy_watchParts: this.buy_watchParts,
+          buy_watchBand: this.buy_watchBand,
+          buy_watchBrand: this.myBrand,
+          buy_watchModel: this.myModel,
           buy_watchState: this.buy_watchState,
           buy_pics: this.imgSels
           // buy_watchpics: this.$store.state.imgUrl
@@ -520,18 +507,18 @@
         // console.log(this.shellDate(this.buy_date));
         this.watch = {};
         this.dialogUpdateWatchVisible = false;
-        this.buy_watchprice = "";
-        this.buy_watchsn = "";
+        this.buy_watchPrice = "";
+        this.buy_watchSn = "";
         this.accessory = [];
-        this.buy_watchparts = "";
-        this.buy_watchband = "";
-        this.buy_watchbrand = "";
-        this.buy_watchmodel = "";
+        this.buy_watchParts = "";
+        this.buy_watchBand = "";
+        this.buy_watchBrand = "";
+        this.buy_watchModel = "";
         console.log(this.pics);
       },
       // 验证额外表带数
       waychbandInput() {
-        if (Math.floor(this.buy_watchband) !== Number(this.buy_watchband)) {
+        if (Math.floor(this.buy_watchBand) !== Number(this.buy_watchBand)) {
           this.$message.error({
             message: '输入内容只能为整型数字',
             showClose: true,
@@ -575,7 +562,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderInsert", {
               buy_date: this.shellDate(this.buy_date),
-              buy_storeid: this.buy_storeid,
+              buy_storeId: this.buy_storeId,
               buy_watch: this.buy_watch
             })
             .then(res => {
@@ -617,7 +604,7 @@
         this.watchList = [];
         this.pics = [];
         this.imgSels = '';
-        this.buy_watchid = '';
+        this.buy_watchId = '';
         this.model = '';
         this.models = [];
         this.myBrand = '';
@@ -767,7 +754,7 @@
 </style>
 <style lang="scss">
   #purchase-container {
-    .buy_watchband {
+    .buy_watchBand {
       right: 10%;
     }
 

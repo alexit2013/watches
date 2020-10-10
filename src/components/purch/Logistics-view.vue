@@ -7,8 +7,8 @@
     <div v-if="logisticsViewList.length !== 0">
       <div class="view" v-for="(item,index) in logisticsViewList" :key="index">
         <div class="purchase-row">
-          <span class="purchase-number">物流单号: {{" " + item.LOG_id}}</span>
-          <span class="purchase-date">发货时间: {{item.LOG_sendtime}}</span>
+          <span class="purchase-number">物流单号: {{" " + item.log_id}}</span>
+          <span class="purchase-date">发货时间: {{item.log_sendTime}}</span>
         </div>
         <table class="view-table">
           <tr>
@@ -18,13 +18,13 @@
             <th>操作</th>
           </tr>
           <tr>
-            <td>{{item.LOG_warehouse}}</td>
-            <td>{{'HKD '+formatNumberRgx(item.LOG_money)}}</td>
+            <td>{{item.log_warehouse}}</td>
+            <td>{{'HKD '+formatNumberRgx(item.log_money)}}</td>
             <td>
               <div style="display: flex;justify-content:center;">
-                <span>{{item.LOG_state == 1 ? "运输中" : "已到达仓库"}}</span>
+                <span>{{item.log_state == 1 ? "运输中" : "已到达仓库"}}</span>
                 <div style="margin-left: 5px;">
-                  <img :src="item.LOG_state == 1 ? img1 : img2" style="width: 20px;height: 20px;" />
+                  <img :src="item.log_state == 1 ? img1 : img2" style="width: 20px;height: 20px;" />
                 </div>
               </div>
             </td>
@@ -36,20 +36,20 @@
                 <div style="text-align: left;">
                   <div class="details-container">
                     <el-form label-width="130px">
-                      <el-form-item label="预计到达时间：" v-if="details.LOG_state == 1">
-                        <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
+                      <el-form-item label="预计到达时间：" v-if="details.log_state == 1">
+                        <el-date-picker v-model="details.log_arriveTime" type="date" placeholder="date"
                           class="input-style" readonly></el-date-picker>
                       </el-form-item>
-                      <el-form-item label="到达仓库时间：" v-if="details.LOG_state == 2">
-                        <el-date-picker v-model="details.LOG_arrivetime" type="date" placeholder="date"
+                      <el-form-item label="到达仓库时间：" v-if="details.log_state == 2">
+                        <el-date-picker v-model="details.log_arriveTime" type="date" placeholder="date"
                           class="input-style" readonly></el-date-picker>
                       </el-form-item>
                       <el-form-item label="到达仓库：">
-                        <el-input v-model="details.LOG_warehouse" class="input-style"
+                        <el-input v-model="details.log_warehouse" class="input-style"
                           style="width: 60%;height: auto;line-height: 40px;" readonly></el-input>
                       </el-form-item>
                       <el-form-item label="总运费：">
-                        <el-input v-model="details.LOG_money" style="width: 60%;height: auto;line-height: 40px;"
+                        <el-input v-model="details.log_money" style="width: 60%;height: auto;line-height: 40px;"
                           readonly>
                           <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">HKD</i>
                         </el-input>
@@ -73,30 +73,29 @@
                             <th class="table-th">物流状态</th>
                             <th class="table-th">运费</th>
                           </tr>
-                          <tr v-for="(items,index) in details.LOG_watch" :key="index">
+                          <tr v-for="(items,index) in details.log_watch" :key="index">
                             <td>
                               <img v-image-preview
-                                :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
+                                :src="items.buy_watchPics == null || items.buy_watchPics == '' ? '' : img + '/img/watch/'+ (items.buy_watchPics || '').split('|')[0]"
                                 style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
                             </td>
                             <td>
                               <div>
-                                <span>{{items.buy_watchbrand}}</span>
+                                <span>{{items.buy_watchBrand}}</span>
                               </div>
                               <div>
-                                <span>{{items.buy_watchmodel}}</span>
+                                <span>{{items.buy_watchModel}}</span>
                               </div>
                             </td>
-                            <!-- <td>{{items.buy_watchbrand +'-'+ items.buy_watchmodel}}</td> -->
-                            <td>{{items.buy_watchsn}}</td>
-                            <td>{{items.buy_watchcurrency}} {{formatNumberRgx(items.buy_watchprice)}}</td>
+                            <td>{{items.buy_watchSn}}</td>
+                            <td>{{items.buy_watchCurrency}} {{formatNumberRgx(items.buy_watchPrice)}}</td>
                             <td>
-                              <!-- <span>{{items.LOG_state == 1 ? "运输中" : "已到达仓库"}}</span> -->
-                              <img :src="items.LOG_state == 2 || items.LOG_state > 2 ? img2 : img1" />
+                              <!-- <span>{{items.log_state == 1 ? "运输中" : "已到达仓库"}}</span> -->
+                              <img :src="items.log_state == 2 || items.log_state > 2 ? img2 : img1" />
                             </td>
                             <td>
                               <div style="width: 100%;margin: 0 auto;border-bottom: 1px solid #000;display: flex;">
-                                <input type="text" v-model="items.LOG_moneyex" class="freight-input" readonly />
+                                <input type="text" v-model="items.log_moneyEx" class="freight-input" readonly />
                                 <i slot="suffix"
                                   style="width: 50%;height: 40px;line-height: 40px;font-style:normal;color: #000;">HKD</i>
                               </div>
@@ -109,7 +108,7 @@
                 </div>
                 <div slot="footer">
                   <el-button @click="viewClick1">取 消</el-button>
-                  <el-button type="primary" @click="viewClick2">确 定</el-button>
+                  <el-button type="primary" @click="viewClick2" v-preventClick>确 定</el-button>
                 </div>
               </el-dialog>
             </td>
@@ -133,7 +132,7 @@
         img: this.$store.state.baseUrl,
         total: 0,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         dialogVisible: false,
         logisticsViewList: [],
         img1: require("../../assets/imgs/carImg.png"),
@@ -156,7 +155,7 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/LOGList", {
             page: this.page,
-            pagenum: this.pagenum
+            pageNum: this.pageNum
           })
           .then(res => {
             console.log("我是已发货商品");
@@ -195,7 +194,7 @@
         console.log("要查看物流详情了哦");
         console.log(details);
         this.details = details;
-        this.nums = this.details.LOG_watch.length;
+        this.nums = this.details.log_watch.length;
         this.dialogVisible = true;
       },
       viewClick1() {

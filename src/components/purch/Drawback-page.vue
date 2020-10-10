@@ -12,7 +12,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="退税方式：" class="input-style">
-              <el-select v-model="buy_taxtype" @change="taxtypeChange">
+              <el-select v-model="buy_taxType" @change="taxtypeChange">
                 <el-option value="现金">现金</el-option>
                 <el-option value="退到银行卡">退到银行卡</el-option>
               </el-select>
@@ -22,20 +22,20 @@
         <el-row>
           <el-col :span="11">
             <el-form-item label="公司名称：">
-              <el-input v-model="buy_taxcompany" placeholder="请输入退税公司名称" class="input-style"></el-input>
+              <el-input v-model="buy_taxCompany" placeholder="请输入退税公司名称" class="input-style"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="13">
             <el-form-item label="负责人：">
-              <el-input v-model="buy_taxperson" placeholder="请输入退税负责人" class="input-style"></el-input>
+              <el-input v-model="buy_taxPerson" placeholder="请输入退税负责人" class="input-style"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="11">
             <el-form-item label="应退金额：">
-              <el-input v-model="buy_taxmoney" class="input-style">
-                <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxcurrency}}</i>
+              <el-input v-model="buy_taxMoney" class="input-style">
+                <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxCurrency}}</i>
               </el-input>
             </el-form-item>
           </el-col>
@@ -52,14 +52,14 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="到账日期：">
-                <el-date-picker v-model="buy_taxrecvtime" type="date" style="width: 100%;">
+                <el-date-picker v-model="buy_taxRecvTime" type="date" style="width: 100%;">
                 </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="13">
               <el-form-item label="到账金额：">
-                <el-input v-model="buy_taxrecvmoney" class="input-style">
-                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxrecvcurrency}}</i>
+                <el-input v-model="buy_taxRecvMoney" class="input-style">
+                  <i slot="suffix" style="color: #000;margin-right:5%;font-style:normal;">{{buy_taxRecvCurrency}}</i>
                 </el-input>
               </el-form-item>
             </el-col>
@@ -80,7 +80,7 @@
               </div>
               <div style="display:flex;position:relative;" id="delImg">
                 <div v-for="(imgurl,index) of imgSrc" :key="index" style="margin-left:10px;position:relative;">
-                  <span class="spanStyle" @click="delImage(index)">x</span>
+                  <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
                   <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
                     style="border-radius:5px;object-fit:cover;" />
                 </div>
@@ -91,7 +91,7 @@
       </div>
     </div>
     <div class="drawback-submit">
-      <el-button type="primary" @click="submitDrawback">保 存</el-button>
+      <el-button type="primary" @click="submitDrawback" v-preventClick>保 存</el-button>
     </div>
   </div>
 </template>
@@ -100,18 +100,18 @@
     data() {
       return {
         img: this.$store.state.baseUrl,
-        buy_watchcurrency: '',
+        buy_watchCurrency: '',
         buy_taxState: true, // 是否有退税
-        buy_taxtype: "退到银行卡", // 退税方式
-        buy_taxcompany: "", // 退税公司名称
-        buy_taxperson: "", // 退税负责人
-        buy_taxmoney: "", // 应退金额
-        buy_taxcurrency: "", // 应退金额币种
+        buy_taxType: "退到银行卡", // 退税方式
+        buy_taxCompany: "", // 退税公司名称
+        buy_taxPerson: "", // 退税负责人
+        buy_taxMoney: "", // 应退金额
+        buy_taxCurrency: "", // 应退金额币种
 
         buy_taxBackStore: true, // 是否返店退税
-        buy_taxrecvtime: '', // 到账日期
-        buy_taxrecvmoney: "", // 到账金额
-        buy_taxrecvcurrency: "", //到账金额币种
+        buy_taxRecvTime: '', // 到账日期
+        buy_taxRecvMoney: "", // 到账金额
+        buy_taxRecvCurrency: "", //到账金额币种
 
         tax: {},
         imgSrc: [],
@@ -129,53 +129,53 @@
           })
           .then(res => {
             for (let item of res.data.watch) {
-              this.buy_taxcurrency = item.buy_watchcurrency;
+              this.buy_taxCurrency = item.buy_watchCurrency;
             }
             this.tax = res.data.tax;
             console.log("退税");
             console.log(this.tax);
-            if (this.buy_taxtype == "退到银行卡") {
-              this.buy_taxrecvcurrency = 'CNY';
-            } else if (this.buy_taxtype == "现金") {
-              this.buy_taxrecvcurrency = this.buy_taxcurrency;
+            if (this.buy_taxType == "退到银行卡") {
+              this.buy_taxRecvCurrency = 'CNY';
+            } else if (this.buy_taxType == "现金") {
+              this.buy_taxRecvCurrency = this.buy_taxCurrency;
             }
             if (this.tax.buy_taxState == -1) {
               this.buy_taxState = false;
             } else if (this.tax.buy_taxState == 0 || this.tax.buy_taxState == 1) {
               this.buy_taxState = true;
-              if (this.tax.buy_taxtype == 0) {
-                this.buy_taxtype = "退到银行卡";
-                this.buy_taxrecvcurrency = 'CNY';
-              } else if (this.tax.buy_taxtype == 1) {
-                this.buy_taxtype = "现金";
-                this.buy_taxrecvcurrency = this.buy_taxcurrency;
+              if (this.tax.buy_taxType == 0) {
+                this.buy_taxType = "退到银行卡";
+                this.buy_taxRecvCurrency = 'CNY';
+              } else if (this.tax.buy_taxType == 1) {
+                this.buy_taxType = "现金";
+                this.buy_taxRecvCurrency = this.buy_taxCurrency;
               }
-              this.buy_taxcompany = this.tax.buy_taxcompany;
-              this.buy_taxperson = this.tax.buy_taxperson;
-              if (this.tax.buy_taxmoney == 0) {
-                this.buy_taxmoney = '';
+              this.buy_taxCompany = this.tax.buy_taxCompany;
+              this.buy_taxPerson = this.tax.buy_taxPerson;
+              if (this.tax.buy_taxMoney == 0) {
+                this.buy_taxMoney = '';
               } else {
-                this.buy_taxmoney = this.tax.buy_taxmoney;
+                this.buy_taxMoney = this.tax.buy_taxMoney;
               };
               if (this.tax.buy_taxBackStore == 0) {
                 this.buy_taxBackStore = false;
               } else if (this.tax.buy_taxBackStore == 1) {
                 this.buy_taxBackStore = true;
               }
-              if (this.tax.buy_taxrecvtime == '0000-00-00') {
-                this.buy_taxrecvtime = '';
+              if (this.tax.buy_taxRecvTime == '0000-00-00') {
+                this.buy_taxRecvTime = '';
               } else {
-                this.buy_taxrecvtime = this.tax.buy_taxrecvtime;
+                this.buy_taxRecvTime = this.tax.buy_taxRecvTime;
               };
-              if (this.tax.buy_taxrecvmoney == 0) {
-                this.buy_taxrecvmoney = '';
+              if (this.tax.buy_taxRecvMoney == 0) {
+                this.buy_taxRecvMoney = '';
               } else {
-                this.buy_taxrecvmoney = this.tax.buy_taxrecvmoney;
+                this.buy_taxRecvMoney = this.tax.buy_taxRecvMoney;
               };
               console.log("mmmm");
               console.log(this.tax);
-              if (this.tax.buy_taxpic !== null && this.tax.buy_taxpic !== '') {
-                this.imgSrc = this.tax.buy_taxpic.split("|");
+              if (this.tax.buy_taxPic !== null && this.tax.buy_taxPic !== '') {
+                this.imgSrc = this.tax.buy_taxPic.split("|");
                 for (let i = 0; i < this.imgSrc.length; i++) {
                   if (this.imgSrc[i] == '') {
                     this.imgSrc.splice(i, 1);
@@ -194,122 +194,105 @@
         this.imgSrc.splice(index, 1);
       },
       // 上传图片
-      inputChange1(file) {
-        console.log(file);
-        let imgFiles = file.target.files;
-        console.log(imgFiles);
-        this.uploadSectionFile(imgFiles);
-      },
-      // 上传前压缩的方法
-      uploadSectionFile(f) { //	附件上传
-        console.log(f);
-        let self = this;
-        let Orientation;
-        let ndata;
-        console.log('图片尺寸');
-        console.log(f[0].size);
-        // * 1024 * 1024
-        if (f[0].size <= 1 * 1024 * 1024) {
-          //判断图片是否大于1M,是就直接上传
-          ndata = f[0];
-          self.postImg(ndata);
-        } else {
-          //反之压缩图片
-          let reader = new FileReader();
-          // 将图片2将转成 base64 格式
-          reader.readAsDataURL(f[0]);
-          console.log(reader)
-          // 读取成功后的回调
-          reader.onloadend = function () {
-            let result = this.result;
-            let img = new Image();
-            img.src = result;
-            img.onload = function () {
-              let data = self.compress(img, Orientation);
-              self.headerImage = data;
-              ndata = self.compress(img, Orientation);
-              console.log('ndata值');
-              console.log(ndata);
-              //BASE64转图片
-              var arr = ndata.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-              while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-              }
-              ndata = new File([u8arr], f[0].name, {
-                type: mime
-              })
-              console.log('6weeeee');
-              console.log(ndata);
-              self.postImg(ndata);
-            }
-          }
+      inputChange1(e) {
+        let file = e.target.files[0];
+        let that = this;
+        if (file === undefined) {
+          return
+        }
+        if (file.size / 1024 > 1025) { // 文件大于1M（根据需求更改），进行压缩上传
+          this.photoCompress(file, { // 调用压缩图片方法
+            quality: 0.7
+          }, function (base64Codes) {
+            // console.log("压缩后：" + base.length / 1024 + " " + base);
+            let bl = that.base64UrlToBlob(base64Codes)
+            // file.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+            that.uploadLice(bl) // 请求图片上传接口
+          })
+        } else { // 小于等于1M 原图上传
+          this.uploadLice(file)
         }
       },
-      async postImg(ndata) {
+
+      // base64 转 Blob 格式 和file格式
+      base64UrlToBlob(urlData) {
+        let arr = urlData.split(','),
+          mime = arr[0].match(/:(.*?);/)[1], // 去掉url的头，并转化为byte
+          bstr = atob(arr[1]), // 处理异常,将ascii码小于0的转换为大于0
+          n = bstr.length,
+          u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        // 转blob
+        // return new Blob([u8arr], {type: mime})
+        let filename = Date.parse(new Date()) + '.jpg'
+        // 转file
+        return new File([u8arr], filename, {
+          type: mime
+        })
+      },
+      /*压缩图片
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+      */
+      photoCompress(file, obj, callback) {
+        let that = this
+        let ready = new FileReader()
+        /* 开始读取指定File对象中的内容. 读取操作完成时,返回一个URL格式的字符串. */
+        ready.readAsDataURL(file)
+        ready.onload = function () {
+          let re = this.result
+          that.canvasDataURL(re, obj, callback) // 开始压缩
+        }
+      },
+      /* 利用canvas数据化图片进行压缩 */
+      /* 图片转base64 */
+      canvasDataURL(path, obj, callback) {
+        let img = new Image()
+        img.src = path
+        img.onload = function () {
+          let that = this // 指到img
+          // 默认按比例压缩
+          let w = that.width,
+            h = that.height,
+            scale = w / h
+          w = obj.width || w
+          h = obj.height || (w / scale)
+          let quality = 0.7 // 默认图片质量为0.7
+          // 生成canvas
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+
+          // 创建属性节点
+          let anw = document.createAttribute('width')
+          anw.nodeValue = w
+          let anh = document.createAttribute('height')
+          anh.nodeValue = h
+          canvas.setAttributeNode(anw)
+          canvas.setAttributeNode(anh)
+          // 铺底色
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(that, 0, 0, w, h)
+
+          // 图像质量
+          if (obj.quality && obj.quality >= 1 && obj.quality < 0) {
+            quality = obj.quality
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/jpeg', quality)
+          // 回调函数返回base64的值
+          callback(base64)
+        }
+      },
+      //  返回file文件，调用接口执行上传
+      uploadLice(file) {
+        console.log(file)
         let formdata1 = new FormData(); //创建form对象
-        console.log('9999999999');
-        console.log(ndata.size);
-        formdata1.append("img", ndata); //通过append向form对象添加数据
-        // console.log(formUpload1);
+        formdata1.append("img", file); //通过append向form对象添加数据
         this.uploadImg(formdata1);
-      },
-      compress(img, Orientation) {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-        //瓦片canvas
-        let tCanvas = document.createElement("canvas");
-        let tctx = tCanvas.getContext("2d");
-        let initSize = img.src.length;
-        let width = img.width;
-        let height = img.height;
-        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        let ratio;
-        if ((ratio = width * height / 4000000) > 1) {
-          console.log("大于400万像素")
-          ratio = Math.sqrt(ratio);
-          width /= ratio;
-          height /= ratio;
-        } else {
-          ratio = 1;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        // 		铺底色
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        //如果图片像素大于100万则使用瓦片绘制
-        let count;
-        if ((count = width * height / 1000000) > 1) {
-          console.log("超过100W像素");
-          count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
-          //            计算每块瓦片的宽和高
-          let nw = ~~(width / count);
-          let nh = ~~(height / count);
-          tCanvas.width = nw;
-          tCanvas.height = nh;
-          for (let i = 0; i < count; i++) {
-            for (let j = 0; j < count; j++) {
-              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
-              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
-            }
-          }
-        } else {
-          ctx.drawImage(img, 0, 0, width, height);
-        }
-        //进行最小压缩
-        let ndata = canvas.toDataURL('image/jpeg', 0.7);
-
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log("ndata:" + ndata)
-
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
-        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
-        return ndata;
       },
       uploadImg(formdata) {
         this.$axios
@@ -340,11 +323,11 @@
       },
       // 退税方式改变币种
       taxtypeChange() {
-        // console.log(this.buy_taxcurrency);
-        if (this.buy_taxtype == "退到银行卡") {
-          this.buy_taxrecvcurrency = 'CNY';
-        } else if (this.buy_taxtype == "现金") {
-          this.buy_taxrecvcurrency = this.buy_taxcurrency;
+        // console.log(this.buy_taxCurrency);
+        if (this.buy_taxType == "退到银行卡") {
+          this.buy_taxRecvCurrency = 'CNY';
+        } else if (this.buy_taxType == "现金") {
+          this.buy_taxRecvCurrency = this.buy_taxCurrency;
         }
       },
       // 提交退税信息
@@ -354,23 +337,23 @@
         let storeImgUrl1 = this.imgSrc.join('|');
         // console.log(this.buy_taxState);
         // console.log(storeImgUrl1);
-        console.log(this.buy_taxrecvtime);
+        console.log(this.buy_taxRecvTime);
         this.$axios
           .post(this.$store.state.baseUrl + "/BuyTaxSave", {
             buy_id: sessionStorage.getItem("buy_id"),
             buy_taxState: this.buy_taxState == true ? 1 : -1,
-            buy_taxtype: this.buy_taxState == true ? (this.buy_taxtype == "现金" ? 1 : 0) : "",
-            buy_taxcompany: this.buy_taxState == true ? this.buy_taxcompany : "",
-            buy_taxperson: this.buy_taxState == true ? this.buy_taxperson : "",
-            buy_taxmoney: this.buy_taxState == true ? Number(this.buy_taxmoney) : "",
-            buy_taxcurrency: this.buy_taxState == true ? this.buy_taxcurrency : "",
+            buy_taxType: this.buy_taxState == true ? (this.buy_taxType == "现金" ? 1 : 0) : "",
+            buy_taxCompany: this.buy_taxState == true ? this.buy_taxCompany : "",
+            buy_taxPerson: this.buy_taxState == true ? this.buy_taxPerson : "",
+            buy_taxMoney: this.buy_taxState == true ? Number(this.buy_taxMoney) : "",
+            buy_taxCurrency: this.buy_taxState == true ? this.buy_taxCurrency : "",
             buy_taxBackStore: this.buy_taxState == true ? (this.buy_taxBackStore == true ? 1 : 0) : "",
-            buy_taxrecvtime: this.buy_taxState == true ? (this.buy_taxrecvtime == null ? '' : this.shellDate(this
-              .buy_taxrecvtime)) : '',
-            buy_taxrecvmoney: this.buy_taxState == true ? Number(this.buy_taxrecvmoney) : "",
-            // this.buy_taxrecvcurrency
-            buy_taxrecvcurrency: this.buy_taxtype == "现金" ? this.buy_taxcurrency : "CNY",
-            buy_taxpic: this.buy_taxState == true ? storeImgUrl1 : ""
+            buy_taxRecvTime: this.buy_taxState == true ? (this.buy_taxRecvTime == null ? '' : this.shellDate(this
+              .buy_taxRecvTime)) : '',
+            buy_taxRecvMoney: this.buy_taxState == true ? Number(this.buy_taxRecvMoney) : "",
+            // this.buy_taxRecvCurrency
+            buy_taxRecvCurrency: this.buy_taxType == "现金" ? this.buy_taxCurrency : "CNY",
+            buy_taxPic: this.buy_taxState == true ? storeImgUrl1 : ""
           })
           .then(res => {
             console.log("提交退税信息");

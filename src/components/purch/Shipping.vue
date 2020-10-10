@@ -1,11 +1,11 @@
 <template>
   <div class="shipping-container">
     <!-- 发货 -->
-    <div v-if="shipping.msg == 0" id="search" style="margin-top: 75px;">
+    <div v-show="shipping.msg == 0" id="search" style="margin-top: 75px;">
       <div v-show="shippingList.length == 0" ref="hello" style="text-align: center;">
         <p>{{hintMsg}}</p>
       </div>
-      <div v-if="shippingList.length !== 0">
+      <div v-show="shippingList.length !== 0">
         <div style="margin-left: 20px;">
           <p style="margin-top: 0;margin-bottom: 20px;font-size: 18px;">
             <span>{{'商品数量:  ' + ' ' + totalNum + ' '}}</span>
@@ -17,10 +17,12 @@
         </div>
         <div v-for="(item,index) of shippingList" :key="index" class="mypurchase-table">
           <div class="purchase-row">
-            <span class="purchase-number">采购单号: {{"   " + item.buy_id}}</span>
-            <span class="purchase-date">采购日期: {{item.buy_date}}</span>
+            <input class="selBtn" type="checkbox" v-model="hobby" :value="item"
+              @change="purchaseCheckedChange($event,item,index)" @click="checkedClick(item,index)" :id="'all'+index">
+            <p class="purchase-number">采购单号: {{"   " + item.buy_id}}</p>
+            <p class="purchase-date">采购日期: {{item.buy_date}}</p>
           </div>
-          <div class="div-table">
+          <div class="div-table" :id="'check'+index">
             <table>
               <tr class="table-tr">
                 <th class="table-th">选择发货</th>
@@ -34,19 +36,20 @@
               <tr v-for="(content,indexs) of item.watch" :key="indexs" class="table-tr-container">
                 <td>
                   <input class="selBtn" type="checkbox" v-model="hobby" :value="content"
-                    @change="checkedChange($event,content)" :disabled="content.buy_watchState == 1 ? false : true">
+                    @change="checkedChange($event,content,index)"
+                    :disabled="content.buy_watchState == 1 ? false : true">
                 </td>
                 <td style="padding: 20px;">
                   <img v-image-preview
-                    :src="content.buy_watchpics == null || content.buy_watchpics == '' ? '' : img + '/img/watch/'+ (content.buy_watchpics || '').split('|')[0]"
+                    :src="content.buy_watchPics == null || content.buy_watchPics == '' ? '' : img + '/img/watch/'+ (content.buy_watchPics || '').split('|')[0]"
                     style="width: 100px;height: 100px;object-fit: cover;" class="first-img" />
                 </td>
                 <td>
-                  <p>{{content.buy_watchbrand}}</p>
-                  <p>{{content.buy_watchmodel}}</p>
+                  <p>{{content.buy_watchBrand}}</p>
+                  <p>{{content.buy_watchModel}}</p>
                 </td>
-                <td>{{content.buy_watchsn}}</td>
-                <td>{{content.buy_watchcurrency}} {{formatNumberRgx(content.buy_watchprice)}}</td>
+                <td>{{content.buy_watchSn}}</td>
+                <td>{{content.buy_watchCurrency}} {{formatNumberRgx(content.buy_watchPrice)}}</td>
                 <td>
                   <div style="display: flex;justify-content: center;">
                     <div>
@@ -94,7 +97,7 @@
         shippingList: [],
         total: 0,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         completeness1: require("../../assets/imgs/sureImg.png"),
         completeness2: require("../../assets/imgs/error.png"),
         detailsSelect: {
@@ -116,14 +119,18 @@
       goback(val) {
         this.shipping.msg = 0;
         this.$emit('shippingState', 0);
-        this.handleList();
+        // this.handleList();
+        console.log(this.keyword);
+        this.stockInSearch();
       },
       // 本次发货完成后，重新加载页面
       logisticsMsg(val) {
         console.log("9999999999999999999");
         console.log(val);
         this.isChecked = [];
-        this.handleList();
+        // this.handleList();
+        console.log(this.keyword);
+        this.stockInSearch();
       },
       selecting(val) {
         this.shipping.msg = 0;
@@ -142,7 +149,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               type: this.filtrate,
               keyword: this.keyword
             })
@@ -152,7 +159,7 @@
               this.shippingList = res.data.orders;
               console.log(this.shippingList);
               this.total = res.data.total;
-              this.totalNum = res.data.watchtotal;
+              this.totalNum = res.data.watchTotal;
               if (this.shippingList.length == 0) {
                 this.hintMsg = '啊哦~暂无数据'
               }
@@ -171,7 +178,7 @@
         this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderListEx', {
           page: this.page,
-          pagenum: this.pagenum,
+          pageNum: this.pageNum,
           type: this.filtrate
         }).then((res) => {
           console.log('pfgdgd');
@@ -179,7 +186,7 @@
           this.shippingList = res.data.orders;
           console.log(this.shippingList);
           this.total = res.data.total;
-          this.totalNum = res.data.watchtotal;
+          this.totalNum = res.data.watchTotal;
           if (this.shippingList.length == 0) {
             this.hintMsg = '啊哦~暂无数据'
           }
@@ -188,16 +195,77 @@
         })
       },
       // 选择发货商品
-      checkedChange(e, content) {
+      checkedClick(content, index) {
+        for (let item in content.watch) {
+          if (content.watch[item].buy_watchState == 0) {
+            console.log(document.getElementById('all' + index).checked);
+            document.getElementById('all' + index).checked = false;
+            this.$message.error({
+              message: '该采购单下有手表信息未填写完成，不能全选，请填写手表信息',
+              showClose: true,
+              duration: 2000
+            });
+          }
+        }
+      },
+      purchaseCheckedChange(e, content, index) {
         console.log('feng');
         console.log(e);
         console.log(content);
+        for (let item in content.watch) {
+          //单个每个复选按钮
+          var chbs = document.getElementById('check' + index);
+          chbs = chbs.querySelectorAll('table>tr>td:first-child>input');
+          console.log(chbs);
+          if (e.target.checked == true) {
+            //4.修改元素
+            for (let chb of chbs) {
+              chb.checked = true;
+            };
+            console.log(JSON.stringify(this.isChecked).indexOf(JSON.stringify(content.watch[item])));
+            if (JSON.stringify(this.isChecked).indexOf(JSON.stringify(content.watch[item])) === -1) {
+              this.isChecked.push(content.watch[item]);
+            }
+          } else if (e.target.checked == false) {
+            for (let chb of chbs) {
+              chb.checked = false;
+            };
+            for (let i in this.isChecked) {
+              if (this.isChecked[i].id == content.watch[item].id) {
+                this.isChecked.splice(i, 1);
+              }
+            };
+          };
+        }
+
+        sessionStorage.setItem("isSelected", JSON.stringify(this.isChecked));
+        console.log('99000');
+        console.log(this.isChecked);
+      },
+      checkedChange(e, content, index) {
+        console.log('feng');
+        console.log(e);
+        console.log(content);
+        console.log(index);
+        let mainSelect = document.getElementById('all' + index);
+        console.log(mainSelect);
         if (e.target.checked == true) {
+          // if (this.isChecked.indexOf(content) === -1) {
           this.isChecked.push(content);
+          // }
+          var chbs = document.getElementById('check' + index);
+          var unchecked = chbs.querySelector('table>tr>td:first-child>input:not(:checked)');
+          if (unchecked == null) { //如果未选中的chb为空
+            mainSelect.checked = true;
+          } else {
+            mainSelect.checked = false;
+          }
         } else if (e.target.checked == false) {
+          mainSelect.checked = false;
           for (let index in this.isChecked) {
             if (this.isChecked[index].id == content.id) {
               this.isChecked.splice(index, 1);
+
             }
           }
         }
@@ -292,13 +360,17 @@
       .purchase-row {
         padding-top: 30px;
         padding-left: 30px;
+        display: flex;
 
         .purchase-number {
+          margin: 0;
+          margin-left: 20px;
           font-size: 18px;
           font-weight: bold;
         }
 
         .purchase-date {
+          margin: 0;
           margin-left: 20px;
           color: #c8c8c8;
         }

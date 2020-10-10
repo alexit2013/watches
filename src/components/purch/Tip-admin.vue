@@ -14,7 +14,8 @@
               class="input-style" style="width: 70%;"></el-date-picker>
           </el-form-item>
         </el-form>
-        <el-button type="primary" style="width: 100px;height: 40px;font-size: 14px;" @click="filtrateMsgSure">筛 选
+        <el-button type="primary" style="width: 100px;height: 40px;font-size: 14px;" @click="filtrateMsgSure"
+          v-preventClick>筛 选
         </el-button>
       </div>
       <div v-show="feeList.length == 0" style="text-align: center;">
@@ -67,8 +68,12 @@
           <p>完成时间：<span>{{toConfirmedDetails.checkTime == null ? '未完成' : toConfirmedDetails.checkTime}}</span></p>
         </div>
         <div class="details-top" style="margin: 30px auto;">
-          <p>预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + 'HKD'}}</span></p>
-          <p>核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + 'HKD'}}</span></p>
+          <p>
+            预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+          </p>
+          <p>
+            核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+          </p>
         </div>
         <div class="details-main">
           <p>消费记录：</p>
@@ -90,8 +95,8 @@
                 <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
               </td>
               <td>{{reim.type == 0 ? reim.obj.name : reim.obj.type}}</td>
-              <td>{{formatNumberRgx(reim.obj.sysCheckMoney) + ' ' + 'HKD'}}</td>
-              <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + 'HKD'}}</td>
+              <td>{{formatNumberRgx(reim.obj.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
+              <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
               <td>
                 <p v-if="reim.type == 0" style="margin: 0;">{{reim.obj.startTime}}</p>
                 <p v-if="reim.type == 0" style="margin: 0;">至</p>
@@ -106,7 +111,8 @@
                 <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible" center>
                   <div>
                     <p style="text-align: center;">
-                      <span>{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
+                      <span
+                        style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
                     </p>
                     <p>
                       <span>日期： <span>{{unJourneyInfo.time}}</span></span>
@@ -126,14 +132,17 @@
                     <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                       <p>财务核算：</p>
                       <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                        <p>当日汇率：<span>{{unJourneyInfo.rate}}</span></p>
+                        <p>汇率：<span>{{unJourneyInfo.rate}}</span></p>
                         <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;" @click="jumpRate" />
                       </div>
-                      <p style="padding-left: 15px;">
-                        预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                      <p style="margin-top: 0;padding-left: 15px;">
+                        汇率日期：<span>{{unJourneyInfo.rateTime}}</span>
                       </p>
                       <p style="padding-left: 15px;">
-                        核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+                        预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
+                      </p>
+                      <p style="padding-left: 15px;">
+                        核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
                       </p>
                     </div>
                   </div>
@@ -178,10 +187,10 @@
           <tr v-for="(every,index) in journeyInfo.recordList" :key="index">
             <td>{{every.type}}</td>
             <td>
-              {{formatNumberRgx(every.sysCheckMoney) + ' ' + 'HKD'}}
+              {{formatNumberRgx(every.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}
             </td>
             <td>
-              {{formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+              {{formatNumberRgx(every.checkMoney) + ' ' + journeyInfo.settle_currency}}
             </td>
             <td>{{every.time}}</td>
             <td>
@@ -191,7 +200,8 @@
               <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible" center>
                 <div>
                   <p style="text-align: center;">
-                    <span>{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
+                    <span
+                      style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
                   </p>
                   <p>
                     <span>日期： <span>{{recordDetailsMsg.time}}</span></span>
@@ -211,14 +221,17 @@
                   <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                     <p>财务核算：</p>
                     <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                      <p>当日汇率：<span>{{recordDetailsMsg.rate}}</span></p>
+                      <p>汇率：<span>{{recordDetailsMsg.rate}}</span></p>
                       <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;" @click="jumpRate" />
                     </div>
-                    <p style="padding-left: 15px;">
-                      预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                    <p style="margin-top: 0;padding-left: 15px;">
+                      汇率日期：<span>{{recordDetailsMsg.rateTime}}</span>
                     </p>
                     <p style="padding-left: 15px;">
-                      核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + 'HKD'}}</span>
+                      预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
+                    </p>
+                    <p style="padding-left: 15px;">
+                      核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
                     </p>
                   </div>
                 </div>
@@ -233,9 +246,11 @@
       </div>
       <div class="details-top">
         <p>财务核算：</p>
-        <p style="margin-left: 20px;">预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+        <p style="margin-left: 20px;">
+          预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
         </p>
-        <p style="margin-left: 20px;">核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+        <p style="margin-left: 20px;">
+          核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
         </p>
       </div>
     </div>
@@ -247,7 +262,7 @@
       return {
         msg: '数据加载中...',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         startTime: '',
         endTime: '',
         total: 0,
@@ -282,7 +297,7 @@
         this.msg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/FeeList?java', {
           page: this.page,
-          pagenum: this.pagenum,
+          pageNum: this.pageNum,
           startTime: this.startTime,
           endTime: this.endTime
         }).then((res) => {
@@ -305,12 +320,12 @@
       },
       // 查看详情
       checkDetails(id, bxNumber) {
-        if (id !== null) {
+        if (id !== null && id !== "") {
           console.log(id);
           sessionStorage.setItem("buy_id", id);
           this.tipSel.select = 1;
           this.detailsSelect.num = 3;
-        } else if (bxNumber !== null) {
+        } else if (bxNumber !== null && bxNumber !== "") {
           this.$axios.post(this.$store.state.baseUrl + '/ClaimFormInfo?java', {
             bxNumber: bxNumber
           }).then(res => {
@@ -355,11 +370,11 @@
             this.unJourneyInfo = res.data;
             console.log(this.unJourneyInfo);
             this.imgurls = [];
-            if (this.unJourneyInfo.billpics !== null && this.unJourneyInfo.billpics !== '') {
-              if (this.unJourneyInfo.billpics.indexOf('|') !== -1) {
-                this.imgurls = this.unJourneyInfo.billpics.split('|');
+            if (this.unJourneyInfo.billPics !== null && this.unJourneyInfo.billPics !== '') {
+              if (this.unJourneyInfo.billPics.indexOf('|') !== -1) {
+                this.imgurls = this.unJourneyInfo.billPics.split('|');
               } else {
-                this.imgurls.push(this.unJourneyInfo.billpics);
+                this.imgurls.push(this.unJourneyInfo.billPics);
               }
             } else {
               this.imgurls = [];
@@ -375,11 +390,11 @@
         this.recordDetailsMsg = every;
         console.log(this.recordDetailsMsg);
         this.imgurls = [];
-        if (this.recordDetailsMsg.billpics !== null && this.recordDetailsMsg.billpics !== '') {
-          if (this.recordDetailsMsg.billpics.indexOf('|') !== -1) {
-            this.imgurls = this.recordDetailsMsg.billpics.split('|');
+        if (this.recordDetailsMsg.billPics !== null && this.recordDetailsMsg.billPics !== '') {
+          if (this.recordDetailsMsg.billPics.indexOf('|') !== -1) {
+            this.imgurls = this.recordDetailsMsg.billPics.split('|');
           } else {
-            this.imgurls.push(this.recordDetailsMsg.billpics);
+            this.imgurls.push(this.recordDetailsMsg.billPics);
           }
         } else {
           this.imgurls = [];

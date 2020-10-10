@@ -3,7 +3,140 @@
   <div class="reimbursement-container" id="reimbursement">
     <!-- 我的报销页面 -->
     <div v-if="reimbursementSel.select == 0">
-      <el-tabs v-model="activeName" @tab-click="handleTabClick">
+      <div class="reimbursement-container-center">
+        <el-button type="primary" style="width: 160px;height: 45px;font-size: 14px;" @click="addJourney">新增行程消费
+        </el-button>
+        <el-button type="info" style="width: 160px;height: 45px;font-size: 14px;" @click="addNotJourney">非行程消费
+        </el-button>
+        <el-dialog title="新增非行程消费" :visible.sync="dialogNotJourneyVisible" center :close-on-press-escape="false"
+          :close-on-click-modal="false">
+          <div>
+            <div class="not-type">
+              <p style="height: 20px;margin: 0;line-height: 20px;font-size: 17px;text-align: center;">类型</p>
+              <div>
+                <el-radio-group v-model="notType" style="display: flex;justify-content: space-around;">
+                  <div>
+                    <el-radio-button label="交通" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-05.png" />
+                        </div>
+                        <span style="font-size: 15px;">交通</span>
+                      </div>
+                    </el-radio-button>
+                    <el-radio-button label="工资支出" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-02.png" />
+                        </div>
+                        <span style="font-size: 15px;">工资支出</span>
+                      </div>
+                    </el-radio-button>
+                    <el-radio-button label="接待购物" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-06.png" />
+                        </div>
+                        <span style="font-size: 15px;">接待购物</span>
+                      </div>
+                    </el-radio-button>
+                  </div>
+                  <div>
+                    <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-11.png" />
+                        </div>
+                        <span style="font-size: 15px;">住宿</span>
+                      </div>
+                    </el-radio-button>
+                    <el-radio-button label="公司运营" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-03.png" />
+                        </div>
+                        <span style="font-size: 15px;">公司运营</span>
+                      </div>
+                    </el-radio-button>
+                    <el-radio-button label="其他" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-08.png" />
+                        </div>
+                        <span style="font-size: 15px;">其他</span>
+                      </div>
+                    </el-radio-button>
+                  </div>
+                  <div>
+                    <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-01.png" />
+                        </div>
+                        <span style="font-size: 15px;">餐饮</span>
+                      </div>
+                    </el-radio-button>
+                    <el-radio-button label="经费拨款" style="display: block;margin-top: 10px;">
+                      <div class="radio-button-style">
+                        <div>
+                          <img src="../../assets/imgs/type-07.png" />
+                        </div>
+                        <span style="font-size: 15px;">经费拨款</span>
+                      </div>
+                    </el-radio-button>
+                  </div>
+                </el-radio-group>
+              </div>
+            </div>
+            <el-form label-width="120px">
+              <el-form-item label="日期：" required>
+                <el-date-picker v-model="notTime" type="date" value-format="yyyy-MM-dd" class="input-style">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item label="金额：" required>
+                <el-input v-model="notEstimateMoney" type="text" class="input-style"></el-input>
+                <el-select v-model="notCurrency" placeholder="请选择">
+                  <el-option v-for="(item,index) in currencyList" :key="index" :label="item" :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="账单图片：">
+                <div style="display:flex;">
+                  <div class="upload-imgs">
+                    <div class="add">
+                      <form enctype="multipart/form-data">
+                        <!--  name="img" accept="image/*" -->
+                        <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
+                        <i class="el-icon-plus addIcon"></i>
+                      </form>
+                    </div>
+                    <div style="display:flex;position:relative;" id="delImg">
+                      <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
+                        <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
+                        <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                          :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                          <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                            height="100px" style="border-radius:5px;object-fit:cover;" />
+                          <img v-else :src="pdfImg" width="100px" height="100px"
+                            style="border-radius:5px;object-fit:cover;" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="备注：" required>
+                <el-input type="textarea" v-model="notRemark"></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div slot="footer">
+            <el-button @click="dialogNotJourneyVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addNotJourneySure" v-preventClick>确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <el-tabs type="border-card" v-model="activeName" @tab-click="handleTabClick">
         <el-tab-pane label="新增消费单" name="first">
           <div style="display: flex;justify-content: space-between">
             <div style="margin-bottom: 30px;margin-top: 10px;text-align: center;">
@@ -23,119 +156,11 @@
                   class="input-style" style="width: 70%;"></el-date-picker>
               </el-form-item>
             </el-form>
-            <el-button type="primary" style="width: 100px;height: 40px;font-size: 14px;" @click="filtrateMsgSure">筛 选
+            <el-button type="primary" style="width: 100px;height: 40px;font-size: 14px;" @click="filtrateMsgSure"
+              v-preventClick>筛 选
             </el-button>
           </div>
-          <div class="reimbursement-container-center">
-            <div style="height: 80px;line-height: 60px;">
-              <p style="height: 20px;margin: 0;text-align: center;color: #ccc;">+</p>
-              <p style="height: 20px;margin: 0;text-align: center;color: #ccc;">新增</p>
-            </div>
-            <div class="addBtn">
-              <el-button type="primary" style="width: 160px;height: 45px;font-size: 14px;" @click="addJourney">新增行程消费
-              </el-button>
-            </div>
-            <div class="addBtn">
-              <el-button type="primary" style="width: 160px;height: 45px;font-size: 14px;" @click="addNotJourney">非行程消费
-              </el-button>
-              <el-dialog title="新增非行程消费" :visible.sync="dialogNotJourneyVisible" center :close-on-press-escape="false"
-                :close-on-click-modal="false">
-                <div>
-                  <div class="not-type">
-                    <p style="height: 20px;margin: 0;line-height: 20px;font-size: 17px;text-align: center;">类型</p>
-                    <div>
-                      <el-radio-group v-model="notType" style="display: flex;justify-content: space-around;">
-                        <div>
-                          <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/car.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">交通</span>
-                          </el-radio-button>
-                          <el-radio-button label="工资支出" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">工资支出</span>
-                          </el-radio-button>
-                          <el-radio-button label="接待购物" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/08-1.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">接待购物</span>
-                          </el-radio-button>
-                        </div>
-                        <div>
-                          <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/hotel.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">住宿</span>
-                          </el-radio-button>
-                          <el-radio-button label="公司运营" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">公司运营</span>
-                          </el-radio-button>
-                          <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/other.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">其他</span>
-                          </el-radio-button>
-                        </div>
-                        <div>
-                          <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/eat.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">餐饮</span>
-                          </el-radio-button>
-                          <el-radio-button label="经费拨款" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">经费拨款</span>
-                          </el-radio-button>
-                        </div>
-                      </el-radio-group>
-                    </div>
-                  </div>
-                  <el-form label-width="120px">
-                    <el-form-item label="日期：" required>
-                      <el-date-picker v-model="notTime" type="date" value-format="yyyy-MM-dd" class="input-style">
-                      </el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="金额：" required>
-                      <el-input v-model="notEstimateMoney" type="text" class="input-style"></el-input>
-                      <el-select v-model="notCurrency" placeholder="请选择">
-                        <el-option v-for="(item,index) in currencyList" :key="index" :label="item" :value="item">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="账单图片：">
-                      <div style="display:flex;">
-                        <div class="upload-imgs">
-                          <div class="add">
-                            <form enctype="multipart/form-data">
-                              <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                class="inputUpload" multiple />
-                              <i class="el-icon-plus addIcon"></i>
-                            </form>
-                          </div>
-                          <div style="display:flex;position:relative;" id="delImg">
-                            <div v-for="(imgurl,index) of imgurls" :key="index"
-                              style="margin-left:10px;position:relative;">
-                              <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                              <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                style="border-radius:5px;object-fit:cover;" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </el-form-item>
-                    <el-form-item label="备注：" required>
-                      <el-input type="textarea" v-model="notRemark"></el-input>
-                    </el-form-item>
-                  </el-form>
-                </div>
-                <div slot="footer">
-                  <el-button @click="dialogNotJourneyVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="addNotJourneySure">确 定</el-button>
-                </div>
-              </el-dialog>
-            </div>
-          </div>
+
           <div v-if="reimburseList.length == 0" style="text-align: center;">
             <p>{{hintMsg}}</p>
           </div>
@@ -151,7 +176,7 @@
               </tr>
               <tr>
                 <td>
-                  <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
+                  <img :src="reim.type | imgFilter(reim.data.type)" style="width: 40px;height: 40px;" />
                 </td>
                 <td>{{reim.type == 0 ? reim.data.name : (reim.type == 1 ? reim.data.type : '')}}</td>
                 <td>{{reim.type == 0 ? reim.data.des : (reim.type == 1 ? reim.data.remark : '')}}</td>
@@ -183,50 +208,74 @@
                         <p style="height: 20px;margin: 0;line-height: 20px;font-size: 17px;text-align: center;">类型</p>
                         <div>
                           <el-radio-group v-model="notType" style="display: flex;justify-content: space-around;">
-                            <div style="text-align: left;">
+                            <div>
                               <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/car.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">交通</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-05.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">交通</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="工资支出" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/money.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">工资支出</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-02.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">工资支出</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="接待购物" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/08-1.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">接待购物</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-06.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">接待购物</span>
+                                </div>
                               </el-radio-button>
                             </div>
-                            <div style="text-align: left;">
+                            <div>
                               <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/hotel.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">住宿</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-11.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">住宿</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="公司运营" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/money.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">公司运营</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-03.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">公司运营</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/other.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">其他</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-08.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">其他</span>
+                                </div>
                               </el-radio-button>
                             </div>
-                            <div style="text-align: left;">
+                            <div>
                               <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/eat.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">餐饮</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-01.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">餐饮</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="经费拨款" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/money.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">经费拨款</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-07.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">经费拨款</span>
+                                </div>
                               </el-radio-button>
                             </div>
                           </el-radio-group>
@@ -249,8 +298,8 @@
                             <div class="upload-imgs">
                               <div class="add">
                                 <form enctype="multipart/form-data">
-                                  <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                    class="inputUpload" multiple />
+                                  <!-- name="img" accept="image/*" -->
+                                  <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                                   <i class="el-icon-plus addIcon" style="left: 45%;"></i>
                                 </form>
                               </div>
@@ -258,8 +307,13 @@
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
                                   <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -272,13 +326,14 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogUpdateReimburseVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="updateReimburseSure">确 定</el-button>
+                      <el-button type="primary" @click="updateReimburseSure" v-preventClick>确 定</el-button>
                     </div>
                   </el-dialog>
                   <el-dialog title="非行程记录详情" :visible.sync="dialogUnReimDetailsVisible" center="">
                     <div>
                       <div style="text-align: center;">
-                        <p>{{formatNumberRgx(notEstimateMoney) + ' ' + notCurrency}}</p>
+                        <p style="font-size: 17px;color: #0c8563;">
+                          {{formatNumberRgx(notEstimateMoney) + ' ' + notCurrency}}</p>
                       </div>
                       <el-form label-width="120px">
                         <el-form-item label="日期：">
@@ -290,8 +345,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -310,7 +370,8 @@
                   <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible" center>
                     <div>
                       <p style="text-align: center;">
-                        <span>{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
+                        <span
+                          style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
                       </p>
                       <p>
                         <span>日期： <span>{{unJourneyInfo.time}}</span></span>
@@ -320,8 +381,13 @@
                         <div style="display:flex;position:relative;" id="delImg">
                           <div v-for="(imgurl,index) of imgurls" :key="index"
                             style="margin-left:10px;position:relative;">
-                            <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                              style="border-radius:5px;object-fit:cover;" />
+                            <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                              :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                              <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                height="100px" style="border-radius:5px;object-fit:cover;" />
+                              <img v-else :src="pdfImg" width="100px" height="100px"
+                                style="border-radius:5px;object-fit:cover;" />
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -331,15 +397,18 @@
                       <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                         <p>财务核算：</p>
                         <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                          <p>当日汇率：<span>{{unJourneyInfo.rate}}</span></p>
+                          <p>汇率：<span>{{unJourneyInfo.rate}}</span></p>
                           <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                             @click="rateCalcJump" />
                         </div>
-                        <p style="padding-left: 15px;">
-                          预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                        <p style="margin-top: 0;padding-left: 15px;">
+                          汇率日期：<span>{{unJourneyInfo.rateTime}}</span>
                         </p>
                         <p style="padding-left: 15px;">
-                          核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+                          预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
+                        </p>
+                        <p style="padding-left: 15px;">
+                          核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
                         </p>
                       </div>
                     </div>
@@ -358,7 +427,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogDeleteReimVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="deleteReimburseSure">确 定</el-button>
+                      <el-button type="primary" @click="deleteReimburseSure" v-preventClick>确 定</el-button>
                     </div>
                   </el-dialog>
                 </td>
@@ -374,12 +443,12 @@
           </div>
         </el-tab-pane>
         <el-tab-pane name="second">
-          <div slot="label" style="display: flex;">报销单
+          <div slot="label" style="display: flex;justify-content: center;">报销单
             <p style="margin-top: -10px;margin-left: 3px;">
               <img v-if="whether == 1" src="../../assets/imgs/circle.png" style="width: 10px;height: 10px;" />
             </p>
           </div>
-          <div>
+          <div id="activeSecond">
             <el-tabs type="border-card" v-model="activeSecondName" @tab-click="handleSecondTabClick">
               <el-tab-pane name="one">
                 <div slot="label" style="font-size: 15px;">未报销</div>
@@ -396,7 +465,7 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane name="three">
-                <div slot="label" style="display: flex;font-size: 15px;">待确认
+                <div slot="label" style="display: flex;justify-content: center;font-size: 15px;">待确认
                   <p style="margin-top: -10px;margin-left: 3px;">
                     <img v-if="whether == 1" src="../../assets/imgs/circle.png" style="width: 10px;height: 10px;" />
                   </p>
@@ -444,28 +513,52 @@
           <div>
             <el-radio-group v-model="type">
               <el-radio-button label="交通">
-                <img src="../../assets/imgs/car.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">交通</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-05.png" />
+                  </div>
+                  <span style="font-size: 15px;">交通</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="住宿">
-                <img src="../../assets/imgs/hotel.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">住宿</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-11.png" />
+                  </div>
+                  <span style="font-size: 15px;">住宿</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="餐饮">
-                <img src="../../assets/imgs/eat.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">餐饮</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-01.png" />
+                  </div>
+                  <span style="font-size: 15px;">餐饮</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="人工">
-                <img src="../../assets/imgs/people.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">人工</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-09.png" />
+                  </div>
+                  <span style="font-size: 15px;">人工</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="小费">
-                <img src="../../assets/imgs/tip.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">小费</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-10.png" />
+                  </div>
+                  <span style="font-size: 15px;">小费</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="其他">
-                <img src="../../assets/imgs/other.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">其他</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-08.png" />
+                  </div>
+                  <span style="font-size: 15px;">其他</span>
+                </div>
               </el-radio-button>
             </el-radio-group>
           </div>
@@ -495,8 +588,8 @@
                       <div class="upload-imgs">
                         <div class="add">
                           <form enctype="multipart/form-data">
-                            <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                              class="inputUpload" multiple />
+                            <!--  name="img" accept="image/*" -->
+                            <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                             <i class="el-icon-plus addIcon"></i>
                           </form>
                         </div>
@@ -504,8 +597,13 @@
                           <div v-for="(imgurl,index) of imgurls" :key="index"
                             style="margin-left:10px;position:relative;">
                             <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                            <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                              style="border-radius:5px;object-fit:cover;" />
+                            <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                              :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                              <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                height="100px" style="border-radius:5px;object-fit:cover;" />
+                              <img v-else :src="pdfImg" width="100px" height="100px"
+                                style="border-radius:5px;object-fit:cover;" />
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -518,7 +616,7 @@
               </div>
               <div slot="footer">
                 <el-button @click="dialogAddRecordVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addRecordSure">保 存</el-button>
+                <el-button type="primary" @click="addRecordSure" v-preventClick>保 存</el-button>
               </div>
             </el-dialog>
           </div>
@@ -555,38 +653,56 @@
                           <el-radio-group v-model="updateType" style="display: flex;justify-content: space-around;">
                             <div>
                               <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/car.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">交通</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-05.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">交通</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="人工" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/people.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">人工</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-09.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">人工</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/hotel.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">住宿</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-11.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">住宿</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="小费" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/tip.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">小费</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-10.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">小费</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/eat.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">餐饮</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-01.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">餐饮</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/other.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">其他</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-08.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">其他</span>
+                                </div>
                               </el-radio-button>
                             </div>
                           </el-radio-group>
@@ -610,8 +726,8 @@
                             <div class="upload-imgs">
                               <div class="add">
                                 <form enctype="multipart/form-data">
-                                  <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                    class="inputUpload" multiple />
+                                  <!--  name="img" accept="image/*" -->
+                                  <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                                   <i class="el-icon-plus addIcon"></i>
                                 </form>
                               </div>
@@ -619,8 +735,13 @@
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
                                   <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -633,7 +754,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogUpdateRecordVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="updateRecordSure">保 存</el-button>
+                      <el-button type="primary" @click="updateRecordSure" v-preventClick>保 存</el-button>
                     </div>
                   </el-dialog>
                   <el-tooltip class="item" effect="light" content="删除" placement="top-end">
@@ -646,7 +767,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogDelRecordVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="deleteRecordSure">确 定</el-button>
+                      <el-button type="primary" @click="deleteRecordSure" v-preventClick>确 定</el-button>
                     </div>
                   </el-dialog>
                 </td>
@@ -655,7 +776,7 @@
           </div>
         </div>
         <div style="margin-top: 40px;margin-right: 10%;text-align: right;">
-          <el-button type="primary" @click="addJourneySure">保存</el-button>
+          <el-button type="primary" @click="addJourneySure" v-preventClick>保 存</el-button>
         </div>
       </div>
     </div>
@@ -684,28 +805,52 @@
           <div>
             <el-radio-group v-model="type">
               <el-radio-button label="交通">
-                <img src="../../assets/imgs/car.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">交通</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-05.png" />
+                  </div>
+                  <span style="font-size: 15px;">交通</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="住宿">
-                <img src="../../assets/imgs/hotel.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">住宿</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-11.png" />
+                  </div>
+                  <span style="font-size: 15px;">住宿</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="餐饮">
-                <img src="../../assets/imgs/eat.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">餐饮</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-01.png" />
+                  </div>
+                  <span style="font-size: 15px;">餐饮</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="人工">
-                <img src="../../assets/imgs/people.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">人工</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-09.png" />
+                  </div>
+                  <span style="font-size: 15px;">人工</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="小费">
-                <img src="../../assets/imgs/tip.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">小费</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-10.png" />
+                  </div>
+                  <span style="font-size: 15px;">小费</span>
+                </div>
               </el-radio-button>
               <el-radio-button label="其他">
-                <img src="../../assets/imgs/other.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                <span style="font-size: 15px;">其他</span>
+                <div class="radio-button-style">
+                  <div>
+                    <img src="../../assets/imgs/type-08.png" />
+                  </div>
+                  <span style="font-size: 15px;">其他</span>
+                </div>
               </el-radio-button>
             </el-radio-group>
           </div>
@@ -735,8 +880,8 @@
                       <div class="upload-imgs">
                         <div class="add">
                           <form enctype="multipart/form-data">
-                            <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                              class="inputUpload" multiple />
+                            <!-- name="img" accept="image/*"  -->
+                            <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                             <i class="el-icon-plus addIcon"></i>
                           </form>
                         </div>
@@ -744,8 +889,13 @@
                           <div v-for="(imgurl,index) of imgurls" :key="index"
                             style="margin-left:10px;position:relative;">
                             <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                            <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                              style="border-radius:5px;object-fit:cover;" />
+                            <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                              :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                              <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                height="100px" style="border-radius:5px;object-fit:cover;" />
+                              <img v-else :src="pdfImg" width="100px" height="100px"
+                                style="border-radius:5px;object-fit:cover;" />
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -758,7 +908,7 @@
               </div>
               <div slot="footer">
                 <el-button @click="dialogAddRecordVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addRecordSure">保 存</el-button>
+                <el-button type="primary" @click="addRecordSure" v-preventClick>保 存</el-button>
               </div>
             </el-dialog>
           </div>
@@ -795,38 +945,56 @@
                           <el-radio-group v-model="updateType" style="display: flex;justify-content: space-around;">
                             <div>
                               <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/car.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">交通</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-05.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">交通</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="人工" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/people.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">人工</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-09.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">人工</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/hotel.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">住宿</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-11.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">住宿</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="小费" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/tip.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">小费</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-10.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">小费</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/eat.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">餐饮</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-01.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">餐饮</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/other.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">其他</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-08.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">其他</span>
+                                </div>
                               </el-radio-button>
                             </div>
                           </el-radio-group>
@@ -850,8 +1018,8 @@
                             <div class="upload-imgs">
                               <div class="add">
                                 <form enctype="multipart/form-data">
-                                  <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                    class="inputUpload" multiple />
+                                  <!--  name="img" accept="image/*" -->
+                                  <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                                   <i class="el-icon-plus addIcon"></i>
                                 </form>
                               </div>
@@ -859,8 +1027,13 @@
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
                                   <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -873,7 +1046,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogUpdateRecordVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="updateRecordSure">保 存</el-button>
+                      <el-button type="primary" @click="updateRecordSure" v-preventClick>保 存</el-button>
                     </div>
                   </el-dialog>
                   <el-tooltip class="item" effect="light" content="删除" placement="top-end">
@@ -886,7 +1059,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogDelRecordVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="deleteRecordSure">确 定</el-button>
+                      <el-button type="primary" @click="deleteRecordSure" v-preventClick>确 定</el-button>
                     </div>
                   </el-dialog>
                 </td>
@@ -904,10 +1077,10 @@
             </div>
             <div slot="footer">
               <el-button @click="dialogFinishTripVisible = false">手滑了</el-button>
-              <el-button type="primary" @click="finishTripSure">结束行程</el-button>
+              <el-button type="primary" @click="finishTripSure" v-preventClick>结束行程</el-button>
             </div>
           </el-dialog>
-          <el-button type="primary" @click="updateJourneySure"
+          <el-button type="primary" @click="updateJourneySure" v-preventClick
             style="width: 15%;margin-top: 40px;margin-right: 2%;position: fixed;bottom: 35px;right: 10%;">确定修改
           </el-button>
         </div>
@@ -937,7 +1110,7 @@
         <div>
           <div style="margin-top: 15px;">
             <span>预估报销金额：</span>
-            <span>{{formatNumberRgx(sysCheckMoney) + ' ' + 'HKD'}}</span>
+            <span>{{formatNumberRgx(sysCheckMoney) + ' ' + settle_currency}}</span>
           </div>
           <p style="margin: 0;font-size: 14px;color: #bbb;">实际报销费用以财务核算为准</p>
           <div v-if="records.length !== 0" style="margin-top: 30px;">
@@ -961,7 +1134,8 @@
                     :close-on-press-escape="false" :close-on-click-modal="false">
                     <div>
                       <div style="text-align: center;">
-                        <p>{{formatNumberRgx(estimateMoney) + ' ' +currency}}</p>
+                        <p style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(estimateMoney) + ' ' +currency}}
+                        </p>
                       </div>
                       <el-form label-width="120px">
                         <el-form-item label="日期：">
@@ -973,8 +1147,13 @@
                               <div style="display:flex;position:relative;" id="delImg">
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -1028,10 +1207,10 @@
             <tr v-for="(every,index) in journeyInfo.recordList" :key="index">
               <td>{{every.type}}</td>
               <td>
-                {{formatNumberRgx(every.sysCheckMoney) + ' ' + 'HKD'}}
+                {{formatNumberRgx(every.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}
               </td>
               <td>
-                {{formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+                {{formatNumberRgx(every.checkMoney) + ' ' + journeyInfo.settle_currency}}
               </td>
               <td>{{every.time}}</td>
               <td>
@@ -1041,7 +1220,8 @@
                 <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible" center>
                   <div>
                     <p style="text-align: center;">
-                      <span>{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
+                      <span
+                        style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
                     </p>
                     <p>
                       <span>日期： <span>{{recordDetailsMsg.time}}</span></span>
@@ -1050,8 +1230,13 @@
                       <span>账单图片：</span>
                       <div style="display:flex;position:relative;" id="delImg">
                         <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
-                          <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                            style="border-radius:5px;object-fit:cover;" />
+                          <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                            :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                            <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                              height="100px" style="border-radius:5px;object-fit:cover;" />
+                            <img v-else :src="pdfImg" width="100px" height="100px"
+                              style="border-radius:5px;object-fit:cover;" />
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -1061,15 +1246,18 @@
                     <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                       <p>财务核算：</p>
                       <div style="padding-left: 15px;display: flex;justify-content: space-between;">
-                        <p>当日汇率：<span>{{recordDetailsMsg.rate}}</span></p>
+                        <p>汇率：<span>{{recordDetailsMsg.rate}}</span></p>
                         <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;"
                           @click="rateCalcJump" />
                       </div>
-                      <p style="padding-left: 15px;">
-                        预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                      <p style="margin-top: 0;padding-left: 15px;">
+                        汇率日期：<span>{{recordDetailsMsg.rateTime}}</span>
                       </p>
                       <p style="padding-left: 15px;">
-                        核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + 'HKD'}}</span>
+                        预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
+                      </p>
+                      <p style="padding-left: 15px;">
+                        核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
                       </p>
                     </div>
                   </div>
@@ -1084,9 +1272,11 @@
         </div>
         <div>
           <p>财务核算：</p>
-          <p style="margin-left: 20px;">预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+          <p style="margin-left: 20px;">
+            预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
           </p>
-          <p style="margin-left: 20px;">核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+          <p style="margin-left: 20px;">
+            核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
           </p>
         </div>
       </div>
@@ -1098,14 +1288,13 @@
   export default {
     data() {
       return {
+        pdfImg: require('../../assets/imgs/pdf.png'),
         hintMsg: '数据加载中...',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         reimburseList: [],
         total: 0,
         whether: 0,
-        img1: require('../../assets/imgs/reim.png'),
-        img2: require('../../assets/imgs/notReim.png'),
         updateType: 0,
         updateId: 0,
         deleteType: 0,
@@ -1115,7 +1304,7 @@
         dialogFiltrateVisible: false,
         keyword: '',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         typeList: ['行程报销', '非行程报销'],
         startTime: '',
         endTime: '',
@@ -1139,7 +1328,7 @@
         deleteRecordId: 0,
         dialogNotJourneyVisible: false,
         notType: '', // 非行程消费类型
-        notTime: '', // 非行程消费日期
+        notTime: new Date(), // 非行程消费日期
         notEstimateMoney: '', // 金额
         notCurrency: '', // 币种
         notRemark: '', // 备注
@@ -1172,10 +1361,38 @@
         dialogUnReimDetailsVisible: false,
         dialogUnReimbursementVisible: false,
         unJourneyInfo: {},
+        settle_currency: '',
 
       }
     },
     props: ['reimbursementSel'],
+    filters: {
+      imgFilter(type, name) {
+        console.log(type, name);
+        if (type === 0) {
+          return require('../../assets/imgs/type-04.png')
+        } else if (type === 1) {
+          switch (name) {
+            case '交通':
+              return require('../../assets/imgs/type-05.png');
+            case '住宿':
+              return require('../../assets/imgs/type-11.png');
+            case '餐饮':
+              return require('../../assets/imgs/type-01.png');
+            case '工资支出':
+              return require('../../assets/imgs/type-02.png');
+            case '公司运营':
+              return require('../../assets/imgs/type-03.png');
+            case '经费拨款':
+              return require('../../assets/imgs/type-07.png');
+            case '接待购物':
+              return require('../../assets/imgs/type-06.png');
+            case '其他':
+              return require('../../assets/imgs/type-08.png');
+          }
+        }
+      }
+    },
     created() {
       this.handleReimburseList();
       this.handleCountryGet();
@@ -1184,6 +1401,16 @@
       this.handleSureReimbursement();
     },
     methods: {
+      isPdf(img) {
+        // console.log(img);
+        if (img !== '' && img !== null) {
+          if (img.indexOf('pdf') === -1) {
+            return 0;
+          } else {
+            return 1;
+          }
+        }
+      },
       handleTabClick(tab, event) {
         console.log(this.activeName);
         if (this.activeName == 'second') {
@@ -1191,6 +1418,11 @@
           this.activeSecondName = 'one';
         } else {
           this.$emit('tabSelect', 0);
+          this.keyword = '';
+          this.startTime = '';
+          this.endTime = '';
+          this.page = 1;
+          this.handleReimburseList();
         };
         this.unReimbursementSel.select = 0;
         this.checkPendingSel.select = 0;
@@ -1211,7 +1443,7 @@
       handleSureReimbursement() {
         this.$axios.post(this.$store.state.baseUrl + '/UserClaimFormList?java', {
           page: 1,
-          pagenum: 10,
+          pageNum: 10,
           flag: 1
         }).then((res) => {
           console.log('是否有需要确认的报销单');
@@ -1236,7 +1468,7 @@
         this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/ReimburseList?java', {
           page: this.page,
-          pagenum: this.pagenum,
+          pageNum: this.pageNum,
           keyword: this.keyword,
           type: this.typeList.length > 1 ? 3 : (this.typeList[0] == '行程报销' ? 1 : 2),
           startTime: this.startTime,
@@ -1315,6 +1547,7 @@
             console.log(res);
             this.journeyInfo = res.data;
             this.name = res.data.name;
+            this.settle_currency = res.data.settle_currency;
             this.startTime2.push(res.data.startTime);
             this.startTime2.push(res.data.endTime);
             this.des = res.data.des;
@@ -1354,11 +1587,11 @@
             this.notTime = res.data.time;
             this.notEstimateMoney = res.data.estimateMoney;
             this.notCurrency = res.data.currency;
-            if (res.data.billpics !== '') {
-              if (res.data.billpics.indexOf('|') !== -1) {
-                this.imgurls = res.data.billpics.split('|');
+            if (res.data.billPics !== '') {
+              if (res.data.billPics.indexOf('|') !== -1) {
+                this.imgurls = res.data.billPics.split('|');
               } else {
-                this.imgurls.push(res.data.billpics);
+                this.imgurls.push(res.data.billPics);
               }
             } else {
               this.imgurls = [];
@@ -1373,11 +1606,11 @@
         this.recordDetailsMsg = every;
         console.log(this.recordDetailsMsg);
         this.imgurls = [];
-        if (this.recordDetailsMsg.billpics !== null && this.recordDetailsMsg.billpics !== '') {
-          if (this.recordDetailsMsg.billpics.indexOf('|') !== -1) {
-            this.imgurls = this.recordDetailsMsg.billpics.split('|');
+        if (this.recordDetailsMsg.billPics !== null && this.recordDetailsMsg.billPics !== '') {
+          if (this.recordDetailsMsg.billPics.indexOf('|') !== -1) {
+            this.imgurls = this.recordDetailsMsg.billPics.split('|');
           } else {
-            this.imgurls.push(this.recordDetailsMsg.billpics);
+            this.imgurls.push(this.recordDetailsMsg.billPics);
           }
         } else {
           this.imgurls = [];
@@ -1478,7 +1711,7 @@
             time: this.notTime,
             estimateMoney: this.notEstimateMoney,
             currency: this.notCurrency,
-            billpics: this.imgurls.join('|'),
+            billPics: this.imgurls.join('|'),
             remark: this.notRemark
           }).then((res) => {
             console.log('修改非行程记录');
@@ -1609,122 +1842,106 @@
         }
       },
       // 上传图片
-      inputChange(file) {
+      inputChange(e) {
+        let file = e.target.files[0];
         console.log(file);
-        let imgFiles = file.target.files;
-        console.log(imgFiles);
-        this.uploadSectionFile(imgFiles);
-      },
-      // 上传前压缩的方法
-      uploadSectionFile(f) { //	附件上传
-        console.log(f);
-        let self = this;
-        let Orientation;
-        let ndata;
-        console.log('图片尺寸');
-        console.log(f[0].size);
-        // * 1024 * 1024
-        if (f[0].size <= 1 * 1024 * 1024) {
-          //判断图片是否大于1M,是就直接上传
-          ndata = f[0];
-          self.postImg(ndata);
-        } else {
-          //反之压缩图片
-          let reader = new FileReader();
-          // 将图片2将转成 base64 格式
-          reader.readAsDataURL(f[0]);
-          console.log(reader)
-          // 读取成功后的回调
-          reader.onloadend = function () {
-            let result = this.result;
-            let img = new Image();
-            img.src = result;
-            img.onload = function () {
-              let data = self.compress(img, Orientation);
-              self.headerImage = data;
-              ndata = self.compress(img, Orientation);
-              console.log('ndata值');
-              console.log(ndata);
-              //BASE64转图片
-              var arr = ndata.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-              while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-              }
-              ndata = new File([u8arr], f[0].name, {
-                type: mime
-              })
-              console.log('6weeeee');
-              console.log(ndata);
-              self.postImg(ndata);
-            }
-          }
+        let that = this;
+        if (file === undefined) {
+          return
+        }
+        if (file.size / 1024 > 1025) { // 文件大于1M（根据需求更改），进行压缩上传
+          this.photoCompress(file, { // 调用压缩图片方法
+            quality: 0.7
+          }, function (base64Codes) {
+            // console.log("压缩后：" + base.length / 1024 + " " + base);
+            let bl = that.base64UrlToBlob(base64Codes)
+            // file.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+            that.uploadLice(bl) // 请求图片上传接口
+          })
+        } else { // 小于等于1M 原图上传
+          this.uploadLice(file)
         }
       },
-      async postImg(ndata) {
+
+      // base64 转 Blob 格式 和file格式
+      base64UrlToBlob(urlData) {
+        let arr = urlData.split(','),
+          mime = arr[0].match(/:(.*?);/)[1], // 去掉url的头，并转化为byte
+          bstr = atob(arr[1]), // 处理异常,将ascii码小于0的转换为大于0
+          n = bstr.length,
+          u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        // 转blob
+        // return new Blob([u8arr], {type: mime})
+        let filename = Date.parse(new Date()) + '.jpg'
+        // 转file
+        return new File([u8arr], filename, {
+          type: mime
+        })
+      },
+      /*压缩图片
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+      */
+      photoCompress(file, obj, callback) {
+        let that = this
+        let ready = new FileReader()
+        /* 开始读取指定File对象中的内容. 读取操作完成时,返回一个URL格式的字符串. */
+        ready.readAsDataURL(file)
+        ready.onload = function () {
+          let re = this.result
+          that.canvasDataURL(re, obj, callback) // 开始压缩
+        }
+      },
+      /* 利用canvas数据化图片进行压缩 */
+      /* 图片转base64 */
+      canvasDataURL(path, obj, callback) {
+        let img = new Image()
+        img.src = path
+        img.onload = function () {
+          let that = this // 指到img
+          // 默认按比例压缩
+          let w = that.width,
+            h = that.height,
+            scale = w / h
+          w = obj.width || w
+          h = obj.height || (w / scale)
+          let quality = 0.7 // 默认图片质量为0.7
+          // 生成canvas
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+
+          // 创建属性节点
+          let anw = document.createAttribute('width')
+          anw.nodeValue = w
+          let anh = document.createAttribute('height')
+          anh.nodeValue = h
+          canvas.setAttributeNode(anw)
+          canvas.setAttributeNode(anh)
+          // 铺底色
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(that, 0, 0, w, h)
+
+          // 图像质量
+          if (obj.quality && obj.quality >= 1 && obj.quality < 0) {
+            quality = obj.quality
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/jpeg', quality)
+          // 回调函数返回base64的值
+          callback(base64)
+        }
+      },
+      //  返回file文件，调用接口执行上传
+      uploadLice(file) {
+        console.log(file)
         let formdata1 = new FormData(); //创建form对象
-        console.log('9999999999');
-        console.log(ndata.size);
-        formdata1.append("img", ndata); //通过append向form对象添加数据
-        // console.log(formUpload1);
+        formdata1.append("img", file); //通过append向form对象添加数据
         this.uploadImg(formdata1);
-      },
-      compress(img, Orientation) {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-        //瓦片canvas
-        let tCanvas = document.createElement("canvas");
-        let tctx = tCanvas.getContext("2d");
-        let initSize = img.src.length;
-        let width = img.width;
-        let height = img.height;
-        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        let ratio;
-        if ((ratio = width * height / 4000000) > 1) {
-          console.log("大于400万像素")
-          ratio = Math.sqrt(ratio);
-          width /= ratio;
-          height /= ratio;
-        } else {
-          ratio = 1;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        // 		铺底色
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        //如果图片像素大于100万则使用瓦片绘制
-        let count;
-        if ((count = width * height / 1000000) > 1) {
-          console.log("超过100W像素");
-          count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
-          //            计算每块瓦片的宽和高
-          let nw = ~~(width / count);
-          let nh = ~~(height / count);
-          tCanvas.width = nw;
-          tCanvas.height = nh;
-          for (let i = 0; i < count; i++) {
-            for (let j = 0; j < count; j++) {
-              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
-              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
-            }
-          }
-        } else {
-          ctx.drawImage(img, 0, 0, width, height);
-        }
-        //进行最小压缩
-        let ndata = canvas.toDataURL('image/jpeg', 0.7);
-
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log("ndata:" + ndata)
-
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
-        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
-        return ndata;
       },
       uploadImg(formdata) {
         this.$axios
@@ -1764,7 +1981,7 @@
             time: this.time,
             estimateMoney: this.estimateMoney,
             currency: this.currency,
-            billpics: this.imgurls.join("|"),
+            billPics: this.imgurls.join("|"),
             remark: this.remark
           });
           console.log(this.records);
@@ -1803,11 +2020,11 @@
         this.time = record.time;
         this.estimateMoney = record.estimateMoney;
         this.currency = record.currency;
-        if (record.billpics !== '') {
-          if (record.billpics.indexOf('|') !== -1) {
-            this.imgurls = record.billpics.split('|');
+        if (record.billPics !== '' && record.billPics !== null) {
+          if (record.billPics.indexOf('|') !== -1) {
+            this.imgurls = record.billPics.split('|');
           } else {
-            this.imgurls.push(record.billpics);
+            this.imgurls.push(record.billPics);
           }
         } else {
           this.imgurls = [];
@@ -1825,7 +2042,7 @@
               time: this.time,
               estimateMoney: this.estimateMoney,
               currency: this.currency,
-              billpics: this.imgurls.join("|"),
+              billPics: this.imgurls.join("|"),
               remark: this.remark
             });
           } else {
@@ -1834,7 +2051,7 @@
               time: this.time,
               estimateMoney: this.estimateMoney,
               currency: this.currency,
-              billpics: this.imgurls.join("|"),
+              billPics: this.imgurls.join("|"),
               remark: this.remark
             });
           }
@@ -1945,7 +2162,7 @@
       // 新增非行程消费
       addNotJourney() {
         this.notType = '';
-        this.notTime = '';
+        this.notTime = new Date();
         this.notEstimateMoney = '';
         this.imgurls = [];
         this.notRemark = '';
@@ -1971,7 +2188,7 @@
             time: this.notTime,
             estimateMoney: this.notEstimateMoney,
             currency: this.notCurrency,
-            billpics: this.imgurls.join('|'),
+            billPics: this.imgurls.join('|'),
             remark: this.notRemark
           }).then((res) => {
             console.log('增加非行程消费');
@@ -2000,8 +2217,8 @@
           console.log('获取所有币种');
           console.log(res);
           for (let item of res.data) {
-            if (this.currencyList.indexOf(item.EnCurrency) == -1) {
-              this.currencyList.push(item.EnCurrency);
+            if (this.currencyList.indexOf(item.enCurrency) == -1) {
+              this.currencyList.push(item.enCurrency);
             }
           };
           console.log(this.currencyList);
@@ -2030,7 +2247,24 @@
   .reimbursement-container {
     width: 95%;
     margin: 0 auto;
-    margin-top: -15px;
+    // margin-top: -15px;
+    padding: 0 30px;
+
+    .radio-button-style {
+      height: 29px;
+      line-height: 29px;
+      display: flex;
+
+      div {
+        margin-top: 2px;
+
+        img {
+          width: 25px;
+          height: 25px;
+          margin-right: 5px;
+        }
+      }
+    }
 
     .reimbursement-container-top {
       width: 100%;
@@ -2045,14 +2279,8 @@
     }
 
     .reimbursement-container-center {
-      // width: 100%;
-      height: 80px;
-      line-height: 80px;
-      padding: 5px;
       display: flex;
-      justify-content: space-around;
-      border: 1px solid #ddd;
-      border-radius: 10px;
+      justify-content: flex-end;
     }
 
     .reimburse-list-table {
@@ -2060,7 +2288,6 @@
       background-color: #fff;
       margin-top: 20px;
       margin-bottom: 10px;
-      padding: 30px;
       border-radius: 30px;
     }
 
@@ -2187,10 +2414,6 @@
     text-align: center;
   }
 
-  .addBtn {
-    width: 20%;
-  }
-
   .input-style {
     width: 70% !important;
   }
@@ -2214,9 +2437,115 @@
 </style>
 <style lang="scss">
   #reimbursement {
+    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+      color: #000;
+      background-color: #d7ebe7;
+      border-color: #f1f9f7;
+      -webkit-box-shadow: -1px 0 0 0 #f1f9f7;
+      box-shadow: -1px 0 0 0 #f1f9f7;
+    }
+
+    .el-radio-button__inner {
+      width: 122px;
+      padding: 10px 15px;
+    }
+
+    .el-tabs--border-card {
+      background: transparent;
+      border: transparent;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .el-tabs--border-card>.el-tabs__header {
+      background-color: transparent;
+      border-bottom: none;
+      margin: 0;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+      background-color: #ddebec;
+    }
+
     .el-tabs__item {
+      width: 160px;
+      height: 48px !important;
+      line-height: 48px !important;
       font-size: 16px !important;
-      padding-right: 100px !important;
+      text-align: center;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      color: #000;
+    }
+
+    .el-tabs__content {
+      background-color: #fff;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+      color: #000;
+    }
+
+    .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+      color: #000;
+      background-color: #FFF;
+      border-right-color: transparent;
+      border-left-color: transparent;
+    }
+
+
+    .el-tabs--border-card>.el-tabs__content {
+      padding: 20px 30px;
+    }
+
+    #activeSecond {
+      .el-tabs--border-card {
+        background: transparent;
+        border: transparent;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+
+      .el-tabs--border-card>.el-tabs__header {
+        background-color: transparent;
+        border-bottom: none;
+        margin: 0;
+      }
+
+      .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+        background-color: #b9d9d7;
+      }
+
+      .el-tabs__item {
+        width: 160px;
+        height: 48px !important;
+        line-height: 48px !important;
+        font-size: 16px !important;
+        text-align: center;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        color: #fff;
+        border-right: 2px solid #ddd;
+      }
+
+      .el-tabs__content {
+        background-color: #fff;
+      }
+
+
+      .el-tabs--border-card>.el-tabs__content {
+        padding: 20px 0;
+      }
+
+      .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+        color: #000;
+      }
+
+      .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+        color: #000;
+        background-color: #f1f9f7;
+        border-right: none;
+      }
     }
 
     .el-radio-button {

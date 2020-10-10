@@ -16,8 +16,8 @@
           </tr>
           <tr v-for="(item,index) in toConfirmedList" :key="index">
             <td>{{item.bxNumber}}</td>
-            <td>{{formatNumberRgx(item.sysCheckMoney) + ' ' + 'HKD'}}</td>
-            <td>{{formatNumberRgx(item.checkMoney) + ' ' + 'HKD'}}</td>
+            <td>{{formatNumberRgx(item.sysCheckMoney) + ' ' + item.settle_currency}}</td>
+            <td>{{formatNumberRgx(item.checkMoney) + ' ' + item.settle_currency}}</td>
             <td>{{item.subTime}}</td>
             <td>
               <el-tooltip class="item" effect="light" content="查看详情" placement="top-end">
@@ -44,8 +44,12 @@
         </div>
         <div class="details-top">
           <p>报销单号：<span>{{toConfirmedDetails.bxNumber}}</span></p>
-          <p>预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + 'HKD'}}</span></p>
-          <p>核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + 'HKD'}}</span></p>
+          <p>
+            预估报销金额：<span>{{formatNumberRgx(toConfirmedDetails.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+          </p>
+          <p>
+            核算报销金额：<span>{{formatNumberRgx(toConfirmedDetails.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</span>
+          </p>
         </div>
         <div class="details-main">
           <p>消费记录：</p>
@@ -67,8 +71,8 @@
                 <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
               </td>
               <td>{{reim.type == 0 ? reim.obj.name : reim.obj.type}}</td>
-              <td>{{formatNumberRgx(reim.obj.sysCheckMoney) + ' ' + 'HKD'}}</td>
-              <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + 'HKD'}}</td>
+              <td>{{formatNumberRgx(reim.obj.sysCheckMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
+              <td>{{formatNumberRgx(reim.obj.checkMoney) + ' ' + toConfirmedDetails.settle_currency}}</td>
               <td>
                 <p v-if="reim.type == 0" style="margin: 0;">{{reim.obj.startTime}}</p>
                 <p v-if="reim.type == 0" style="margin: 0;">至</p>
@@ -83,7 +87,8 @@
                 <el-dialog title="非行程记录信息" :visible.sync="dialogUnReimbursementVisible" center>
                   <div>
                     <p style="text-align: center;">
-                      <span>{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
+                      <span
+                        style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(unJourneyInfo.estimateMoney) + ' ' + unJourneyInfo.currency}}</span>
                     </p>
                     <p>
                       <span>日期： <span>{{unJourneyInfo.time}}</span></span>
@@ -92,8 +97,13 @@
                       <span>账单图片：</span>
                       <div style="display:flex;position:relative;" id="delImg">
                         <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
-                          <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                            style="border-radius:5px;object-fit:cover;" />
+                          <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                            :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                            <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                              height="100px" style="border-radius:5px;object-fit:cover;" />
+                            <img v-else :src="pdfImg" width="100px" height="100px"
+                              style="border-radius:5px;object-fit:cover;" />
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -103,14 +113,17 @@
                     <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                       <p>财务核算：</p>
                       <div style="display: flex;justify-content: space-between;">
-                        <p>当日汇率：<span>{{unJourneyInfo.rate}}</span></p>
+                        <p>汇率：<span>{{unJourneyInfo.rate}}</span></p>
                         <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;" @click="jumpRate" />
                       </div>
-                      <p>
-                        预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                      <p style="margin-top: 0;">
+                        汇率日期：<span>{{unJourneyInfo.rateTime}}</span>
                       </p>
                       <p>
-                        核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+                        预估报销金额：<span>{{formatNumberRgx(unJourneyInfo.sysCheckMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
+                      </p>
+                      <p>
+                        核算报销金额：<span>{{formatNumberRgx(unJourneyInfo.checkMoney) + ' ' + unJourneyInfo.settle_currency}}</span>
                       </p>
                     </div>
                   </div>
@@ -126,7 +139,7 @@
         <div style="margin-top: 40px;text-align: center;">
           <el-checkbox v-model="checked">确认收到报销款，且相关费用无误（如报相关费用有误，请与财务联系）</el-checkbox>
           <div style="margin-top: 10px;">
-            <el-button type="primary" @click="ReimbursementSubmit">报销确认</el-button>
+            <el-button type="primary" @click="ReimbursementSubmit" v-preventClick>报销确认</el-button>
           </div>
         </div>
       </div>
@@ -160,10 +173,10 @@
             <tr v-for="(every,index) in journeyInfo.recordList" :key="index">
               <td>{{every.type}}</td>
               <td>
-                {{formatNumberRgx(every.sysCheckMoney) + ' ' + 'HKD'}}
+                {{formatNumberRgx(every.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}
               </td>
               <td>
-                {{formatNumberRgx(every.checkMoney) + ' ' + 'HKD'}}
+                {{formatNumberRgx(every.checkMoney) + ' ' + journeyInfo.settle_currency}}
               </td>
               <td>{{every.time}}</td>
               <td>
@@ -173,7 +186,8 @@
                 <el-dialog title="记录详情" :visible.sync="dialogRecordDetailsVisible" center>
                   <div>
                     <p style="text-align: center;">
-                      <span>{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
+                      <span
+                        style="font-size: 17px;color: #0c8563;">{{formatNumberRgx(recordDetailsMsg.estimateMoney) + ' ' + recordDetailsMsg.currency}}</span>
                     </p>
                     <p>
                       <span>日期： <span>{{recordDetailsMsg.time}}</span></span>
@@ -182,8 +196,13 @@
                       <span>账单图片：</span>
                       <div style="display:flex;position:relative;" id="delImg">
                         <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
-                          <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                            style="border-radius:5px;object-fit:cover;" />
+                          <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                            :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                            <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                              height="100px" style="border-radius:5px;object-fit:cover;" />
+                            <img v-else :src="pdfImg" width="100px" height="100px"
+                              style="border-radius:5px;object-fit:cover;" />
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -193,14 +212,17 @@
                     <div style="margin-top: 20px;border-top: 1px solid #ddd;">
                       <p>财务核算：</p>
                       <div style="display: flex;justify-content: space-between;">
-                        <p>当日汇率：<span>{{recordDetailsMsg.rate}}</span></p>
+                        <p>汇率：<span>{{recordDetailsMsg.rate}}</span></p>
                         <img src="../../assets/imgs/calc.png" style="height: 35px;cursor: pointer;" @click="jumpRate" />
                       </div>
-                      <p>
-                        预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + 'HKD'}}</span>
+                      <p style="margin-top: 0;">
+                        汇率日期：<span>{{recordDetailsMsg.rateTime}}</span>
                       </p>
                       <p>
-                        核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + 'HKD'}}</span>
+                        预估报销金额：<span>{{formatNumberRgx(recordDetailsMsg.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
+                      </p>
+                      <p>
+                        核算报销金额：<span>{{formatNumberRgx(recordDetailsMsg.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
                       </p>
                     </div>
                   </div>
@@ -215,9 +237,11 @@
         </div>
         <div style="width: 95%;margin: 0 auto;">
           <p>财务核算：</p>
-          <p style="margin-left: 20px;">预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + 'HKD'}}</span>
+          <p style="margin-left: 20px;">
+            预估报销金额：<span>{{formatNumberRgx(journeyInfo.sysCheckMoney) + ' ' + journeyInfo.settle_currency}}</span>
           </p>
-          <p style="margin-left: 20px;">核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + 'HKD'}}</span>
+          <p style="margin-left: 20px;">
+            核算报销金额：<span>{{formatNumberRgx(journeyInfo.checkMoney) + ' ' + journeyInfo.settle_currency}}</span>
           </p>
         </div>
       </div>
@@ -228,13 +252,14 @@
   export default {
     data() {
       return {
+        pdfImg: require('../../assets/imgs/pdf.png'),
         hintMsg: '数据加载中...',
         img: this.$store.state.baseUrl,
         img1: require('../../assets/imgs/reim.png'),
         img2: require('../../assets/imgs/notReim.png'),
         reimNumber: 0,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         toConfirmedList: [],
         toConfirmedDetails: {},
@@ -254,12 +279,22 @@
       this.handleToConfirmedList();
     },
     methods: {
+      isPdf(img) {
+        // console.log(img);
+        if (img !== '' && img !== null) {
+          if (img.indexOf('pdf') === -1) {
+            return 0;
+          } else {
+            return 1;
+          }
+        }
+      },
       // 获取待确认报销单
       handleToConfirmedList() {
         this.$axios.post(this.$store.state.baseUrl + '/UserClaimFormList?java', {
           flag: 1,
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('待确认报销单');
           console.log(res);
@@ -312,11 +347,11 @@
             this.unJourneyInfo = res.data;
             console.log(this.unJourneyInfo);
             this.imgurls = [];
-            if (this.unJourneyInfo.billpics !== null && this.unJourneyInfo.billpics !== '') {
-              if (this.unJourneyInfo.billpics.indexOf('|') !== -1) {
-                this.imgurls = this.unJourneyInfo.billpics.split('|');
+            if (this.unJourneyInfo.billPics !== null && this.unJourneyInfo.billPics !== '') {
+              if (this.unJourneyInfo.billPics.indexOf('|') !== -1) {
+                this.imgurls = this.unJourneyInfo.billPics.split('|');
               } else {
-                this.imgurls.push(this.unJourneyInfo.billpics);
+                this.imgurls.push(this.unJourneyInfo.billPics);
               }
             } else {
               this.imgurls = [];
@@ -332,11 +367,11 @@
         this.recordDetailsMsg = every;
         console.log(this.recordDetailsMsg);
         this.imgurls = [];
-        if (this.recordDetailsMsg.billpics !== null && this.recordDetailsMsg.billpics !== '') {
-          if (this.recordDetailsMsg.billpics.indexOf('|') !== -1) {
-            this.imgurls = this.recordDetailsMsg.billpics.split('|');
+        if (this.recordDetailsMsg.billPics !== null && this.recordDetailsMsg.billPics !== '') {
+          if (this.recordDetailsMsg.billPics.indexOf('|') !== -1) {
+            this.imgurls = this.recordDetailsMsg.billPics.split('|');
           } else {
-            this.imgurls.push(this.recordDetailsMsg.billpics);
+            this.imgurls.push(this.recordDetailsMsg.billPics);
           }
         } else {
           this.imgurls = [];

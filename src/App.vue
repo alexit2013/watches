@@ -19,8 +19,8 @@
     },
     computed: {
       isLogin() {
-        if (sessionStorage.getItem("role") && sessionStorage.getItem("token")) {
-          this.$store.commit("userStatus", sessionStorage.getItem("role"));
+        if (sessionStorage.getItem("token")) {
+          this.$store.commit("userStatus", sessionStorage.getItem("token"));
         } else {
           this.$store.commit("userStatus", null);
         }

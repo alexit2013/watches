@@ -25,15 +25,15 @@
               <tr v-for="(item,index) of items.watch" :key="index" style="background-color: #f3fbf9;">
                 <td>
                   <img v-image-preview
-                    :src="item.buy_watchpics == null || item.buy_watchpics == '' ? '' : img + '/img/watch/'+ item.buy_watchpics.split('|')[0]"
+                    :src="item.buy_watchPics == null || item.buy_watchPics == '' ? '' : img + '/img/watch/'+ item.buy_watchPics.split('|')[0]"
                     class="first-img" />
                 </td>
                 <td>
-                  <p>{{item.buy_watchbrand}}</p>
-                  <p>{{item.buy_watchmodel}}</p>
+                  <p>{{item.buy_watchBrand}}</p>
+                  <p>{{item.buy_watchModel}}</p>
                 </td>
-                <td>{{item.buy_watchsn}}</td>
-                <td>{{item.buy_watchcurrency + ' ' + formatNumberRgx(item.buy_watchprice)}}</td>
+                <td>{{item.buy_watchSn}}</td>
+                <td>{{item.buy_watchCurrency + ' ' + formatNumberRgx(item.buy_watchPrice)}}</td>
                 <td>{{item.sell_state == 0 ? '未销售' : item.sell_currency + ' ' + formatNumberRgx(item.sell_money)}}</td>
                 <td>
                   <el-tooltip class="item" effect="light" content="查看采购单信息" placement="top-end">
@@ -63,7 +63,7 @@
     data() {
       return {
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         keyword: '',
         total: 0,
         totalNum: 0,
@@ -90,7 +90,9 @@
       },
       // 返回到此页
       goback(val) {
-        this.getForAccountList();
+        // this.getForAccountList();
+        console.log(this.keyword);
+        this.stockInSearch();
         this.forAccountNum.num = 0;
         this.$emit('shippingState', 0);
         // 页面回到顶部
@@ -113,7 +115,7 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/BuyOrderListEx", {
               page: this.page,
-              pagenum: this.pagenum,
+              pageNum: this.pageNum,
               type: 4,
               keyword: this.keyword
             })
@@ -121,8 +123,8 @@
               console.log("模糊搜索获取待结算商品列表");
               console.log(res);
               this.forAccountList = res.data.orders;
-              this.total = res.data.total;
-              this.totalNum = res.data.watchtotal;
+              this.total = res.data.watchTotal;
+              this.totalNum = res.data.watchTotal;
               if (this.forAccountList.length == 0) {
                 this.hintMsg = '啊哦~暂无数据'
               }
@@ -141,14 +143,14 @@
         this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderListEx', {
           page: this.page,
-          pagenum: this.pagenum,
+          pageNum: this.pageNum,
           type: 4
         }).then((res) => {
           console.log('待结算商品列表');
           console.log(res);
           this.forAccountList = res.data.orders;
-          this.total = res.data.total;
-          this.totalNum = res.data.watchtotal;
+          this.total = res.data.watchTotal;
+          this.totalNum = res.data.watchTotal;
           if (this.forAccountList.length == 0) {
             this.hintMsg = '啊哦~暂无数据'
           }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="un-reim-style">
     <!-- 我的报销-未报销页面 -->
     <div v-if="unReimbursementSel.select == 0">
       <div v-if="unReimbursementList.length == 0" ref="unReim" style="text-align: center;">
@@ -8,8 +8,9 @@
       <div v-if="unReimbursementList.length !== 0">
         <table v-for="(reim,index) in unReimbursementList" :key="index">
           <tr>
-            <th>选择消费单</th>
-            <th></th>
+            <th>
+              <input class="selBtn" type="checkbox" v-model="hobby" :value="reim" @change="checkedChange($event,reim)">
+            </th>
             <th>{{reim.type == 0 ? '行程名称' : '类型'}}</th>
             <th>{{reim.type == 0 ? '行程描述' : '描述'}}</th>
             <th>{{reim.type == 0 ? '起止时间' : '时间'}}</th>
@@ -18,10 +19,7 @@
           </tr>
           <tr>
             <td>
-              <input class="selBtn" type="checkbox" v-model="hobby" :value="reim" @change="checkedChange($event,reim)">
-            </td>
-            <td>
-              <img :src="reim.type == 0 ? img2 : img1" style="width: 25px;height: 25px;" />
+              <img :src="reim.type | imgFilter(reim.data.type)" style="width: 40px;height: 40px;" />
             </td>
             <td>{{reim.type == 0 ? reim.data.name : (reim.type == 1 ? reim.data.type : '')}}</td>
             <td>{{reim.type == 0 ? reim.data.des : (reim.type == 1 ? reim.data.remark : '')}}</td>
@@ -46,47 +44,74 @@
                     <p style="height: 20px;margin: 0;line-height: 20px;font-size: 17px;text-align: center;">类型</p>
                     <div>
                       <el-radio-group v-model="notType" style="display: flex;justify-content: space-around;">
-                        <div style="text-align: left;">
+                        <div>
                           <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/car.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">交通</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-05.png" />
+                              </div>
+                              <span style="font-size: 15px;">交通</span>
+                            </div>
                           </el-radio-button>
                           <el-radio-button label="工资支出" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">工资支出</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-02.png" />
+                              </div>
+                              <span style="font-size: 15px;">工资支出</span>
+                            </div>
                           </el-radio-button>
                           <el-radio-button label="接待购物" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/08-1.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">接待购物</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-06.png" />
+                              </div>
+                              <span style="font-size: 15px;">接待购物</span>
+                            </div>
                           </el-radio-button>
                         </div>
-                        <div style="text-align: left;">
+                        <div>
                           <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/hotel.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">住宿</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-11.png" />
+                              </div>
+                              <span style="font-size: 15px;">住宿</span>
+                            </div>
                           </el-radio-button>
                           <el-radio-button label="公司运营" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">公司运营</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-03.png" />
+                              </div>
+                              <span style="font-size: 15px;">公司运营</span>
+                            </div>
                           </el-radio-button>
                           <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/other.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">其他</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-08.png" />
+                              </div>
+                              <span style="font-size: 15px;">其他</span>
+                            </div>
                           </el-radio-button>
                         </div>
-                        <div style="text-align: left;">
+                        <div>
                           <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/eat.png" style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">餐饮</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-01.png" />
+                              </div>
+                              <span style="font-size: 15px;">餐饮</span>
+                            </div>
                           </el-radio-button>
                           <el-radio-button label="经费拨款" style="display: block;margin-top: 10px;">
-                            <img src="../../assets/imgs/money.png"
-                              style="width: 20px;height: 13px;margin-right: 5px;" />
-                            <span style="font-size: 15px;">经费拨款</span>
+                            <div class="radio-button-style">
+                              <div>
+                                <img src="../../assets/imgs/type-07.png" />
+                              </div>
+                              <span style="font-size: 15px;">经费拨款</span>
+                            </div>
                           </el-radio-button>
                         </div>
                       </el-radio-group>
@@ -109,8 +134,8 @@
                         <div class="upload-imgs">
                           <div class="add">
                             <form enctype="multipart/form-data">
-                              <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                class="inputUpload" multiple />
+                              <!--name="img" accept="image/*"  -->
+                              <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                               <i class="el-icon-plus addIcon"></i>
                             </form>
                           </div>
@@ -118,8 +143,13 @@
                             <div v-for="(imgurl,index) of imgurls" :key="index"
                               style="margin-left:10px;position:relative;">
                               <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                              <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                style="border-radius:5px;object-fit:cover;" />
+                              <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                  height="100px" style="border-radius:5px;object-fit:cover;" />
+                                <img v-else :src="pdfImg" width="100px" height="100px"
+                                  style="border-radius:5px;object-fit:cover;" />
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -132,14 +162,14 @@
                 </div>
                 <div slot="footer">
                   <el-button @click="dialogUpdateReimburseVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="updateReimburseSure">确 定</el-button>
+                  <el-button type="primary" @click="updateReimburseSure" v-preventClick>确 定</el-button>
                 </div>
               </el-dialog>
             </td>
           </tr>
         </table>
         <div class="reimBtn">
-          <el-button type="primary" style="width: 100%;" @click="createReimbursement">生成报销单</el-button>
+          <el-button type="primary" style="width: 100%;" @click="createReimbursement" v-preventClick>生成报销单</el-button>
         </div>
         <div style="width: 100%;height: 50px;margin-top: 30px;">
           <el-pagination @current-change="handleCurrentChange" :current-page="page"
@@ -201,38 +231,56 @@
                           <el-radio-group v-model="updateType" style="display: flex;justify-content: space-around;">
                             <div>
                               <el-radio-button label="交通" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/car.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">交通</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-05.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">交通</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="人工" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/people.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">人工</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-09.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">人工</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="住宿" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/hotel.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">住宿</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-11.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">住宿</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="小费" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/tip.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">小费</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-10.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">小费</span>
+                                </div>
                               </el-radio-button>
                             </div>
                             <div>
                               <el-radio-button label="餐饮" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/eat.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">餐饮</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-01.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">餐饮</span>
+                                </div>
                               </el-radio-button>
                               <el-radio-button label="其他" style="display: block;margin-top: 10px;">
-                                <img src="../../assets/imgs/other.png"
-                                  style="width: 20px;height: 13px;margin-right: 5px;" />
-                                <span style="font-size: 15px;">其他</span>
+                                <div class="radio-button-style">
+                                  <div>
+                                    <img src="../../assets/imgs/type-08.png" />
+                                  </div>
+                                  <span style="font-size: 15px;">其他</span>
+                                </div>
                               </el-radio-button>
                             </div>
                           </el-radio-group>
@@ -256,8 +304,8 @@
                             <div class="upload-imgs">
                               <div class="add">
                                 <form enctype="multipart/form-data">
-                                  <input @change="inputChange($event)" type="file" name="img" accept="image/*"
-                                    class="inputUpload" multiple />
+                                  <!-- name="img" accept="image/*" -->
+                                  <input @change="inputChange($event)" type="file" class="inputUpload" multiple />
                                   <i class="el-icon-plus addIcon"></i>
                                 </form>
                               </div>
@@ -265,8 +313,13 @@
                                 <div v-for="(imgurl,index) of imgurls" :key="index"
                                   style="margin-left:10px;position:relative;">
                                   <span v-show="imgurl !== ''" class="spanStyle" @click="delImage(index)">x</span>
-                                  <img v-show="imgurl !== ''" :src="img + imgurl" width="100px" height="100px"
-                                    style="border-radius:5px;object-fit:cover;" />
+                                  <a v-show="imgurl !== ''" :href="isPdf(imgurl) === 0 ? 'javascript:;' :img + imgurl"
+                                    :target="isPdf(imgurl) === 0 ? '': '_blank'">
+                                    <img v-if="isPdf(imgurl) === 0 " v-image-preview :src="img + imgurl" width="100px"
+                                      height="100px" style="border-radius:5px;object-fit:cover;" />
+                                    <img v-else :src="pdfImg" width="100px" height="100px"
+                                      style="border-radius:5px;object-fit:cover;" />
+                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -279,7 +332,7 @@
                     </div>
                     <div slot="footer">
                       <el-button @click="dialogUpdateRecordVisible = false">取 消</el-button>
-                      <el-button type="primary" @click="updateRecordSure">保 存</el-button>
+                      <el-button type="primary" @click="updateRecordSure" v-preventClick>保 存</el-button>
                     </div>
                   </el-dialog>
                 </td>
@@ -288,8 +341,8 @@
           </div>
         </div>
         <div>
-          <el-button type="primary" @click="updateJourneySure"
-            style="width: 15%;margin-top: 40px;margin-right: 2%;position: fixed;bottom: 35px;right: 10%;">保存
+          <el-button type="primary" @click="updateJourneySure" v-preventClick
+            style="width: 15%;margin-top: 40px;margin-right: 2%;position: fixed;bottom: 35px;right: 10%;">保 存
           </el-button>
         </div>
       </div>
@@ -300,17 +353,16 @@
   export default {
     data() {
       return {
+        pdfImg: require('../../assets/imgs/pdf.png'),
         hintMsg: '数据加载中...',
         img: this.$store.state.baseUrl,
-        img1: require('../../assets/imgs/reim.png'),
-        img2: require('../../assets/imgs/notReim.png'),
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         unReimbursementList: [],
         hobby: [],
-        tripids: [],
-        untripids: [],
+        tripIds: [],
+        unTripIds: [],
 
         updateType: 0,
         updateId: 0,
@@ -344,16 +396,53 @@
       }
     },
     props: ['unReimbursementSel'],
+    filters: {
+      imgFilter(type, name) {
+        console.log(type, name);
+        if (type === 0) {
+          return require('../../assets/imgs/type-04.png')
+        } else if (type === 1) {
+          switch (name) {
+            case '交通':
+              return require('../../assets/imgs/type-05.png');
+            case '住宿':
+              return require('../../assets/imgs/type-11.png');
+            case '餐饮':
+              return require('../../assets/imgs/type-01.png');
+            case '工资支出':
+              return require('../../assets/imgs/type-02.png');
+            case '公司运营':
+              return require('../../assets/imgs/type-03.png');
+            case '经费拨款':
+              return require('../../assets/imgs/type-07.png');
+            case '接待购物':
+              return require('../../assets/imgs/type-06.png');
+            case '其他':
+              return require('../../assets/imgs/type-08.png');
+          }
+        }
+      }
+    },
     created() {
       this.handleUnReimbursementList();
     },
     methods: {
+      isPdf(img) {
+        // console.log(img);
+        if (img !== '' && img !== null) {
+          if (img.indexOf('pdf') === -1) {
+            return 0;
+          } else {
+            return 1;
+          }
+        }
+      },
       // 获取未报销消费列表
       handleUnReimbursementList() {
         this.hintMsg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/UnReimburseList?java', {
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('可报销列表');
           console.log(res);
@@ -424,11 +513,11 @@
             this.notTime = res.data.time;
             this.notEstimateMoney = res.data.estimateMoney;
             this.notCurrency = res.data.currency;
-            if (res.data.billpics !== '') {
-              if (res.data.billpics.indexOf('|') !== -1) {
-                this.imgurls = res.data.billpics.split('|');
+            if (res.data.billPics !== '') {
+              if (res.data.billPics.indexOf('|') !== -1) {
+                this.imgurls = res.data.billPics.split('|');
               } else {
-                this.imgurls.push(res.data.billpics);
+                this.imgurls.push(res.data.billPics);
               }
             } else {
               this.imgurls = [];
@@ -502,11 +591,11 @@
         this.time = record.time;
         this.estimateMoney = record.estimateMoney;
         this.currency = record.currency;
-        if (record.billpics !== '') {
-          if (record.billpics.indexOf('|') !== -1) {
-            this.imgurls = record.billpics.split('|');
+        if (record.billPics !== '') {
+          if (record.billPics.indexOf('|') !== -1) {
+            this.imgurls = record.billPics.split('|');
           } else {
-            this.imgurls.push(record.billpics);
+            this.imgurls.push(record.billPics);
           }
         } else {
           this.imgurls = [];
@@ -523,7 +612,7 @@
             time: this.time,
             estimateMoney: this.estimateMoney,
             currency: this.currency,
-            billpics: this.imgurls.join("|"),
+            billPics: this.imgurls.join("|"),
             remark: this.remark
           });
           console.log(this.records);
@@ -561,7 +650,7 @@
             time: this.notTime,
             estimateMoney: this.notEstimateMoney,
             currency: this.notCurrency,
-            billpics: this.imgurls.join('|'),
+            billPics: this.imgurls.join('|'),
             remark: this.notRemark
           }).then((res) => {
             console.log('修改非行程记录');
@@ -585,122 +674,105 @@
         }
       },
       // 上传图片
-      inputChange(file) {
-        console.log(file);
-        let imgFiles = file.target.files;
-        console.log(imgFiles);
-        this.uploadSectionFile(imgFiles);
-      },
-      // 上传前压缩的方法
-      uploadSectionFile(f) { //	附件上传
-        console.log(f);
-        let self = this;
-        let Orientation;
-        let ndata;
-        console.log('图片尺寸');
-        console.log(f[0].size);
-        // * 1024 * 1024
-        if (f[0].size <= 1 * 1024 * 1024) {
-          //判断图片是否大于1M,是就直接上传
-          ndata = f[0];
-          self.postImg(ndata);
-        } else {
-          //反之压缩图片
-          let reader = new FileReader();
-          // 将图片2将转成 base64 格式
-          reader.readAsDataURL(f[0]);
-          console.log(reader)
-          // 读取成功后的回调
-          reader.onloadend = function () {
-            let result = this.result;
-            let img = new Image();
-            img.src = result;
-            img.onload = function () {
-              let data = self.compress(img, Orientation);
-              self.headerImage = data;
-              ndata = self.compress(img, Orientation);
-              console.log('ndata值');
-              console.log(ndata);
-              //BASE64转图片
-              var arr = ndata.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-              while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-              }
-              ndata = new File([u8arr], f[0].name, {
-                type: mime
-              })
-              console.log('6weeeee');
-              console.log(ndata);
-              self.postImg(ndata);
-            }
-          }
+      inputChange(e) {
+        let file = e.target.files[0];
+        let that = this;
+        if (file === undefined) {
+          return
+        }
+        if (file.size / 1024 > 1025) { // 文件大于1M（根据需求更改），进行压缩上传
+          this.photoCompress(file, { // 调用压缩图片方法
+            quality: 0.7
+          }, function (base64Codes) {
+            // console.log("压缩后：" + base.length / 1024 + " " + base);
+            let bl = that.base64UrlToBlob(base64Codes)
+            // file.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+            that.uploadLice(bl) // 请求图片上传接口
+          })
+        } else { // 小于等于1M 原图上传
+          this.uploadLice(file)
         }
       },
-      async postImg(ndata) {
+
+      // base64 转 Blob 格式 和file格式
+      base64UrlToBlob(urlData) {
+        let arr = urlData.split(','),
+          mime = arr[0].match(/:(.*?);/)[1], // 去掉url的头，并转化为byte
+          bstr = atob(arr[1]), // 处理异常,将ascii码小于0的转换为大于0
+          n = bstr.length,
+          u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        // 转blob
+        // return new Blob([u8arr], {type: mime})
+        let filename = Date.parse(new Date()) + '.jpg'
+        // 转file
+        return new File([u8arr], filename, {
+          type: mime
+        })
+      },
+      /*压缩图片
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+      */
+      photoCompress(file, obj, callback) {
+        let that = this
+        let ready = new FileReader()
+        /* 开始读取指定File对象中的内容. 读取操作完成时,返回一个URL格式的字符串. */
+        ready.readAsDataURL(file)
+        ready.onload = function () {
+          let re = this.result
+          that.canvasDataURL(re, obj, callback) // 开始压缩
+        }
+      },
+      /* 利用canvas数据化图片进行压缩 */
+      /* 图片转base64 */
+      canvasDataURL(path, obj, callback) {
+        let img = new Image()
+        img.src = path
+        img.onload = function () {
+          let that = this // 指到img
+          // 默认按比例压缩
+          let w = that.width,
+            h = that.height,
+            scale = w / h
+          w = obj.width || w
+          h = obj.height || (w / scale)
+          let quality = 0.7 // 默认图片质量为0.7
+          // 生成canvas
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+
+          // 创建属性节点
+          let anw = document.createAttribute('width')
+          anw.nodeValue = w
+          let anh = document.createAttribute('height')
+          anh.nodeValue = h
+          canvas.setAttributeNode(anw)
+          canvas.setAttributeNode(anh)
+          // 铺底色
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(that, 0, 0, w, h)
+
+          // 图像质量
+          if (obj.quality && obj.quality >= 1 && obj.quality < 0) {
+            quality = obj.quality
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/jpeg', quality)
+          // 回调函数返回base64的值
+          callback(base64)
+        }
+      },
+      //  返回file文件，调用接口执行上传
+      uploadLice(file) {
+        console.log(file)
         let formdata1 = new FormData(); //创建form对象
-        console.log('9999999999');
-        console.log(ndata.size);
-        formdata1.append("img", ndata); //通过append向form对象添加数据
-        // console.log(formUpload1);
+        formdata1.append("img", file); //通过append向form对象添加数据
         this.uploadImg(formdata1);
-      },
-      compress(img, Orientation) {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-        //瓦片canvas
-        let tCanvas = document.createElement("canvas");
-        let tctx = tCanvas.getContext("2d");
-        let initSize = img.src.length;
-        let width = img.width;
-        let height = img.height;
-        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        let ratio;
-        if ((ratio = width * height / 4000000) > 1) {
-          console.log("大于400万像素")
-          ratio = Math.sqrt(ratio);
-          width /= ratio;
-          height /= ratio;
-        } else {
-          ratio = 1;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        // 		铺底色
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        //如果图片像素大于100万则使用瓦片绘制
-        let count;
-        if ((count = width * height / 1000000) > 1) {
-          console.log("超过100W像素");
-          count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
-          //            计算每块瓦片的宽和高
-          let nw = ~~(width / count);
-          let nh = ~~(height / count);
-          tCanvas.width = nw;
-          tCanvas.height = nh;
-          for (let i = 0; i < count; i++) {
-            for (let j = 0; j < count; j++) {
-              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
-              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
-            }
-          }
-        } else {
-          ctx.drawImage(img, 0, 0, width, height);
-        }
-        //进行最小压缩
-        let ndata = canvas.toDataURL('image/jpeg', 0.7);
-
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log("ndata:" + ndata)
-
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
-        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
-        return ndata;
       },
       uploadImg(formdata) {
         this.$axios
@@ -736,36 +808,36 @@
       checkedChange(e, content) {
         if (e.target.checked == true) {
           if (content.type == 0) {
-            this.tripids.push({
+            this.tripIds.push({
               id: content.data.id
             });
           } else if (content.type == 1) {
-            this.untripids.push({
+            this.unTripIds.push({
               id: content.data.id
             })
           }
         } else if (e.target.checked == false) {
           if (content.type == 0) {
-            for (let index in this.tripids) {
-              if (this.tripids[index].id == content.data.id) {
-                this.tripids.splice(index, 1);
+            for (let index in this.tripIds) {
+              if (this.tripIds[index].id == content.data.id) {
+                this.tripIds.splice(index, 1);
               }
             }
           } else if (content.type == 1) {
-            for (let index in this.untripids) {
-              if (this.untripids[index].id == content.data.id) {
-                this.untripids.splice(index, 1);
+            for (let index in this.unTripIds) {
+              if (this.unTripIds[index].id == content.data.id) {
+                this.unTripIds.splice(index, 1);
               }
             }
           }
         }
         console.log('选择');
-        console.log(this.tripids);
-        console.log(this.untripids);
+        console.log(this.tripIds);
+        console.log(this.unTripIds);
       },
       // 生成报销单
       createReimbursement() {
-        if (this.tripids.length == 0 && this.untripids.length == 0) {
+        if (this.tripIds.length == 0 && this.unTripIds.length == 0) {
           this.$message.error({
             message: '请选择需要报销的消费单',
             showClose: true,
@@ -773,8 +845,8 @@
           });
         } else {
           this.$axios.post(this.$store.state.baseUrl + '/ClaimFormSave?java', {
-            tripids: this.tripids,
-            untripids: this.untripids
+            tripIds: this.tripIds,
+            unTripIds: this.unTripIds
           }).then((res) => {
             console.log('生成报销单');
             console.log(res);
@@ -783,8 +855,8 @@
               showClose: true,
               duration: 2000
             });
-            this.tripids = [];
-            this.untripids = [];
+            this.tripIds = [];
+            this.unTripIds = [];
             this.handleUnReimbursementList();
             (function smoothscroll() {
               var currentScroll =
@@ -838,11 +910,26 @@
   }
 </script>
 <style lang="scss" scoped>
+  .radio-button-style {
+    height: 29px;
+    line-height: 29px;
+    display: flex;
+
+    div {
+      margin-top: 2px;
+
+      img {
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+      }
+    }
+  }
+
   .back-img {
     width: 75px;
     height: 45px;
     margin-left: 30px;
-    margin-top: 20px;
     line-height: 45px;
     display: flex;
     justify-content: space-between;
@@ -863,11 +950,7 @@
   }
 
   .add-container {
-    // width: 90%;
-    // margin: 0 auto;
-    background-color: #fff;
-    border-radius: 30px;
-    padding: 40px;
+    padding: 30px;
 
     .upload-imgs {
       width: 100%;
@@ -1008,8 +1091,23 @@
         width: 25%;
         text-align: center;
         border: 0;
-        font-size: 15px;
       }
+    }
+  }
+</style>
+<style lang="scss">
+  #un-reim-style {
+    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+      color: #000;
+      background-color: #d7ebe7;
+      border-color: #f1f9f7;
+      -webkit-box-shadow: -1px 0 0 0 #f1f9f7;
+      box-shadow: -1px 0 0 0 #f1f9f7;
+    }
+
+    .el-radio-button__inner {
+      width: 122px;
+      padding: 10px 15px;
     }
   }
 </style>

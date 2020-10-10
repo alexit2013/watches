@@ -3,7 +3,7 @@
     <!-- <h1>待入库手表</h1> -->
     <div v-if="stock1.num == 0">
       <div v-show="stockList.length == 0" ref="hello" style="margin-top: 30px;text-align: center;">
-        <p>数据加载中...</p>
+        <p>{{hintMsg}}</p>
       </div>
       <div v-if="stockList.length !== 0">
         <div style="width: 98%;margin: 0 auto;">
@@ -14,8 +14,8 @@
             <div v-if="keyword == ''">
               <div v-for="(item,index) in stockList" :key="index" style="margin-top: 10px;">
                 <div class="purchase-row">
-                  <span class="purchase-number">物流单号: {{" " + item.LOG_id}}</span>
-                  <span class="purchase-date">发货时间: {{item.LOG_sendtime}}</span>
+                  <span class="purchase-number">物流单号: {{" " + item.log_id}}</span>
+                  <span class="purchase-date">发货时间: {{item.log_sendTime}}</span>
                 </div>
                 <table>
                   <tr>
@@ -26,12 +26,12 @@
                   </tr>
                   <tr>
                     <td>{{item.nick}}</td>
-                    <td>{{item.LOG_watch.length}}</td>
-                    <td>{{item.LOG_arrivetime}}</td>
+                    <td>{{item.log_watch.length}}</td>
+                    <td>{{item.log_arriveTime}}</td>
                     <td>
                       <el-tooltip class="item" effect="light" content="查看手表详情" placement="top-end">
                         <img src="../../assets/imgs/details.png" style="cursor:pointer;"
-                          @click="stockListJump(item.LOG_watch)" />
+                          @click="stockListJump(item.log_watch)" />
                       </el-tooltip>
                     </td>
                   </tr>
@@ -59,12 +59,12 @@
                 <tr v-for="(items,index) in stockPending" :key="index">
                   <td>
                     <img v-image-preview
-                      :src="items.buy_watchpics == null || items.buy_watchpics == '' ? '' : img + '/img/watch/'+ (items.buy_watchpics || '').split('|')[0]"
+                      :src="items.buy_watchPics == null || items.buy_watchPics == '' ? '' : img + '/img/watch/'+ (items.buy_watchPics || '').split('|')[0]"
                       style="width: 100px;height: 100px;object-fit: cover;border-radius: 30px;" />
                   </td>
-                  <td>{{items.buy_watchbrand}}</td>
-                  <td>{{items.buy_watchmodel}}</td>
-                  <td>{{items.buy_watchsn}}</td>
+                  <td>{{items.buy_watchBrand}}</td>
+                  <td>{{items.buy_watchModel}}</td>
+                  <td>{{items.buy_watchSn}}</td>
                   <td>
                     <el-button type="text" @click="stockPendingButton(items)">入库</el-button>
                     <el-dialog title="入库" :visible.sync="dialogVisible" :close-on-press-escape="false"
@@ -95,8 +95,8 @@
                             <div style="display:flex;">
                               <div class="upload-imgs">
                                 <div class="add">
-                                  <form :id="items.buy_watchsn" enctype="multipart/form-data">
-                                    <input @change="inputChange($event,items.buy_watchsn)" type="file" name="img"
+                                  <form :id="items.buy_watchSn" enctype="multipart/form-data">
+                                    <input @change="inputChange($event,items.buy_watchSn)" type="file" name="img"
                                       accept="image/*" class="inputUpload" multiple />
                                     <i class="el-icon-plus addIcon"></i>
                                   </form>
@@ -114,13 +114,14 @@
                             </div>
                           </div>
                           <div>
-                            <el-button type="primary" @click="getQRCode" style="width: 40%;">打印二维码</el-button>
+                            <el-button type="primary" @click="getQRCode" v-preventClick style="width: 40%;">打印二维码
+                            </el-button>
                           </div>
                         </div>
                       </div>
                       <div slot="footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="sureStockProduct(items.id)">确 定</el-button>
+                        <el-button type="primary" @click="sureStockProduct(items.id)" v-preventClick>确 定</el-button>
                       </div>
                     </el-dialog>
                   </td>
@@ -145,7 +146,7 @@
         dialogVisible: false,
         count: 0,
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         stockList: [], // 待入库物流
         stockPending: [],
@@ -155,12 +156,12 @@
         watchState: [], // 手表状态
         stock_instateA: "",
         stock_shelfNo_A: "", // 仓库货架号
-        stock_inpic: "",
+        stock_inPic: "",
         imgurls: [],
-        buy_watchbrand: "",
-        buy_watchmodel: "",
+        buy_watchBrand: "",
+        buy_watchModel: "",
         stock_No: "",
-        stock_Nocrc: "",
+        stock_NoCrc: "",
         radioWatch: "1",
         radiowatchs: ""
       };
@@ -193,13 +194,14 @@
         this.$axios
           .post(this.$store.state.baseUrl + "/StockInList", {
             page: this.page,
-            pagenum: this.pagenum
+            pageNum: this.pageNum
           })
           .then(res => {
             console.log("待入库手表列表");
             console.log(res);
             this.total = res.data.total;
             this.stockList = res.data.lst;
+            console.log(this.stockList.length);
             if (this.stockList.length == 0) {
               this.hintMsg = "啊哦~ 暂无数据";
             }
@@ -269,10 +271,10 @@
       // 打开入库弹窗页面
       stockPendingButton(items) {
         console.log(items);
-        this.buy_watchbrand = items.buy_watchbrand;
-        this.buy_watchmodel = items.buy_watchmodel;
+        this.buy_watchBrand = items.buy_watchBrand;
+        this.buy_watchModel = items.buy_watchModel;
         this.stock_No = items.stock_No;
-        this.stock_Nocrc = items.stock_Nocrc;
+        this.stock_NoCrc = items.stock_NoCrc;
         this.imgurls = [];
         this.radioWatch = "1";
         this.watchState = [];
@@ -281,122 +283,105 @@
         this.dialogVisible = true;
       },
       // 上传图片
-      inputChange(file) {
-        console.log(file);
-        let imgFiles = file.target.files;
-        console.log(imgFiles);
-        this.uploadSectionFile(imgFiles);
-      },
-      // 上传前压缩的方法
-      uploadSectionFile(f) { //	附件上传
-        console.log(f);
-        let self = this;
-        let Orientation;
-        let ndata;
-        console.log('图片尺寸');
-        console.log(f[0].size);
-        // * 1024 * 1024
-        if (f[0].size <= 1 * 1024 * 1024) {
-          //判断图片是否大于1M,是就直接上传
-          ndata = f[0];
-          self.postImg(ndata);
-        } else {
-          //反之压缩图片
-          let reader = new FileReader();
-          // 将图片2将转成 base64 格式
-          reader.readAsDataURL(f[0]);
-          console.log(reader)
-          // 读取成功后的回调
-          reader.onloadend = function () {
-            let result = this.result;
-            let img = new Image();
-            img.src = result;
-            img.onload = function () {
-              let data = self.compress(img, Orientation);
-              self.headerImage = data;
-              ndata = self.compress(img, Orientation);
-              console.log('ndata值');
-              console.log(ndata);
-              //BASE64转图片
-              var arr = ndata.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-              while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-              }
-              ndata = new File([u8arr], f[0].name, {
-                type: mime
-              })
-              console.log('6weeeee');
-              console.log(ndata);
-              self.postImg(ndata);
-            }
-          }
+      inputChange(e) {
+        let file = e.target.files[0];
+        let that = this;
+        if (file === undefined) {
+          return
+        }
+        if (file.size / 1024 > 1025) { // 文件大于1M（根据需求更改），进行压缩上传
+          this.photoCompress(file, { // 调用压缩图片方法
+            quality: 0.7
+          }, function (base64Codes) {
+            // console.log("压缩后：" + base.length / 1024 + " " + base);
+            let bl = that.base64UrlToBlob(base64Codes)
+            // file.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+            that.uploadLice(bl) // 请求图片上传接口
+          })
+        } else { // 小于等于1M 原图上传
+          this.uploadLice(file)
         }
       },
-      async postImg(ndata) {
+
+      // base64 转 Blob 格式 和file格式
+      base64UrlToBlob(urlData) {
+        let arr = urlData.split(','),
+          mime = arr[0].match(/:(.*?);/)[1], // 去掉url的头，并转化为byte
+          bstr = atob(arr[1]), // 处理异常,将ascii码小于0的转换为大于0
+          n = bstr.length,
+          u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        // 转blob
+        // return new Blob([u8arr], {type: mime})
+        let filename = Date.parse(new Date()) + '.jpg'
+        // 转file
+        return new File([u8arr], filename, {
+          type: mime
+        })
+      },
+      /*压缩图片
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+      */
+      photoCompress(file, obj, callback) {
+        let that = this
+        let ready = new FileReader()
+        /* 开始读取指定File对象中的内容. 读取操作完成时,返回一个URL格式的字符串. */
+        ready.readAsDataURL(file)
+        ready.onload = function () {
+          let re = this.result
+          that.canvasDataURL(re, obj, callback) // 开始压缩
+        }
+      },
+      /* 利用canvas数据化图片进行压缩 */
+      /* 图片转base64 */
+      canvasDataURL(path, obj, callback) {
+        let img = new Image()
+        img.src = path
+        img.onload = function () {
+          let that = this // 指到img
+          // 默认按比例压缩
+          let w = that.width,
+            h = that.height,
+            scale = w / h
+          w = obj.width || w
+          h = obj.height || (w / scale)
+          let quality = 0.7 // 默认图片质量为0.7
+          // 生成canvas
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+
+          // 创建属性节点
+          let anw = document.createAttribute('width')
+          anw.nodeValue = w
+          let anh = document.createAttribute('height')
+          anh.nodeValue = h
+          canvas.setAttributeNode(anw)
+          canvas.setAttributeNode(anh)
+          // 铺底色
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(that, 0, 0, w, h)
+
+          // 图像质量
+          if (obj.quality && obj.quality >= 1 && obj.quality < 0) {
+            quality = obj.quality
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/jpeg', quality)
+          // 回调函数返回base64的值
+          callback(base64)
+        }
+      },
+      //  返回file文件，调用接口执行上传
+      uploadLice(file) {
+        console.log(file)
         let formdata1 = new FormData(); //创建form对象
-        console.log('9999999999');
-        console.log(ndata.size);
-        formdata1.append("img", ndata); //通过append向form对象添加数据
-        // console.log(formUpload1);
+        formdata1.append("img", file); //通过append向form对象添加数据
         this.uploadImg(formdata1);
-      },
-      compress(img, Orientation) {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-        //瓦片canvas
-        let tCanvas = document.createElement("canvas");
-        let tctx = tCanvas.getContext("2d");
-        let initSize = img.src.length;
-        let width = img.width;
-        let height = img.height;
-        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        let ratio;
-        if ((ratio = width * height / 4000000) > 1) {
-          console.log("大于400万像素")
-          ratio = Math.sqrt(ratio);
-          width /= ratio;
-          height /= ratio;
-        } else {
-          ratio = 1;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        // 		铺底色
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        //如果图片像素大于100万则使用瓦片绘制
-        let count;
-        if ((count = width * height / 1000000) > 1) {
-          console.log("超过100W像素");
-          count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
-          //            计算每块瓦片的宽和高
-          let nw = ~~(width / count);
-          let nh = ~~(height / count);
-          tCanvas.width = nw;
-          tCanvas.height = nh;
-          for (let i = 0; i < count; i++) {
-            for (let j = 0; j < count; j++) {
-              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
-              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
-            }
-          }
-        } else {
-          ctx.drawImage(img, 0, 0, width, height);
-        }
-        //进行最小压缩
-        let ndata = canvas.toDataURL('image/jpeg', 0.7);
-
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log("ndata:" + ndata)
-
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
-        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
-        return ndata;
       },
       uploadImg(formdata) {
         this.$axios
@@ -433,15 +418,15 @@
         this.$axios
           .post("http://127.0.0.1:8079", {
             CMD: "1",
-            CMDDATA: this.buy_watchbrand +
+            CMDDATA: this.buy_watchBrand +
               "`" +
-              this.buy_watchmodel +
+              this.buy_watchModel +
               "`" +
               this.stock_No +
               "-A`" +
               this.stock_No +
               "-A|" +
-              this.stock_Nocrc
+              this.stock_NoCrc
           })
           .then(res => {
             console.log(res);
@@ -493,7 +478,7 @@
               id: id,
               stock_instateA: this.stock_instateA,
               stock_shelfNo_A: this.stock_shelfNo_A,
-              stock_inpic: storeImgUrl3
+              stock_inPic: storeImgUrl3
             })
             .then(res => {
               console.log("是否入库成功");

@@ -33,14 +33,14 @@
             <tr>
               <td>{{item.obj.buy_id}}</td>
               <td>
-                {{item.type == 0 || item.type == 1 ? item.obj.buy_date : formatNumberRgx(item.obj.buy_taxmoney)  + ' ' + item.obj.buy_taxcurrency}}
+                {{item.type == 0 || item.type == 1 ? item.obj.buy_date : formatNumberRgx(item.obj.buy_taxMoney)  + ' ' + item.obj.buy_taxCurrency}}
               </td>
               <td v-show="item.type == 0 || item.type == 2">
-                {{item.type == 0 ? (item.obj.city_CN == null ? item.obj.country_CN : item.obj.city_CN + ' / ' + item.obj.country_CN) : (item.type == 2 ? '约 ' + item.obj.lostTax + ' %' : '')}}
+                {{item.type == 0 ? (item.obj.city_CN == null || item.obj.city_CN == '' ? item.obj.country_CN : item.obj.city_CN + ' / ' + item.obj.country_CN) : (item.type == 2 ? '约 ' + item.obj.lostTax + ' %' : '')}}
               </td>
               <td>
-                <!-- {{item.type == 0 || item.type == 1 ? (item.obj.buy_taxmoney == 0 ? '' : formatNumberRgx(item.obj.buy_taxmoney)  + ' ' + item.obj.buy_taxcurrency) : formatNumberRgx(item.obj.buy_taxrecvmoney)  + ' ' +item.obj.buy_taxrecvcurrency}} -->
-                {{item.type == 0 || item.type == 1 ? formatNumberRgx(item.obj.buy_taxmoney)  + ' ' + item.obj.buy_taxcurrency : formatNumberRgx(item.obj.buy_taxrecvmoney)  + ' ' +item.obj.buy_taxrecvcurrency}}
+                <!-- {{item.type == 0 || item.type == 1 ? (item.obj.buy_taxMoney == 0 ? '' : formatNumberRgx(item.obj.buy_taxMoney)  + ' ' + item.obj.buy_taxCurrency) : formatNumberRgx(item.obj.buy_taxRecvMoney)  + ' ' +item.obj.buy_taxRecvCurrency}} -->
+                {{item.type == 0 || item.type == 1 ? formatNumberRgx(item.obj.buy_taxMoney)  + ' ' + item.obj.buy_taxCurrency : formatNumberRgx(item.obj.buy_taxRecvMoney)  + ' ' +item.obj.buy_taxRecvCurrency}}
               </td>
               <td>
                 <el-tooltip class="item" effect="light" content="查看详细信息" placement="top-end">
@@ -70,7 +70,7 @@
       return {
         msg: '数据加载中...',
         page: 1,
-        pagenum: 10,
+        pageNum: 10,
         total: 0,
         unCheckTotal: 0, // 未结笔数 
         unCheckMoney: 0, // 未结金额
@@ -94,7 +94,7 @@
         this.msg = '数据加载中...';
         this.$axios.post(this.$store.state.baseUrl + '/BuyOrderTaxList?java', {
           page: this.page,
-          pagenum: this.pagenum
+          pageNum: this.pageNum
         }).then((res) => {
           console.log('税金列表');
           console.log(res);

@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/login/login'
+import VueDND from 'awe-dnd'
 
+Vue.use(VueDND)
 Vue.use(Router)
 
 export default new Router({
@@ -10,8 +12,8 @@ export default new Router({
       path: '/',
       name: 'login',
       component: Login,
-      meta:{
-        title: 'login',
+      meta: {
+        title: 'TopTime在线办公系统',
         type: '' // 不需要鉴权
       },
       children: [{
@@ -23,8 +25,8 @@ export default new Router({
       path: '/home',
       name: 'home',
       component: () => import('@/components/home/home.vue'),
-      meta:{
-        title: '手表进销存系统',
+      meta: {
+        title: 'TopTime在线办公系统',
         type: 'login',
         allowBack: false
       }

@@ -41,14 +41,14 @@
             </div>
             <div slot="footer">
               <el-button @click="dialogShelfNoAVisible = false">取 消</el-button>
-              <el-button type="primary" @click="ShelfNoASure">确 定</el-button>
+              <el-button type="primary" @click="ShelfNoASure" v-preventClick>确 定</el-button>
             </div>
           </el-dialog>
         </div>
         <div class="style-margin" v-if="stockwatchinfo == 1">
           <span>
             出售状态：
-            <span>已被 {{stockwatchinfo.sell_usernick}} 出售</span>
+            <span>已被 {{stockwatchinfo.sell_userNick}} 出售</span>
           </span>
         </div>
       </div>
@@ -57,11 +57,11 @@
           <div style="margin: 30px 0;display: flex;justify-content: space-between;">
             <div style="width: 33%;display: flex;">
               <span>品牌：</span>
-              <span>{{stockwatchinfo.buy_watchbrand}}</span>
+              <span>{{stockwatchinfo.buy_watchBrand}}</span>
             </div>
             <div style="width: 33%;display: flex;">
               <span>型号：</span>
-              <span>{{stockwatchinfo.buy_watchmodel}}</span>
+              <span>{{stockwatchinfo.buy_watchModel}}</span>
             </div>
             <div style="width: 33%;display: flex;">
               <span>库存：</span>
@@ -71,11 +71,11 @@
           <div style="display: flex;justify-content: space-between;">
             <div style="width: 33%;display: flex;">
               <span>机芯号：</span>
-              <span>{{stockwatchinfo.buy_watchsn}}</span>
+              <span>{{stockwatchinfo.buy_watchSn}}</span>
             </div>
             <div style="width: 33%;display: flex;">
               <span>保卡日期：</span>
-              <span>{{stockwatchinfo.buy_watchcard}}</span>
+              <span>{{stockwatchinfo.buy_watchCard}}</span>
             </div>
             <div style="width: 33%;display: flex;">
               <span>状态：</span>
@@ -93,10 +93,10 @@
               <el-col :span="12">
                 <el-button
                   style="width: 300px;background-color:#f3fbf9;border: 1px solid #f3fbf9;font-size: 14px;color:#2c3e50;"
-                  @click="checkWatch(stockwatchinfo.buy_watchid)">查看与此手表同型号的未出库的手表</el-button>
+                  @click="checkWatch(stockwatchinfo.buy_watchId)">查看与此手表同型号的未出库的手表</el-button>
               </el-col>
               <el-col :span="12">
-                <el-button @click="getQRCode"
+                <el-button @click="getQRCode" v-preventClick
                   style="width: 300px;margin-left: 10%;background-color:#f3fbf9;border: 1px solid #f3fbf9;font-size: 14px;color:#2c3e50;">
                   打印二维码</el-button>
               </el-col>
@@ -110,7 +110,7 @@
             <div>
               <el-form label-width="100px">
                 <el-form-item label="提货人：" style="text-align: left;">
-                  <el-input v-model="sell_sendusernick" placeholder="请输入提货人昵称" style="width: 60%;"></el-input>
+                  <el-input v-model="sell_sendUserNick" placeholder="请输入提货人昵称" style="width: 60%;"></el-input>
                 </el-form-item>
                 <div style="margin: 15px 0 15px 25px;">
                   <div style="text-align: left;">
@@ -128,7 +128,7 @@
                       <div style="display:flex;position:relative;" id="delImg">
                         <div v-for="(imgurl,index) of imgurls" :key="index" style="margin-left:10px;position:relative;">
                           <span class="spanStyle" @click="delImage(index)">x</span>
-                          <img :src="img + '/img/watch' + imgurl" width="100px" height="100px"
+                          <img :src="img + imgurl" width="100px" height="100px"
                             style="border-radius:5px;object-fit:cover;" />
                         </div>
                       </div>
@@ -136,13 +136,13 @@
                   </div>
                 </div>
                 <el-form-item label="销售：">
-                  <p style="text-align: left;">{{sell_usernick}}</p>
+                  <p style="text-align: left;">{{sell_userNick}}</p>
                 </el-form-item>
               </el-form>
             </div>
             <div slot="footer">
               <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="stockRemovalSure">确 定</el-button>
+              <el-button type="primary" @click="stockRemovalSure" v-preventClick>确 定</el-button>
             </div>
           </el-dialog>
         </div>
@@ -162,7 +162,7 @@
             <th>保卡日期</th>
             <th>手表状态</th>
             <th>
-              {{items.sell_state == 1 ? '销售员' : (items.LOG_state == 0 ? '采购时间' : (items.LOG_state == 1 ? '预计到达时间' : ''))}}
+              {{items.sell_state == 1 ? '销售员' : (items.log_state == 0 ? '采购时间' : (items.log_state == 1 ? '预计到达时间' : ''))}}
             </th>
             <th>物流状态</th>
             <th>库存信息</th>
@@ -170,26 +170,26 @@
           <tr>
             <td>
               <img
-                :src="items.watchpics == null || items.watchpics == '' ? '' : img + '/img/watch/'+ (items.watchpics || '').split('|')[0]"
+                :src="items.watchPics == null || items.watchPics == '' ? '' : img + '/img/watch/'+ (items.watchPics || '').split('|')[0]"
                 class="first-img" />
             </td>
-            <td>{{items.buy_watchcard}}</td>
+            <td>{{items.buy_watchCard}}</td>
             <td>
-              <div v-for="(stateCon,index) of items.watchstate.split('|')" :key="index">
+              <div v-for="(stateCon,index) of items.watchState.split('|')" :key="index">
                 <p>{{stateCon}}</p>
               </div>
             </td>
             <td>
-              {{items.sell_state == 1 ? items.sell_usernick : (items.LOG_state == 0 ? items.buy_date : (items.LOG_state == 1 ? items.LOG_arrivetime : ''))}}
+              {{items.sell_state == 1 ? items.sell_userNick : (items.log_state == 0 ? items.buy_date : (items.log_state == 1 ? items.log_arriveTime : ''))}}
             </td>
             <td>
-              {{items.sell_state == 1 ? '已出售' : (items.LOG_state == 0 ? '采购中' : (items.LOG_state == 1 ? '运输中' : '已入库'))}}
+              {{items.sell_state == 1 ? '已出售' : (items.log_state == 0 ? '采购中' : (items.log_state == 1 ? '运输中' : '已入库'))}}
             </td>
             <td>
-              <div v-show="items.LOG_state !== 2">
+              <div v-show="items.log_state !== 2">
                 <span style="font-size: 15px;">当前商品未入库，暂无库存信息</span>
               </div>
-              <div v-show="items.LOG_state == 2" class="td-center">
+              <div v-show="items.log_state == 2" class="td-center">
                 <el-button type="text" @click="inventoryInfo(items.id)">查看库存信息</el-button>
               </div>
             </td>
@@ -221,18 +221,18 @@
         watchid: 0, // 手表id
         stockWatchList: [], // 同型号手表
         sell_sendid: "", // 送货人/提货人id
-        sell_sendusernick: "", // 送货人/提货人昵称
-        sell_usernick: "", // 销售员昵称
+        sell_sendUserNick: "", // 送货人/提货人昵称
+        sell_userNick: "", // 销售员昵称
         sell_state: 0, // 销售状态
-        sell_stocktoken: "", // 出库验证码/提货码
+        sell_stockToken: "", // 出库验证码/提货码
         barCode: "",
         barCode3: "",
         stock_No: "", // 货号
         doing: false,
-        buy_watchbrand: "",
-        buy_watchmodel: "",
+        buy_watchBrand: "",
+        buy_watchModel: "",
         stock_No: "",
-        stock_Nocrc: "",
+        stock_NoCrc: "",
         imgurls: [],
       };
     },
@@ -262,27 +262,27 @@
                 console.log("扫描查询内容");
                 console.log(res);
                 this.stockwatchinfo = res.data;
-                if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
-                  if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
-                    this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                if (this.stockwatchinfo.stock_inPic !== '' && this.stockwatchinfo.stock_inPic !== null) {
+                  if (this.stockwatchinfo.stock_inPic.indexOf('|') !== -1) {
+                    this.imgs = this.stockwatchinfo.stock_inPic.split("|");
                   } else {
-                    this.imgs.push(this.stockwatchinfo.stock_inpic);
+                    this.imgs.push(this.stockwatchinfo.stock_inPic);
                   }
                 }
                 console.log(this.imgs);
-                if (this.stockwatchinfo.watchstate !== null) {
-                  this.watchState = this.stockwatchinfo.watchstate.split("|");
+                if (this.stockwatchinfo.watchState !== null) {
+                  this.watchState = this.stockwatchinfo.watchState.split("|");
                 }
-                this.sell_stocktoken = this.stockwatchinfo.sell_stocktoken;
+                this.sell_stockToken = this.stockwatchinfo.sell_stockToken;
                 this.sell_state = this.stockwatchinfo.sell_state;
-                this.sell_usernick = this.stockwatchinfo.sell_usernick;
-                this.buy_watchbrand = this.stockwatchinfo.buy_watchbrand;
-                this.buy_watchmodel = this.stockwatchinfo.buy_watchmodel;
+                this.sell_userNick = this.stockwatchinfo.sell_userNick;
+                this.buy_watchBrand = this.stockwatchinfo.buy_watchBrand;
+                this.buy_watchModel = this.stockwatchinfo.buy_watchModel;
                 this.stock_No = this.stockwatchinfo.stock_No;
-                this.stock_Nocrc = this.stockwatchinfo.stock_Nocrc;
+                this.stock_NoCrc = this.stockwatchinfo.stock_NoCrc;
                 this.id = this.stockwatchinfo.id;
                 console.log(this.stockwatchinfo);
-                console.log(this.sell_usernick);
+                console.log(this.sell_userNick);
                 console.log(this.stock_No);
                 this.barCode3 = "";
                 this.$message.success({
@@ -311,27 +311,27 @@
                 console.log("扫描查询内容");
                 console.log(res);
                 this.stockwatchinfo = res.data;
-                if (this.stockwatchinfo.stock_inpic !== '' && this.stockwatchinfo.stock_inpic !== null) {
-                  if (this.stockwatchinfo.stock_inpic.indexOf('|') !== -1) {
-                    this.imgs = this.stockwatchinfo.stock_inpic.split("|");
+                if (this.stockwatchinfo.stock_inPic !== '' && this.stockwatchinfo.stock_inPic !== null) {
+                  if (this.stockwatchinfo.stock_inPic.indexOf('|') !== -1) {
+                    this.imgs = this.stockwatchinfo.stock_inPic.split("|");
                   } else {
-                    this.imgs.push(this.stockwatchinfo.stock_inpic);
+                    this.imgs.push(this.stockwatchinfo.stock_inPic);
                   }
                 }
                 console.log(this.imgs);
-                if (this.stockwatchinfo.watchstate !== null) {
-                  this.watchState = this.stockwatchinfo.watchstate.split("|");
+                if (this.stockwatchinfo.watchState !== null) {
+                  this.watchState = this.stockwatchinfo.watchState.split("|");
                 }
-                this.sell_stocktoken = this.stockwatchinfo.sell_stocktoken;
+                this.sell_stockToken = this.stockwatchinfo.sell_stockToken;
                 this.sell_state = this.stockwatchinfo.sell_state;
-                this.sell_usernick = this.stockwatchinfo.sell_usernick;
-                this.buy_watchbrand = this.stockwatchinfo.buy_watchbrand;
-                this.buy_watchmodel = this.stockwatchinfo.buy_watchmodel;
+                this.sell_userNick = this.stockwatchinfo.sell_userNick;
+                this.buy_watchBrand = this.stockwatchinfo.buy_watchBrand;
+                this.buy_watchModel = this.stockwatchinfo.buy_watchModel;
                 this.stock_No = this.stockwatchinfo.stock_No;
-                this.stock_Nocrc = this.stockwatchinfo.stock_Nocrc;
+                this.stock_NoCrc = this.stockwatchinfo.stock_NoCrc;
                 this.id = this.stockwatchinfo.id;
                 console.log(this.stockwatchinfo);
-                console.log(this.sell_usernick);
+                console.log(this.sell_userNick);
                 console.log(this.stock_No);
                 this.barCode3 = "";
                 this.$message.success({
@@ -362,15 +362,15 @@
             console.log("手表库存信息");
             console.log(res);
             this.stockwatchinfo = res.data;
-            this.watchState = this.stockwatchinfo.watchstate.split("|");
-            // 手表id  buy_watchid 用于获取同品牌未出库手表列表
-            this.watchid = this.stockwatchinfo.buy_watchid;
-            this.imgs = this.stockwatchinfo.stock_inpic.split("|");
-            this.watchState = this.stockwatchinfo.watchstate.split("|");
+            this.watchState = this.stockwatchinfo.watchState.split("|");
+            // 手表id  buy_watchId 用于获取同品牌未出库手表列表
+            this.watchid = this.stockwatchinfo.buy_watchId;
+            this.imgs = this.stockwatchinfo.stock_inPic.split("|");
+            this.watchState = this.stockwatchinfo.watchState.split("|");
             this.stock_No = this.stockwatchinfo.stock_No;
-            this.sell_stocktoken = this.stockwatchinfo.sell_stocktoken;
+            this.sell_stockToken = this.stockwatchinfo.sell_stockToken;
             this.sell_state = this.stockwatchinfo.sell_state;
-            this.sell_usernick = this.stockwatchinfo.sell_usernick;
+            this.sell_userNick = this.stockwatchinfo.sell_userNick;
             console.log(this.imgs);
             console.log("查询手表库存信息");
             console.log(this.stockwatchinfo);
@@ -420,7 +420,7 @@
         console.log(this.watchid);
         this.$axios
           .post(this.$store.state.baseUrl + "/StockWatchList", {
-            buy_watchid: this.watchid
+            buy_watchId: this.watchid
           })
           .then(res => {
             console.log(res);
@@ -456,15 +456,15 @@
         this.$axios
           .post("http://127.0.0.1:8079", {
             CMD: "1",
-            CMDDATA: this.buy_watchbrand +
+            CMDDATA: this.buy_watchBrand +
               "`" +
-              this.buy_watchmodel +
+              this.buy_watchModel +
               "`" +
               this.stock_No +
               "-A`" +
               this.stock_No +
               "-A|" +
-              this.stock_Nocrc
+              this.stock_NoCrc
           })
           .then(res => {
             console.log(res);
@@ -488,122 +488,105 @@
         this.imgurls.splice(index, 1);
       },
       // 上传图片
-      inputChange(file) {
-        console.log(file);
-        let imgFiles = file.target.files;
-        console.log(imgFiles);
-        this.uploadSectionFile(imgFiles);
-      },
-      // 上传前压缩的方法
-      uploadSectionFile(f) { //	附件上传
-        console.log(f);
-        let self = this;
-        let Orientation;
-        let ndata;
-        console.log('图片尺寸');
-        console.log(f[0].size);
-        // * 1024 * 1024
-        if (f[0].size <= 1 * 1024 * 1024) {
-          //判断图片是否大于1M,是就直接上传
-          ndata = f[0];
-          self.postImg(ndata);
-        } else {
-          //反之压缩图片
-          let reader = new FileReader();
-          // 将图片2将转成 base64 格式
-          reader.readAsDataURL(f[0]);
-          console.log(reader)
-          // 读取成功后的回调
-          reader.onloadend = function () {
-            let result = this.result;
-            let img = new Image();
-            img.src = result;
-            img.onload = function () {
-              let data = self.compress(img, Orientation);
-              self.headerImage = data;
-              ndata = self.compress(img, Orientation);
-              console.log('ndata值');
-              console.log(ndata);
-              //BASE64转图片
-              var arr = ndata.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-              while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-              }
-              ndata = new File([u8arr], f[0].name, {
-                type: mime
-              })
-              console.log('6weeeee');
-              console.log(ndata);
-              self.postImg(ndata);
-            }
-          }
+      inputChange(e) {
+        let file = e.target.files[0];
+        let that = this;
+        if (file === undefined) {
+          return
+        }
+        if (file.size / 1024 > 1025) { // 文件大于1M（根据需求更改），进行压缩上传
+          this.photoCompress(file, { // 调用压缩图片方法
+            quality: 0.7
+          }, function (base64Codes) {
+            // console.log("压缩后：" + base.length / 1024 + " " + base);
+            let bl = that.base64UrlToBlob(base64Codes)
+            // file.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+            that.uploadLice(bl) // 请求图片上传接口
+          })
+        } else { // 小于等于1M 原图上传
+          this.uploadLice(file)
         }
       },
-      async postImg(ndata) {
+
+      // base64 转 Blob 格式 和file格式
+      base64UrlToBlob(urlData) {
+        let arr = urlData.split(','),
+          mime = arr[0].match(/:(.*?);/)[1], // 去掉url的头，并转化为byte
+          bstr = atob(arr[1]), // 处理异常,将ascii码小于0的转换为大于0
+          n = bstr.length,
+          u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        // 转blob
+        // return new Blob([u8arr], {type: mime})
+        let filename = Date.parse(new Date()) + '.jpg'
+        // 转file
+        return new File([u8arr], filename, {
+          type: mime
+        })
+      },
+      /*压缩图片
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+      */
+      photoCompress(file, obj, callback) {
+        let that = this
+        let ready = new FileReader()
+        /* 开始读取指定File对象中的内容. 读取操作完成时,返回一个URL格式的字符串. */
+        ready.readAsDataURL(file)
+        ready.onload = function () {
+          let re = this.result
+          that.canvasDataURL(re, obj, callback) // 开始压缩
+        }
+      },
+      /* 利用canvas数据化图片进行压缩 */
+      /* 图片转base64 */
+      canvasDataURL(path, obj, callback) {
+        let img = new Image()
+        img.src = path
+        img.onload = function () {
+          let that = this // 指到img
+          // 默认按比例压缩
+          let w = that.width,
+            h = that.height,
+            scale = w / h
+          w = obj.width || w
+          h = obj.height || (w / scale)
+          let quality = 0.7 // 默认图片质量为0.7
+          // 生成canvas
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+
+          // 创建属性节点
+          let anw = document.createAttribute('width')
+          anw.nodeValue = w
+          let anh = document.createAttribute('height')
+          anh.nodeValue = h
+          canvas.setAttributeNode(anw)
+          canvas.setAttributeNode(anh)
+          // 铺底色
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(that, 0, 0, w, h)
+
+          // 图像质量
+          if (obj.quality && obj.quality >= 1 && obj.quality < 0) {
+            quality = obj.quality
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/jpeg', quality)
+          // 回调函数返回base64的值
+          callback(base64)
+        }
+      },
+      //  返回file文件，调用接口执行上传
+      uploadLice(file) {
+        console.log(file)
         let formdata1 = new FormData(); //创建form对象
-        console.log('9999999999');
-        console.log(ndata.size);
-        formdata1.append("img", ndata); //通过append向form对象添加数据
-        // console.log(formUpload1);
+        formdata1.append("img", file); //通过append向form对象添加数据
         this.uploadImg(formdata1);
-      },
-      compress(img, Orientation) {
-        let canvas = document.createElement("canvas");
-        let ctx = canvas.getContext('2d');
-        //瓦片canvas
-        let tCanvas = document.createElement("canvas");
-        let tctx = tCanvas.getContext("2d");
-        let initSize = img.src.length;
-        let width = img.width;
-        let height = img.height;
-        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        let ratio;
-        if ((ratio = width * height / 4000000) > 1) {
-          console.log("大于400万像素")
-          ratio = Math.sqrt(ratio);
-          width /= ratio;
-          height /= ratio;
-        } else {
-          ratio = 1;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        // 		铺底色
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        //如果图片像素大于100万则使用瓦片绘制
-        let count;
-        if ((count = width * height / 1000000) > 1) {
-          console.log("超过100W像素");
-          count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
-          //            计算每块瓦片的宽和高
-          let nw = ~~(width / count);
-          let nh = ~~(height / count);
-          tCanvas.width = nw;
-          tCanvas.height = nh;
-          for (let i = 0; i < count; i++) {
-            for (let j = 0; j < count; j++) {
-              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
-              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
-            }
-          }
-        } else {
-          ctx.drawImage(img, 0, 0, width, height);
-        }
-        //进行最小压缩
-        let ndata = canvas.toDataURL('image/jpeg', 0.7);
-
-        console.log('压缩前：' + initSize);
-        console.log('压缩后：' + ndata.length);
-        console.log("ndata:" + ndata)
-
-        console.log('压缩率：' + ~~(100 * (initSize - ndata.length) / initSize) + "%");
-        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
-        return ndata;
       },
       uploadImg(formdata) {
         console.log(formdata);
@@ -636,14 +619,14 @@
       stockRemoval() {
         console.log("手表出库");
         console.log(this.sell_state);
-        console.log(this.sell_stocktoken);
+        console.log(this.sell_stockToken);
         this.imgurls = [];
-        this.sell_sendusernick = "";
+        this.sell_sendUserNick = "";
         this.dialogVisible = true;
       },
       // 确认出库
       stockRemovalSure() {
-        if (this.sell_sendusernick == "") {
+        if (this.sell_sendUserNick == "") {
           this.$message.error({
             message: "提货人不能为空，请输入",
             showClose: true,
@@ -655,9 +638,9 @@
           this.$axios
             .post(this.$store.state.baseUrl + "/StockOutDo", {
               id: this.id,
-              sell_sendusernick: this.sell_sendusernick,
-              sell_stocktoken: this.barCode,
-              stock_outpic: storeImgUrl5,
+              sell_sendUserNick: this.sell_sendUserNick,
+              sell_stockToken: this.barCode,
+              stock_outPic: storeImgUrl5,
             })
             .then(res => {
               console.log(res);
